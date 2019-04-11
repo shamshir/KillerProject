@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killerproject;
+package communications;
 
+import communications.ConnectionHandler;
+import game.KillerGame;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;

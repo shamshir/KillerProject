@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killerproject;
+package visibleObjects;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -14,17 +14,17 @@ import java.awt.Rectangle;
  */
 public abstract class Alive extends VisibleObject implements Runnable {
 
-    double dx;
-    double dy;
-    double speed;
+    public double dx;
+    public double dy;
+    public double speed;
 
-    Rectangle hitbox;
-    Color color;
-    String colorhex;
+    public Rectangle hitbox;
+    public Color color;
+    public String colorhex;
 
-    boolean alive;
+    public boolean alive;
     
-    long time;
+    public long time;
 
     public abstract void move();
 

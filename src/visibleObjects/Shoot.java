@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killerproject;
+package visibleObjects;
 
+import communications.KillerPad;
+import game.KillerGame;
 import java.awt.Color;
 import java.awt.Rectangle;
 
@@ -18,7 +20,7 @@ public class Shoot extends Automata implements Runnable {
     private double speed;
     private boolean frightdir;
     private Controlled ship;
-    Rectangle hitbox;
+    public Rectangle hitbox;
 
     private boolean alive;
 

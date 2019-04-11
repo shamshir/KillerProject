@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killerproject;
+package visualEffects;
 
+import game.KillerGame;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
