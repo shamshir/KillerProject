@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killerproject;
+package visibleObjects;
+
+import game.KillerGame;
+import interfaces.Renderizable;
 
 /**
  *
@@ -11,13 +14,13 @@ package killerproject;
  */
 public abstract class VisibleObject implements Renderizable {
 
-    KillerGame kg;
+    public KillerGame kg;
 
-    double x;
-    double y;
+    public double x;
+    public double y;
 
-    int HEIGHT;
-    int WIDTH;
+    public int HEIGHT;
+    public int WIDTH;
 
     public KillerGame getKg() {
         return kg;

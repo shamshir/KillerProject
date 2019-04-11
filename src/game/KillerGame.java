@@ -3,8 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killerproject;
+package game;
 
+import visualEffects.Viewer;
+import visibleObjects.Automata;
+import visibleObjects.VisibleObject;
+import visibleObjects.Alive;
+import visibleObjects.Shoot;
+import visibleObjects.Controlled;
+import communications.VisualHandler;
+import communications.KillerServer;
+import communications.KillerPad;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;

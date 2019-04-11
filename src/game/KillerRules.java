@@ -3,7 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killerproject;
+package game;
+
+import visibleObjects.Automata;
+import visibleObjects.VisibleObject;
+import visibleObjects.Alive;
+import visibleObjects.Shoot;
+import visibleObjects.Controlled;
 
 /**
  *

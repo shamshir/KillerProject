@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killerproject;
+package visibleObjects;
 
+import communications.KillerPad;
+import game.KillerGame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -16,11 +18,11 @@ import java.util.ArrayList;
  */
 public class Controlled extends Alive {
 
-    String ip;
-    String user;
-    boolean up, down, right, left;
-    boolean fright;
-    boolean wup, wdown, wright, wleft;
+    public String ip;
+    public String user;
+    public boolean up, down, right, left;
+    public boolean fright;
+    public boolean wup, wdown, wright, wleft;
     private ArrayList<Shoot> shoots = new ArrayList();
     private boolean death;
 
