@@ -1,38 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package communications;
 
 import communications.ConnectionHandler;
 import game.KillerGame;
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
- * @author berna
- */
 public class KillerServer implements Runnable {
 
     private KillerGame killergame;
-
     private final int PORT;
-    private Socket clientSock;
+    private final String id;
     private ServerSocket serverSocket;
 
-    private BufferedReader in;
-    private PrintWriter out;
+    public KillerServer(final KillerGame kg, final int port) throws Exception {
 
-    public KillerServer(KillerGame kg, int PORT) throws Exception {
-
-        killergame = kg;
-        this.PORT = PORT;
-        serverSocket = new ServerSocket(PORT);
+        this.killergame = kg;
+        this.tryToCreateServerSocket(port);
+        
+        if(this.serverSocket == null){            
+                throw new Exception("Ningun puerto ha sido encontrado, inserte otro puerto");
+        }
+        
+        this.PORT = this.serverSocket.getLocalPort();
+        this.id = InetAddress.getLocalHost().getHostAddress() + " - " + this.PORT;
+        System.out.println("Server iniciado en: " + this.id);
     }
 
     @Override
@@ -41,36 +32,44 @@ public class KillerServer implements Runnable {
         while (true) {
             try {
                 System.out.println("Waiting for a connection......");
-                contact();
-            } catch (IOException ex) {
+                this.contact();
+                Thread.sleep(500);
+
+            } catch (InterruptedException ex) {
 
             }
         }
 
     }
 
-    public void contact() throws IOException {
+    private void tryToCreateServerSocket(final int port){
+        boolean ok = false;
+        for (int i = 0; !ok && i < 10; i++) {
 
-        clientSock = serverSocket.accept();
-        System.out.println("Connection from " + clientSock.getInetAddress().getHostAddress());
-        new Thread(new ConnectionHandler(clientSock, clientSock.getInetAddress().getHostAddress(), killergame)).start();
+            try {
+                this.serverSocket = new ServerSocket(port + i);
+                ok = true;
+            } catch (Exception ex) {
+            }
+        }
+    } 
+    
+    private void contact() {
 
+        try {
+            final Socket clientSock = this.serverSocket.accept();
+            new Thread(new ConnectionHandler(clientSock, this.killergame)).start();
+        } catch (Exception ex) {
+            System.out.println("Fallo al contactar");
+        }
     }
 
-    public Socket getClientSock() {
-        return clientSock;
+    public int getPort() {
+        return this.PORT;
     }
-
-    public void setClientSock(Socket clientSock) {
-        this.clientSock = clientSock;
-    }
-
-    public ServerSocket getServerSocket() {
-        return serverSocket;
-    }
-
-    public void setServerSocket(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
+    
+    public String getId(){
+        return this.id;
     }
 
 }
