@@ -3,6 +3,7 @@ package communications;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class Message {
@@ -10,19 +11,12 @@ public class Message {
     private String command;
     private String senderId;
     private String receiverId;
-    private String action;
-    private String object;
     private Boolean relay;
-    private String color;
-    private String userName;
-    private String shipType;
-    private String direction;
-    private int velX;
-    private int velY;
+    private KillerAction action;
+    private ObjectResponse objectResponse;
+    private ConnectionResponse connectionResponse;
     private int damage;
-    private boolean right;
     private String configRoom;
-    private int originPort;
 
     private static final String EMPTY_STRING = "";
 
@@ -33,19 +27,12 @@ public class Message {
         this.command = builder.command;
         this.senderId = builder.senderId;
         this.receiverId = builder.receiverId;
+        this.relay = builder.relay;
         this.action = builder.action;
-        this.object = builder.object;
-        this.relay = builder.right;
-        this.color = builder.color;
-        this.userName = builder.userName;
-        this.shipType = builder.shipType;
-        this.direction = builder.direction;
-        this.velX = builder.velX;
-        this.velY = builder.velY;
+        this.objectResponse = builder.objectResponse;
+        this.connectionResponse = builder.connectionResponse;
         this.damage = builder.damage;
-        this.right = builder.right;
         this.configRoom = builder.configRoom;
-        this.originPort = builder.originPort;
     }
 
     public String getCommand() {
@@ -60,64 +47,36 @@ public class Message {
         return receiverId;
     }
 
-    public String getAction() {
+    public KillerAction getAction() {
         return action;
     }
 
-    public String getObject() {
-        return object;
+    public ObjectResponse getObjectResponse() {
+        return objectResponse;
+    }
+    
+    public ConnectionResponse getConnectionResponse(){
+        return this.connectionResponse;
     }
 
     public Boolean isRelay() {
         return relay;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getShipType() {
-        return shipType;
-    }
-
-    public String getDirection() {
-        return direction;
-    }
-
-    public int getVelX() {
-        return velX;
-    }
-
-    public int getVelY() {
-        return velY;
-    }
-
     public int getDamage() {
         return damage;
-    }
-
-    public boolean isRight() {
-        return right;
     }
 
     public String getConfigRoom() {
         return configRoom;
     }
 
-    public int getOriginPort() {
-        return originPort;
-    }
-
     public static Message readMessage(final String jsonStr) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(jsonStr, Message.class);
-        } catch (Exception ex) {
-            System.out.println("MESSAGE: Error leer mensaje");
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
             return Message.Builder.builder(EMPTY_STRING, EMPTY_STRING).build();
         }
 
@@ -138,19 +97,12 @@ public class Message {
         private String command;
         private String senderId;
         private String receiverId;
-        private String action;
-        private String object;
-        private boolean relay;
-        private String color;
-        private String userName;
-        private String shipType;
-        private String direction;
-        private int velX;
-        private int velY;
+        private Boolean relay;
+        private KillerAction action;
+        private ObjectResponse objectResponse;
+        private ConnectionResponse connectionResponse;
         private int damage;
-        private boolean right;
         private String configRoom;
-        private int originPort;
 
         public Builder(final String command, final String senderId) {
             this.command = command;
@@ -166,48 +118,23 @@ public class Message {
             return this;
         }
 
-        public Builder withAction(final String action) {
+        public Builder withAction(final KillerAction action) {
             this.action = action;
             return this;
         }
+        
+        public Builder withConnection(final ConnectionResponse connectionResponse) {
+            this.connectionResponse = connectionResponse;
+            return this;
+        }
 
-        public Builder withObject(final String object) {
-            this.object = object;
+        public Builder withObject(final ObjectResponse objectResponse) {
+            this.objectResponse = objectResponse;
             return this;
         }
 
         public Builder withRelay(final Boolean isRelay) {
-            this.right = isRelay;
-            return this;
-        }
-
-        public Builder withColor(final String color) {
-            this.color = color;
-            return this;
-        }
-
-        public Builder withUserName(final String name) {
-            this.userName = name;
-            return this;
-        }
-
-        public Builder withShipType(final String shipType) {
-            this.shipType = shipType;
-            return this;
-        }
-
-        public Builder withDirection(final String direction) {
-            this.direction = direction;
-            return this;
-        }
-
-        public Builder withVelX(final int velX) {
-            this.velX = velX;
-            return this;
-        }
-
-        public Builder withVelY(final int velY) {
-            this.velY = velY;
+            this.relay = isRelay;
             return this;
         }
 
@@ -216,18 +143,8 @@ public class Message {
             return this;
         }
 
-        public Builder withRight(final boolean isRight) {
-            this.right = isRight;
-            return this;
-        }
-
         public Builder withConfigRoom(final String configRoom) {
             this.configRoom = configRoom;
-            return this;
-        }
-
-        public Builder withOriginPort(final int originPort) {
-            this.originPort = originPort;
             return this;
         }
 

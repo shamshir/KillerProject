@@ -4,15 +4,15 @@ import communications.KillerClient;
 import visibleObjects.Automata;
 import visibleObjects.Controlled;
 import game.KillerGame;
+import java.net.Socket;
 import visibleObjects.Shoot;
-import java.net.*;
 import visibleObjects.Alive;
 
 public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private KillerClient client;
     private final boolean right;
-
+        
     private static final String EMPTY_STRING = "";
 
     private static final String STATUS_REQUEST = "ok";
@@ -22,7 +22,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String READY_TO_START = "ready";
     private static final String QUIT_GAME = "quit";
     private static final String PAD_COMMAND = "pad(.*)";
-
+   
     private static final String SHOOT_TYPE = "shoot";
 
     public VisualHandler(final KillerGame killergame, final boolean right) {
@@ -54,7 +54,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
         while (!done) {
             try {
-                done = processLine(this.readLine());
+                done = !this.processLine(this.readLine());
 
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
@@ -67,19 +67,19 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private boolean processLine(final String line) {
         if (line == null) {
-            return true;
+            return false;
         }
         if (!STATUS_REQUEST.equalsIgnoreCase(line)) {
-            processMessage(Message.readMessage(line));
+            this.processMessage(Message.readMessage(line));
         }
-        return false;
+        return true;
     }
 
     private void processMessage(final Message message) {
 
         switch (message.getCommand()) {
             case SEND_OBJECT_COMMAND:
-                this.receiveObject(ObjectResponse.readObjectResponse(message.getObject()));
+                this.receiveObject(message.getObjectResponse());
                 break;
             case START_GAME:
                 break;
@@ -88,17 +88,15 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case QUIT_GAME:
                 break;
             default:
-                processPadCommand(message);
+                this.processPadCommand(message);
                 break;
         }
     }
 
     private void processPadCommand(final Message message) {
-        String command = message.getCommand();
+        final String command = message.getCommand();
         if (command != null && command.matches(PAD_COMMAND)) {
-            if (!KillerPad.processMessage(message)) {
-                //TODO ennviar  instruccion al siguiente visual
-            }
+            KillerPad.processMessage(message);            
         }
     }
 
@@ -117,14 +115,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     public void sendObject(final Alive object) {
-        //TODO rellenar con los datos que se pida
-        final String objectJson = ObjectResponse.convertObjectToString(object);
         final Message message = Message.Builder.builder(SEND_OBJECT_COMMAND, this.getKillergame().getServer().getId())
-                .withObject(objectJson)
+                .withObject(this.convertObjectToObjectResponse(object))
                 .build();
-        this.send(Message.convertMessageToJson(message));
+        this.sendLine(Message.convertMessageToJson(message));
     }
-
+    
     private void startClient() {
         this.client = new KillerClient(this, this.getKillergame());
         new Thread(this.client).start();
@@ -140,21 +136,27 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
         if (super.setSocket(sock)) {
 
-            if (this.right) {
-                this.getKillergame().getIpnext().setEnabled(false);
-                this.getKillergame().getPortnext().setEnabled(false);
-                this.getKillergame().getIpnext().setText("Connected!");
-            } else {
-                this.getKillergame().getIpprev().setEnabled(false);
-                this.getKillergame().getPortprev().setEnabled(false);
-                this.getKillergame().getIpprev().setText("Connected!");
-            }
+            //TODO Llamar método para actualizar el panel
             try {
                 this.getSocket().setSoTimeout(3500);
-            } catch (SocketException ex) {
+            } catch (Exception ex) {
             }
             return true;
         }
         return false;
+    }
+
+    private ObjectResponse convertObjectToObjectResponse(final Alive object) {        
+        //TODO rellenar con los datos que se pida
+        if (object instanceof Shoot) {
+            return this.buildObjectResponseFromShoot((Shoot)object);
+        }
+        return ObjectResponse.Builder.builder(EMPTY_STRING).build();
+    }
+
+    private ObjectResponse buildObjectResponseFromShoot(final Shoot shoot) {
+        return ObjectResponse.Builder.builder(SHOOT_TYPE)
+                .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
+                .build();
     }
 }

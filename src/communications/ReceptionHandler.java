@@ -2,12 +2,9 @@ package communications;
 
 import game.KillerGame;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ReceptionHandler {
 
@@ -17,7 +14,6 @@ public class ReceptionHandler {
     private final KillerGame killergame;
     private BufferedReader in;
     private PrintWriter out;
-
     private static final String EMPTY_STRING = "";
 
     public ReceptionHandler(final KillerGame killergame) {
@@ -28,7 +24,7 @@ public class ReceptionHandler {
         this.killergame = killergame;
         this.setSocket(socket);
     }
-
+    
     public synchronized Socket getSocket() {
         return this.sock;
     }
@@ -57,8 +53,12 @@ public class ReceptionHandler {
         return this.in.readLine();
     }
 
-    public void send(final String line) {
+    public void sendLine(final String line) {
         this.out.println(line);
+    }
+    
+    public void sendMessage(final Message message) {
+        this.out.println(Message.convertMessageToJson(message));
     }
 
     public synchronized boolean setSocket(final Socket socket) {

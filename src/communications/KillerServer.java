@@ -9,7 +9,7 @@ public class KillerServer implements Runnable {
 
     private KillerGame killergame;
     private final int PORT;
-    private final String id;
+    private static String id;
     private ServerSocket serverSocket;
 
     public KillerServer(final KillerGame kg, final int port) throws Exception {
@@ -68,8 +68,8 @@ public class KillerServer implements Runnable {
         return this.PORT;
     }
     
-    public String getId(){
-        return this.id;
+    public static String getId(){
+        return id;
     }
 
 }

@@ -1,9 +1,7 @@
 package communications;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import visibleObjects.Alive;
-import visibleObjects.Shoot;
+
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ObjectResponse {
 
@@ -52,7 +50,7 @@ public class ObjectResponse {
         return posicionYInPercent;
     }
 
-    public int getHeight() {
+    public int getHEIGHT() {
         return height;
     }
 
@@ -82,38 +80,6 @@ public class ObjectResponse {
 
     public int getLife() {
         return life;
-    }
-
-    public static ObjectResponse readObjectResponse(final String jsonStr) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(jsonStr, ObjectResponse.class);
-        } catch (Exception ex) {
-            System.out.println("OBJECT RESPONSE: Error leer response");
-            return ObjectResponse.Builder.builder(EMPTY_STRING).build();
-        }
-
-    }
-
-    public static String convertObjectToString(final Alive object){
-        if(object instanceof Shoot){
-            return convertShootToJson((Shoot)object);
-        }
-        return EMPTY_STRING;
-    }
-    
-    private static String convertShootToJson(final Shoot shoot) {
-
-        final ObjectResponse response = ObjectResponse.Builder.builder(SHOOT_OBJECT)
-                .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
-                .build();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(response);
-        } catch (Exception ex) {
-            System.out.println("Error al convertir objectresponse a Json");
-        }
-        return EMPTY_STRING;
     }
 
     public static class Builder {

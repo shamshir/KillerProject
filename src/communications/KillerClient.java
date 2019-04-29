@@ -50,9 +50,13 @@ public class KillerClient implements Runnable {
 
     private void contact(final Socket sock) throws Exception {
 
-        final Message message = Message.Builder.builder(CONNECT_TO_CLIENT, this.killergame.getServer().getId())
+        final ConnectionResponse connectionResponse = ConnectionResponse.Builder.builder()
                 .withRight(((VisualHandler) this.receptionHandler).isRight())
                 .withOriginPort(this.killergame.getServer().getPort())
+                .build();
+        
+        final Message message = Message.Builder.builder(CONNECT_TO_CLIENT, KillerServer.getId())
+                .withConnection(connectionResponse)
                 .build();
 
         PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
@@ -60,7 +64,7 @@ public class KillerClient implements Runnable {
     }
 
     private void sendStatusRequest() {
-        this.receptionHandler.send(STATUS_REQUEST);
+        this.receptionHandler.sendLine(STATUS_REQUEST);
     }
 
 }
