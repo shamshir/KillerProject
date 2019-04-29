@@ -1,8 +1,9 @@
 package communications;
 
 import game.KillerGame;
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.Socket;
 
 public class ConnectionHandler implements Runnable {
 
@@ -11,6 +12,7 @@ public class ConnectionHandler implements Runnable {
 
     private static final String CONNECTION_FROM_CLIENT = "connect";
     private static final String CONNECTION_FROM_PAD = "pad-connect";
+    private static final String EMPTY_STRING = "";
 
     public ConnectionHandler(final Socket socket, final KillerGame kg) {
         this.socket = socket;
@@ -23,20 +25,21 @@ public class ConnectionHandler implements Runnable {
     }
 
     private void connect() {
+        final Message messageReceived = this.readConnectionMessage();
+        if (CONNECTION_FROM_CLIENT.equalsIgnoreCase(messageReceived.getCommand())) {
+            this.clientConnect(messageReceived);
+        } else if (CONNECTION_FROM_PAD.equalsIgnoreCase(messageReceived.getCommand())) {
+            this.padConnect(messageReceived);
+        }
+    }
 
+    private Message readConnectionMessage() {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            final Message messageReceived = Message.readMessage(in.readLine());
-
-            if (CONNECTION_FROM_CLIENT.equalsIgnoreCase(messageReceived.getCommand())) {
-                this.clientConnect(messageReceived);
-
-            } else if (CONNECTION_FROM_PAD.equalsIgnoreCase(messageReceived.getCommand())) {
-                this.padConnect(messageReceived);
-            }
-
+            return Message.readMessage(in.readLine());
         } catch (Exception ex) {
             System.out.println("Error: Connection handler Connect");
+            return Message.Builder.builder(EMPTY_STRING, EMPTY_STRING).build();
         }
     }
 
@@ -44,7 +47,7 @@ public class ConnectionHandler implements Runnable {
 
         VisualHandler visualHandler = null;
         if (message.isRight()) {
-            //TODO cambiar getter
+            //TODO crear SETUP 
             visualHandler = this.kg.getPk();
         } else {
             visualHandler = this.kg.getNk();
@@ -52,16 +55,13 @@ public class ConnectionHandler implements Runnable {
 
         visualHandler.setSocket(this.socket);
         visualHandler.setDestinationPort(message.getOriginPort());
-        
+
         //TODO enviar configuracion
     }
 
     private void padConnect(final Message message) {
         //TODO comprobar si se puede crear un mando y responder al PAD
         //TODO implementar metodo crear PAD en KillerGame
-        new Thread(new KillerPad(this.kg, this.socket,  
-                message.getUserName(),
-                message.getColor()
-        )).start();
+
     }
 }

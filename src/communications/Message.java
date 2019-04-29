@@ -11,14 +11,12 @@ public class Message {
     private String senderId;
     private String receiverId;
     private String action;
-    private String object;
+    private ObjectResponse object;
     private Boolean relay;
     private String color;
     private String userName;
     private String shipType;
     private String direction;
-    private int velX;
-    private int velY;
     private int damage;
     private boolean right;
     private String configRoom;
@@ -40,8 +38,6 @@ public class Message {
         this.userName = builder.userName;
         this.shipType = builder.shipType;
         this.direction = builder.direction;
-        this.velX = builder.velX;
-        this.velY = builder.velY;
         this.damage = builder.damage;
         this.right = builder.right;
         this.configRoom = builder.configRoom;
@@ -64,7 +60,7 @@ public class Message {
         return action;
     }
 
-    public String getObject() {
+    public ObjectResponse getObject() {
         return object;
     }
 
@@ -86,14 +82,6 @@ public class Message {
 
     public String getDirection() {
         return direction;
-    }
-
-    public int getVelX() {
-        return velX;
-    }
-
-    public int getVelY() {
-        return velY;
     }
 
     public int getDamage() {
@@ -139,14 +127,12 @@ public class Message {
         private String senderId;
         private String receiverId;
         private String action;
-        private String object;
+        private ObjectResponse object;
         private boolean relay;
         private String color;
         private String userName;
         private String shipType;
         private String direction;
-        private int velX;
-        private int velY;
         private int damage;
         private boolean right;
         private String configRoom;
@@ -171,7 +157,7 @@ public class Message {
             return this;
         }
 
-        public Builder withObject(final String object) {
+        public Builder withObject(final ObjectResponse object) {
             this.object = object;
             return this;
         }
@@ -198,16 +184,6 @@ public class Message {
 
         public Builder withDirection(final String direction) {
             this.direction = direction;
-            return this;
-        }
-
-        public Builder withVelX(final int velX) {
-            this.velX = velX;
-            return this;
-        }
-
-        public Builder withVelY(final int velY) {
-            this.velY = velY;
             return this;
         }
 
