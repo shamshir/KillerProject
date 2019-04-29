@@ -27,9 +27,9 @@ public class ConnectionHandler implements Runnable {
     private void connect() {
         final Message messageReceived = this.readConnectionMessage();
         if (CONNECTION_FROM_CLIENT.equalsIgnoreCase(messageReceived.getCommand())) {
-            this.clientConnect(messageReceived);
+            this.clientConnect(messageReceived.getConnectionResponse());
         } else if (CONNECTION_FROM_PAD.equalsIgnoreCase(messageReceived.getCommand())) {
-            this.padConnect(messageReceived);
+            this.padConnect(messageReceived.getConnectionResponse());
         }
     }
 
@@ -43,10 +43,10 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
-    private void clientConnect(final Message message) {
+    private void clientConnect(final ConnectionResponse connectionResponse) {
 
         VisualHandler visualHandler = null;
-        if (message.isRight()) {
+        if (connectionResponse.isRight()) {
             //TODO crear SETUP 
             visualHandler = this.kg.getPk();
         } else {
@@ -54,12 +54,12 @@ public class ConnectionHandler implements Runnable {
         }
 
         visualHandler.setSocket(this.socket);
-        visualHandler.setDestinationPort(message.getOriginPort());
+        visualHandler.setDestinationPort(connectionResponse.getOriginPort());
 
         //TODO enviar configuracion
     }
 
-    private void padConnect(final Message message) {
+    private void padConnect(final ConnectionResponse connectionResponse) {
         //TODO comprobar si se puede crear un mando y responder al PAD
         //TODO implementar metodo crear PAD en KillerGame
 

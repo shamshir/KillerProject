@@ -79,7 +79,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
         switch (message.getCommand()) {
             case SEND_OBJECT_COMMAND:
-                this.receiveObject(message.getObject());
+                this.receiveObject(message.getObjectResponse());
                 break;
             case START_GAME:
                 break;
