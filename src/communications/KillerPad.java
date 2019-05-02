@@ -5,7 +5,7 @@
  */
 package communications;
 
-import visibleObjects.Controlled;
+import visibleObjects.KillerShip;
 import game.KillerGame;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -36,7 +36,7 @@ public class KillerPad implements Runnable {
         this.ip = ip;
         this.killergame = killergame;
         port = sock.getPort();
-        Controlled player = new Controlled(killergame, Color.decode("#" + color), ip, user);
+        KillerShip player = new KillerShip(killergame, Color.decode("#" + color), ip, user);
         killergame.getObjects().add(player);
         killergame.getKpads().add(this);
         new Thread(player).start();
@@ -60,11 +60,11 @@ public class KillerPad implements Runnable {
 
     public static void lifeShip(String msg, KillerGame kg, String ipShip, String ipOrig) {
 
-        Controlled player = null;
+        KillerShip player = null;
 
         for (int i = 0; i < kg.getObjects().size(); i++) {
-            if (kg.getObjects().get(i) instanceof Controlled) {
-                Controlled temporal = (Controlled) kg.getObjects().get(i);
+            if (kg.getObjects().get(i) instanceof KillerShip) {
+                KillerShip temporal = (KillerShip) kg.getObjects().get(i);
                 if (temporal.getIp().equals(ipShip)) {
                     player = temporal;
                 }
@@ -110,11 +110,11 @@ public class KillerPad implements Runnable {
 
         System.out.println(msg);
 
-        Controlled player = null;
+        KillerShip player = null;
 
         for (int i = 0; i < kg.getObjects().size(); i++) {
-            if (kg.getObjects().get(i) instanceof Controlled) {
-                Controlled temporal = (Controlled) kg.getObjects().get(i);
+            if (kg.getObjects().get(i) instanceof KillerShip) {
+                KillerShip temporal = (KillerShip) kg.getObjects().get(i);
                 if (temporal.getIp().equals(ipShip)) {
                     player = temporal;
                 }
@@ -169,11 +169,11 @@ public class KillerPad implements Runnable {
 
     public static void removeShip(String msg, KillerGame kg, String ipShip, String ipOrig) {
 
-        Controlled player = null;
+        KillerShip player = null;
 
         for (int i = 0; i < kg.getObjects().size(); i++) {
-            if (kg.getObjects().get(i).kg.getObjects().get(i) instanceof Controlled) {
-                Controlled temporal = (Controlled) kg.getObjects().get(i);
+            if (kg.getObjects().get(i).getGame().getObjects().get(i) instanceof KillerShip) {
+                KillerShip temporal = (KillerShip) kg.getObjects().get(i);
                 System.out.println("vuelta");
                 if (temporal.getIp().equals(ipShip)) {
                     System.out.println("lo tengo");
@@ -183,7 +183,7 @@ public class KillerPad implements Runnable {
         }
 
         if (player != null) {
-            player.death();
+            player.die();
             kg.getObjects().remove(player);
         } else {
             kg.getNk().sendMessage(kg.getNk().notifyVisual(msg, ipShip), "r", msg);

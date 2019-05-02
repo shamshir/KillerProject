@@ -2,17 +2,14 @@ package visibleObjects;
 
 import game.KillerGame;
 
-public abstract class Controlled extends Alive {   
+public abstract class Static extends VisibleObject {
     
-    
-    public Controlled(KillerGame game) {
+    public Static(KillerGame game) {
         super(game);
     }
-    
     
     
     // *********************
     // * Getters & Setters *
     // *********************
-    
 }

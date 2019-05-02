@@ -7,8 +7,8 @@ package communications;
 
 import communications.KillerPad;
 import communications.KillerClient;
-import visibleObjects.Automata;
-import visibleObjects.Controlled;
+import visibleObjects.Asteroid;
+import visibleObjects.KillerShip;
 import game.KillerGame;
 import visibleObjects.Shoot;
 import java.awt.Color;
@@ -198,34 +198,40 @@ public class VisualHandler implements Runnable {
                     int axisX = Integer.parseInt(info[9]);
                     int axisY = Integer.parseInt(info[10]);
 
-                    Controlled contr = new Controlled(killergame, Color.decode(color), ip, user);
-                    contr.y = killergame.getViewer().getHeight() * Double.valueOf(percnt);
-                    contr.speed = Double.valueOf(speed);
-                    contr.WIDTH = Integer.parseInt(WIDTH);
-                    contr.HEIGHT = Integer.parseInt(HEIGHT);
+                    KillerShip contr = new KillerShip(killergame, Color.decode(color), ip, user);
+                    contr.setY(killergame.getViewer().getHeight() * Double.valueOf(percnt));
+                    contr.setSpeed(Double.valueOf(speed));
+                    contr.setWidth(Integer.parseInt(WIDTH));
+                    contr.setHeight(Integer.parseInt(HEIGHT));
 
                     if (dir.equals("right")) {
-                        contr.x = killergame.getViewer().getWidth() - contr.WIDTH / 2;
-                        contr.right = false;
+                        contr.setX(killergame.getViewer().getWidth() - contr.getWidth() / 2);
+                        //contr.right = false;
+                        contr.setRight(false);
                     } else if (dir.equals("left")) {
-                        contr.x = -contr.WIDTH / 2;
-                        contr.right = true;
+                        contr.setX(-contr.getWidth() / 2);
+                        //contr.right = true;
+                        contr.setRight(true);
                     }
 
                     if (axisX == 1) {
-                        contr.right = true;
+                        //contr.right = true;
+                        contr.setRight(true);
                     } else if (axisX == -1) {
-                        contr.left = true;
+                        //contr.left = true;
+                        contr.setLeft(true);
                     }
 
                     if (axisY == 1) {
-                        contr.up = true;
+                        //contr.up = true;
+                        contr.setUp(true);
 
                     } else if (axisY == -1) {
-                        contr.down = true;
+                        //contr.down = true;
+                        contr.setDown(true);
                     }
                     System.out.println(percnt);
-                    System.out.println(contr.y);
+                    System.out.println(contr.getY());
                     killergame.createControlled(contr);
 
                 } else if (info[0].trim().equals("automata")) {
@@ -238,20 +244,22 @@ public class VisualHandler implements Runnable {
                     String dirx = info[6];
                     String diry = info[7];
 
-                    Automata auto = new Automata(killergame, Color.decode(color));
-                    auto.y = killergame.getViewer().getHeight() * Double.valueOf(percnt);
-                    auto.speed = Double.valueOf(speed);
-                    auto.WIDTH = Integer.parseInt(WIDTH);
-                    auto.HEIGHT = Integer.parseInt(HEIGHT);
+//                  Asteroid auto = new Asteroid(killergame, Color.decode(color));
+                    Asteroid auto = new Asteroid(killergame);
+
+                    auto.setY(killergame.getViewer().getHeight() * Double.valueOf(percnt));
+                    auto.setSpeed(Double.valueOf(speed));
+                    auto.setWidth(Integer.parseInt(WIDTH));
+                    auto.setHeight(Integer.parseInt(HEIGHT));
 
                     if (dirx.equals("right")) {
-                        auto.x = killergame.getViewer().getWidth() - auto.WIDTH / 2;
-                        auto.dx = -Double.valueOf(speed);
+                        auto.setX(killergame.getViewer().getWidth() - auto.getWidth() / 2);
+                        auto.setDx(-Double.valueOf(speed));
                     } else if (dirx.equals("left")) {
-                        auto.x = -auto.WIDTH / 2;
-                        auto.dx = Double.valueOf(speed);
+                        auto.setX(-auto.getWidth() / 2);
+                        auto.setDx(Double.valueOf(speed));
                     }
-                    auto.dy = Integer.parseInt(diry) * Double.valueOf(speed);
+                    auto.setDy(Integer.parseInt(diry) * Double.valueOf(speed));
                     killergame.createAutomata(auto);
 
                 } else if (info[0].trim().equals("shoot")) {
@@ -276,9 +284,9 @@ public class VisualHandler implements Runnable {
         out.println(msg);
     }
 
-    public String sendPlayer(Controlled obj, boolean right) {
+    public String sendPlayer(KillerShip obj, boolean right) {
 
-        double percentSc = (obj.y / killergame.getViewer().getHeight());
+        double percentSc = (obj.getY() / killergame.getViewer().getHeight());
         String dir = null;
         if (right) {
             dir = "right";
@@ -289,28 +297,28 @@ public class VisualHandler implements Runnable {
         int axisX = 0;
         int axisY = 0;
 
-        if (obj.left) {
+        if (obj.isLeft()) {
             axisX = -1;
         }
-        if (obj.right) {
+        if (obj.isRight()) {
             axisX = 1;
         }
-        if (obj.up) {
+        if (obj.isUp()) {
             axisY = 1;
         }
-        if (obj.down) {
+        if (obj.isDown()) {
             axisY = -1;
         }
 
-        String msg = "player/" + obj.ip + "/" + obj.user + "/" + obj.colorhex
-                + "/" + percentSc + "/" + obj.speed + "/"
-                + obj.WIDTH + "/" + obj.HEIGHT + "/" + dir + "/"
+        String msg = "player/" + obj.getIp() + "/" + obj.getUser() + "/" + obj.getColorhex()
+                + "/" + percentSc + "/" + obj.getSpeed() + "/"
+                + obj.getWidth() + "/" + obj.getHeight() + "/" + dir + "/"
                 + axisX + "/" + axisY;
         return msg;
     }
 
-    public String sendAutomata(Automata obj, boolean right) {
-        double percentSc = (obj.y / killergame.getViewer().getHeight());
+    public String sendAutomata(Asteroid obj, boolean right) {
+        double percentSc = (obj.getY() / killergame.getViewer().getHeight());
         String dirx = null;
         int diry = 0;
         if (right) {
@@ -319,21 +327,21 @@ public class VisualHandler implements Runnable {
             dirx = "left";
         }
 
-        if (obj.dy >= 0) {
+        if (obj.getDy() >= 0) {
             diry = 1;
-        } else if (obj.dy < 0) {
+        } else if (obj.getDy() < 0) {
             diry = -1;
         }
 
-        String msg = "automata/" + obj.colorhex
-                + "/" + percentSc + "/" + obj.speed + "/"
-                + obj.WIDTH + "/" + obj.HEIGHT + "/" + dirx + "/" + diry;
+        String msg = "automata/" + obj.getColorhex()
+                + "/" + percentSc + "/" + obj.getSpeed() + "/"
+                + obj.getWidth() + "/" + obj.getHeight() + "/" + dirx + "/" + diry;
         return msg;
     }
 
     public String sendShoot(Shoot obj, boolean right) {
 
-        double percentSc = (obj.y / killergame.getViewer().getHeight());
+        double percentSc = (obj.getY() / killergame.getViewer().getHeight());
         String dir = null;
         if (right) {
             dir = "right";
@@ -341,9 +349,9 @@ public class VisualHandler implements Runnable {
             dir = "left";
         }
 
-        String msg = "shoot/" + obj.getShip().ip + "/" + obj.color
+        String msg = "shoot/" + obj.getShip().getIp() + "/" + obj.getColor()
                 + "/" + percentSc + "/" + obj.getSpeed() + "/"
-                + obj.WIDTH + "/" + obj.HEIGHT + "/" + dir;
+                + obj.getWidth() + "/" + obj.getHeight() + "/" + dir;
         return msg;
 
     }
