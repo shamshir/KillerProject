@@ -54,7 +54,7 @@ public class KillerImage extends BufferedImage {
         this.originalImg = imgSource;
         this.byteRaster = ((DataBufferByte) this.getRaster().getDataBuffer()).getData();
         this.heatMap = new int[imgSource.getWidth() * spaceHeight * 4];
-        this.copyOriginalRasterToKillerRaster();
+//        this.copyOriginalRasterToKillerRaster();
     }
 
     private void copyOriginalRasterToKillerRaster() {

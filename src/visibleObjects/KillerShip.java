@@ -29,7 +29,7 @@ public class KillerShip extends Controlled {
         //aspecto visual
 //        this.width = 30;
 //        this.height = 30;
-        this.setImage("img/nave.png");
+//        this.setImage("img/nave.png");
         this.width = 70;
         this.height = 90;
         this.user = user;
