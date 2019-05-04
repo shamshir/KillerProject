@@ -32,7 +32,7 @@ import java.net.*;
 
 /**
  *
- * @author berna
+ * @author Alvaro
  */
 public class KillerGame extends JFrame {
 
