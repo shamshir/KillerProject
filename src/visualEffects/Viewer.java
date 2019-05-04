@@ -34,7 +34,7 @@ public class Viewer extends Canvas implements Runnable {
 
     private BufferedImage fondo;
     private BufferedImage frame;
-    private Image offImg;
+    private BufferedImage offImg;
     public Graphics2D g2d;
 
     public Viewer(KillerGame k) {
@@ -45,9 +45,9 @@ public class Viewer extends Canvas implements Runnable {
         requestFocus();
 
     }
-    
+
     @Override
-    public void repaint(){
+    public void repaint() {
     }
 
     @Override
@@ -59,7 +59,6 @@ public class Viewer extends Canvas implements Runnable {
         int vueltas = 385;
 
 //        this.g2d = (Graphics2D) this.offImg.getGraphics();
-
         while (true) {
             this.updateFrame();
 
@@ -71,149 +70,6 @@ public class Viewer extends Canvas implements Runnable {
         }
     }
 
-//    public void run() {
-//        paintBackground();
-//        int iteracion;
-//        iteracion = 0;
-//        int vueltas = 385;
-//
-//        while (true) {
-//            update();
-//
-//            try {
-//                Thread.sleep((long) 1000);
-//            } catch (InterruptedException ex) {
-//
-//            }
-//        }
-//    }
-    //            for (int i = 0; i < vueltas; i++) {
-    //
-    //                update();
-    //
-    //                this.pintarEspiral(Color.magenta, (Graphics2D) this.fondo.getGraphics(), iteracion);
-    //                iteracion++;
-    //
-    //                try {
-    //                    Thread.sleep((long) target);
-    //                } catch (InterruptedException ex) {
-    //
-    //                }
-    //            }
-    //            iteracion = vueltas;
-    //            for (int i = 0; i < vueltas; i++) {
-    //                update();
-    //
-    //                this.pintarEspiral(Color.BLUE, (Graphics2D) this.fondo.getGraphics(), iteracion);
-    //                iteracion--;
-    //
-    //                try {
-    //                    Thread.sleep((long) target);
-    //                } catch (InterruptedException ex) {
-    //
-    //                }
-    //
-    //            }
-    //
-    //            iteracion = 0;
-    //
-    //            for (int i = 0; i < vueltas; i++) {
-    //                update();
-    //
-    //                this.pintarEspiral(Color.ORANGE, (Graphics2D) this.fondo.getGraphics(), iteracion);
-    //                iteracion++;
-    //
-    //                try {
-    //                    Thread.sleep((long) target);
-    //                } catch (InterruptedException ex) {
-    //
-    //                }
-    //
-    //            }
-    //
-    //            iteracion = vueltas;
-    //
-    //            for (int i = 0; i < vueltas; i++) {
-    //                update();
-    //
-    //                this.pintarEspiral(Color.GREEN, (Graphics2D) this.fondo.getGraphics(), iteracion);
-    //                iteracion--;
-    //
-    //                try {
-    //                    Thread.sleep((long) target);
-    //                } catch (InterruptedException ex) {
-    //
-    //                }
-    //
-    //            }
-    //
-    //            iteracion = 0;
-    //
-    //            for (int i = 0; i < vueltas; i++) {
-    //                update();
-    //
-    //                this.pintarEspiral(Color.PINK, (Graphics2D) this.fondo.getGraphics(), iteracion);
-    //                iteracion++;
-    //
-    //                try {
-    //                    Thread.sleep((long) target);
-    //                } catch (InterruptedException ex) {
-    //
-    //                }
-    //
-    //            }
-    //
-    //            iteracion = vueltas;
-    //
-    //            for (int i = 0; i < vueltas; i++) {
-    //                update();
-    //
-    //                this.pintarEspiral(Color.YELLOW, (Graphics2D) this.fondo.getGraphics(), iteracion);
-    //                iteracion--;
-    //
-    //                try {
-    //                    Thread.sleep((long) target);
-    //                } catch (InterruptedException ex) {
-    //
-    //                }
-    //
-    //            }
-    //
-    //            iteracion = 0;
-    //
-    //            for (int i = 0; i < vueltas; i++) {
-    //                update();
-    //
-    //                this.pintarEspiral(Color.CYAN, (Graphics2D) this.fondo.getGraphics(), iteracion);
-    //                iteracion++;
-    //
-    //                try {
-    //                    Thread.sleep((long) target);
-    //                } catch (InterruptedException ex) {
-    //
-    //                }
-    //
-    //            }
-    //
-    //            iteracion = vueltas;
-    //
-    //            for (int i = 0; i < vueltas; i++) {
-    //                update();
-    //
-    //                this.pintarEspiral(Color.orange, (Graphics2D) this.fondo.getGraphics(), iteracion);
-    //                iteracion--;
-    //
-    //                try {
-    //                    Thread.sleep((long) target);
-    //                } catch (InterruptedException ex) {
-    //
-    //                }
-    //
-    //            }
-    //
-    //        }
-    //
-    //    }
     private void pintarEspiral(Color color, Graphics2D g2d, int iteracion) {
         double x, y;
 
@@ -239,7 +95,7 @@ public class Viewer extends Canvas implements Runnable {
 
     }
 
-    public void drawConnectionInfo(Graphics g) {
+    public void drawConnectionInfo(Graphics2D g) {
 
         double height = (int) getHeight() / 20;
 
@@ -286,7 +142,7 @@ public class Viewer extends Canvas implements Runnable {
 
     public void paintBackground() {
         //creamos una nueva imagen del tamaño del canvas
-        offImg = createImage(getWidth(), getHeight());
+        offImg = (BufferedImage) createImage(getWidth(), getHeight());
         try {
             fondo = ImageIO.read(new File("img/fondoLM.jpg"));
 
@@ -297,31 +153,45 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     public void updateFrame() {
-        BufferStrategy bs;
+        //cogemos los graficos de la imagen
+        Graphics2D g2d = (Graphics2D) this.offImg.getGraphics();
+        //asi pintamos el fondo
+        // g2d.drawImage(this.fondo, 0, 0, null);
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.fillRect(0, 0, 1920, 1080);
+        
+        //pintamos todos los componentes en los graphics de la imagen
+        this.drawComponents(g2d);
 
-        bs = this.getBufferStrategy();
-        if (bs == null) {
-            System.out.println("kgd");
-            return; //=================================================>>>>>>>>>
-        }
-
-        do {
-            Graphics2D gg = (Graphics2D) bs.getDrawGraphics();
-
-            //pintamos el fondo
-            gg.drawImage(this.fondo, 0, 0, null);
-
-            //pintamos todos los componentes en los graphics de la imagen
-            this.drawComponents(gg);
-
-            gg.dispose();
-        } while (bs.contentsRestored());
-
-        // mostramos la imagen en el canvas
-        bs.show();
-
+        //pintamos la imagen en el canvas
+        this.getGraphics().drawImage(offImg, 0, 0, null);
     }
 
+//    public void updateFrame() {
+//        BufferStrategy bs;
+//
+//        bs = this.getBufferStrategy();
+//        if (bs == null) {
+//            System.out.println("kgd");
+//            return; //=================================================>>>>>>>>>
+//        }
+//
+//        do {
+//            Graphics2D gg = (Graphics2D) bs.getDrawGraphics();
+//
+//            //pintamos el fondo
+//            gg.drawImage(this.fondo, 0, 0, null);
+//
+//            //pintamos todos los componentes en los graphics de la imagen
+//            this.drawComponents(gg);
+//
+//            gg.dispose();
+//        } while (bs.contentsRestored());
+//
+//        // mostramos la imagen en el canvas
+//        bs.show();
+//
+//    }
     public Image getImage() {
         return this.offImg;
     }
