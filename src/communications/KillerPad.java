@@ -7,11 +7,13 @@ import java.net.Socket;
 public class KillerPad extends ReceptionHandler implements Runnable {
 
     private KillerClient client;
+    private final String id;
 
     private static final String EMPTY_STRING = "";
 
     private static final String STATUS_REQUEST = "ok";
 
+    private static final String ACTION_COMMAND = "action";
     private static final String DAMAGE_COMMAND = "pad_damage";
     private static final String DEATH_COMMAND = "pad_death";
     private static final String KILL_COMMAND = "pad_kill";
@@ -22,9 +24,13 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     private static final String TURBO_COMMAND = "pad_turbo";
     private static final String DISCONNECTION_COMMAND = "bye";
 
-    public KillerPad(final KillerGame killergame, final Socket sock, final String user, final String color) {
+    public KillerPad(final KillerGame killergame, final Socket sock, final String user, final String color, final String id) {
         super(killergame, sock);
-        //TODO crear metodo crear controlled en killergame    ( crear controlled y thread del pad)     
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     @Override
@@ -60,88 +66,46 @@ public class KillerPad extends ReceptionHandler implements Runnable {
             return false;
         }
         if (!STATUS_REQUEST.equalsIgnoreCase(line)) {
-            processMessage(Message.readMessage(line));
+            this.processMessage(Message.readMessage(line));
         }
         return true;
     }
 
-    public static void processMessage(final Message message) {
+    private void processMessage(final Message message) {
 
-        Controlled player = null;
-        // player = findShip(this.getDestinationIp());
-        if (player != null) {
-            switch (message.getCommand()) {
-                //TODO 
-                case DEATH_COMMAND:
-                    killPlayer();
-                    break;
-                case KILL_COMMAND:
-                    sumKillToPlayer();
-                    break;
-                case MOVEMENT_COMMAND:
-                    movePlayer();
-                    break;
-                case SHOOT_COMMAND:
-                    shoot();
-                    break;
-                case DASH_COMMAND:
-                    dash();
-                    break;
-                case POWERUP_COMMAND:
-                    powerUp();
-                    break;
-                case TURBO_COMMAND:
-                    turbo();
-                    break;
-                default:
-                    System.out.println("ERROR: MENSAJE DESCONOCIDO" + message.getCommand());
-                    break;
-            }
-        } else {
-            sendPadCommandToTheNextVisualHandler(message);
+        if (ACTION_COMMAND.equalsIgnoreCase(message.getCommand())) {
+            sendActionToPlayer(message, this.getKillergame(), true);
         }
     }
 
-    private static void sendPadCommandToTheNextVisualHandler(final Message message) {
-        
-        final Message messageToSend;
-        
+    public static void sendActionToPlayer(final Message message,
+            final KillerGame kg,
+            final boolean sendNextModule) {
+
+        Controlled player = kg.getShipByIP(message.getSenderId());
+        if (player != null) {
+            player.sendAction(message.getAction());
+        } else if (sendNextModule) {
+            sendPadCommandToNextModule(message, kg);
+        }
+    }
+
+    private static void sendPadCommandToNextModule(final Message message, final KillerGame kg) {
+
+        //final Message messageToSend = buildMessageWithRelay(message);
+        kg.getNextModule().sendMessage(message);
+
+    }
+
+    /* private static Message buildMessageWithRelay(final Message message){
         if (message.isRelay()) {
-            messageToSend = message;
+            return  message;
         } else {
-            messageToSend = Message.Builder.builder(message.getCommand(), KillerServer.getId())
+            return Message.Builder.builder(message.getCommand(), KillerServer.getId())
                     .withAction(message.getAction())
                     .withRelay(Boolean.TRUE)
+                    .withDamage(message.getDamage())
                     .build();
         }
-        //TODO llamar al nextVisualHandler.sendMessage()
-    }
-
-    private static void killPlayer() {
-
-    }
-
-    private static void sumKillToPlayer() {
-
-    }
-
-    private static void movePlayer() {
-
-    }
-
-    private static void shoot() {
-
-    }
-
-    private static void dash() {
-
-    }
-
-    private static void powerUp() {
-
-    }
-
-    private static void turbo() {
-
-    }
+    }*/
 }

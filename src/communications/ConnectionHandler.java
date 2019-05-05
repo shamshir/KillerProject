@@ -3,6 +3,7 @@ package communications;
 import game.KillerGame;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ConnectionHandler implements Runnable {
@@ -12,6 +13,8 @@ public class ConnectionHandler implements Runnable {
 
     private static final String CONNECTION_FROM_CLIENT = "connect";
     private static final String CONNECTION_FROM_PAD = "pad-connect";
+    private static final String PAD_CONNECTED = "padConnected";
+    private static final String PAD_NOT_CONNECTED = "padNotConnected";
     private static final String EMPTY_STRING = "";
 
     public ConnectionHandler(final Socket socket, final KillerGame kg) {
@@ -29,7 +32,7 @@ public class ConnectionHandler implements Runnable {
         if (CONNECTION_FROM_CLIENT.equalsIgnoreCase(messageReceived.getCommand())) {
             this.clientConnect(messageReceived.getConnectionResponse());
         } else if (CONNECTION_FROM_PAD.equalsIgnoreCase(messageReceived.getCommand())) {
-            this.padConnect(messageReceived.getConnectionResponse());
+            this.padConnect(messageReceived.getConnectionResponse(), messageReceived.getSenderId());
         }
     }
 
@@ -45,23 +48,40 @@ public class ConnectionHandler implements Runnable {
 
     private void clientConnect(final ConnectionResponse connectionResponse) {
 
-        VisualHandler visualHandler = null;
-        if (connectionResponse.isRight()) {
-            //TODO crear SETUP 
-            visualHandler = this.kg.getPk();
-        } else {
-            visualHandler = this.kg.getNk();
-        }
-
+        final VisualHandler visualHandler = getVisualHandler(connectionResponse.isRight());
+        
         visualHandler.setSocket(this.socket);
         visualHandler.setDestinationPort(connectionResponse.getOriginPort());
-
         //TODO enviar configuracion
     }
 
-    private void padConnect(final ConnectionResponse connectionResponse) {
-        //TODO comprobar si se puede crear un mando y responder al PAD
-        //TODO implementar metodo crear PAD en KillerGame
+    private VisualHandler getVisualHandler(final boolean isRight) {
+        if (isRight) {
+            return this.kg.getNextModule();
+        }
+        return this.kg.getPrevModule();
 
+    }
+
+    private void padConnect(final ConnectionResponse connectionResponse, final String senderId) {
+        try {
+            final PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
+            final Message message = this.tryToCreatePad(connectionResponse, senderId);
+            out.print(Message.convertMessageToJson(message));
+
+        } catch (Exception ex) {
+
+        }
+    }
+
+    private Message tryToCreatePad(final ConnectionResponse connectionResponse, final String senderId) {
+        final Message message;
+        if (this.kg.newKillerPad(senderId)) {
+            this.kg.newKillerShip(senderId);
+            message = Message.Builder.builder(PAD_CONNECTED, KillerServer.getId()).build();
+        } else {
+            message = Message.Builder.builder(PAD_NOT_CONNECTED, KillerServer.getId()).build();
+        }
+        return message;
     }
 }

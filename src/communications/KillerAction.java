@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package communications;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_DEFAULT)
 public class KillerAction {
 
+    private String command;
     private String direction;
     private int speedX;
     private int speedY;
@@ -20,11 +16,16 @@ public class KillerAction {
     }
     
     private KillerAction(final KillerAction.Builder builder){
+        this.command = builder.command;
         this.direction = builder.direction;
         this.speedX = builder.speedX;
         this.speedY = builder.speedY;        
     }
 
+    public String getCommand() {
+        return command;
+    }
+    
     public String getDirection() {
         return direction;
     }
@@ -39,15 +40,17 @@ public class KillerAction {
     
     public static class Builder {
 
+        private String command;
         private String direction;
         private int speedX;
         private int speedY;
 
-        public Builder() {
+        public Builder(final String command) {
+            this.command = command;
         }
 
-        public static Builder builder() {
-            return new Builder();
+        public static Builder builder(final String command) {
+            return new Builder(command);
         }
 
         public Builder withDirection(final String direction) {
