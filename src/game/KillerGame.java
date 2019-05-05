@@ -41,7 +41,7 @@ public class KillerGame extends JFrame {
     public KillerGame() {
         
         // Update game status
-        this.status = "starting";
+        this.status = "room";
         
         // Open left and right modules
         this.newPrevModule();
@@ -61,6 +61,44 @@ public class KillerGame extends JFrame {
         
         // TODO
         
+    }
+    
+    public void sendMessageToPrev(Message message) {
+        
+        // TODO
+        
+    }
+    
+    public void sendMessageToNext(Message message) {
+        
+        // TODO
+        
+    }
+    
+    public void sendObjectToPrev(Alive object) {
+        
+        // TODO
+        
+    }
+    
+    public void sendObjectToNext(Alive object) {
+        
+        // TODO
+        
+    }
+    
+    public void StartGame() {
+        
+        if (this.status == "room") {
+            
+            this.status = "starting";
+            
+            // TODO
+            
+            this.status = "playing";
+            
+        }
+    
     }
     
     // Methods new
