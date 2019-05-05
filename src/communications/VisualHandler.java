@@ -12,7 +12,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private KillerClient client;
     private final boolean right;
-        
+
     private static final String EMPTY_STRING = "";
 
     private static final String STATUS_REQUEST = "ok";
@@ -22,7 +22,11 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String READY_TO_START = "ready";
     private static final String QUIT_GAME = "quit";
     private static final String PAD_COMMAND = "pad(.*)";
-   
+    private static final String DAMAGE_COMMAND = "pad_damage";
+    private static final String DEATH_COMMAND = "pad_death";
+    private static final String KILL_COMMAND = "pad_kill";
+    private static final String ACTION_COMMAND = "action";
+
     private static final String SHOOT_TYPE = "shoot";
 
     public VisualHandler(final KillerGame killergame, final boolean right) {
@@ -82,32 +86,45 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 this.receiveObject(message.getObjectResponse());
                 break;
             case START_GAME:
+                this.processStart(message);
                 break;
             case READY_TO_START:
+                this.processReady(message);
                 break;
             case QUIT_GAME:
+                this.processQuitGame(message);
+                break;
+            case ACTION_COMMAND:
+                this.processPadCommand(message);
                 break;
             default:
-                this.processPadCommand(message);
+                final String command = message.getCommand();
+                if (command != null && command.matches(PAD_COMMAND)) {
+                    if (!KillerServer.getId().equals(message.getSenderId())) {
+                        this.sendInfoMessageToPad(message);
+                    }
+                } else {
+                    System.out.println("COMANDO DESCONOCIDO");
+                }
                 break;
         }
     }
 
     private void processPadCommand(final Message message) {
-        final String command = message.getCommand();
-        if (command != null && command.matches(PAD_COMMAND)) {
-            KillerPad.processMessage(message);            
-        }
+
+        boolean sendNextModule = this.getKillergame().getPadByIP(message.getSenderId()) == null;
+        KillerPad.sendActionToPlayer(message, this.getKillergame(), sendNextModule);
     }
 
-    private void receiveObject(final ObjectResponse response) {
+    private void receiveObject(final ObjectResponse object) {
 
-        switch (response.getObjectType()) {
+        switch (object.getObjectType()) {
             case SHOOT_TYPE:
                 //TODO crear bala con los datos del response
+                //new (object.getId)
                 break;
             default:
-                System.out.println("ERROR: OBJETO DESCONOCIDO" + response.getObjectType());
+                System.out.println("ERROR: OBJETO DESCONOCIDO" + object.getObjectType());
                 break;
 
             //TODO los demas objetos
@@ -115,12 +132,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     public void sendObject(final Alive object) {
-        final Message message = Message.Builder.builder(SEND_OBJECT_COMMAND, this.getKillergame().getServer().getId())
+        final Message message = Message.Builder.builder(SEND_OBJECT_COMMAND, KillerServer.getId())
                 .withObject(this.convertObjectToObjectResponse(object))
                 .build();
-        this.sendLine(Message.convertMessageToJson(message));
+        this.sendMessage(message);
     }
-    
+
     private void startClient() {
         this.client = new KillerClient(this, this.getKillergame());
         new Thread(this.client).start();
@@ -146,10 +163,10 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return false;
     }
 
-    private ObjectResponse convertObjectToObjectResponse(final Alive object) {        
+    private ObjectResponse convertObjectToObjectResponse(final Alive object) {
         //TODO rellenar con los datos que se pida
         if (object instanceof Shoot) {
-            return this.buildObjectResponseFromShoot((Shoot)object);
+            return this.buildObjectResponseFromShoot((Shoot) object);
         }
         return ObjectResponse.Builder.builder(EMPTY_STRING).build();
     }
@@ -158,5 +175,40 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return ObjectResponse.Builder.builder(SHOOT_TYPE)
                 .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
                 .build();
+    }
+
+    public void startGame() {
+        this.sendMessage(Message.Builder.builder(READY_TO_START, KillerServer.getId()).build());
+    }
+
+    private void processReady(final Message message) {
+        if (KillerServer.getId().equals(message.getSenderId())) {
+            this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId()).build());
+        } else {
+            this.sendMessage(message);
+        }
+    }
+
+    private void processStart(final Message message) {
+        if (!KillerServer.getId().equals(message.getSenderId())) {
+            this.sendMessage(message);
+            this.getKillergame().start();
+        }
+    }
+    
+    private void processQuitGame(final Message message){
+        if (!KillerServer.getId().equals(message.getSenderId())) {
+            this.sendMessage(message);        
+           //TODO this.getKillergame().quitGame();
+        }
+    }
+
+    public void sendInfoMessageToPad(final Message message) {
+        final KillerPad pad = this.getKillergame().getPadByIP(message.getReceiverId());
+        if (pad != null) {
+            pad.sendMessage(message);
+        } else {
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
     }
 }
