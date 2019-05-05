@@ -1,78 +1,70 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package communications;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import game.KillerGame;
 import java.io.PrintWriter;
 import java.net.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
- * @author berna
- */
 public class KillerClient implements Runnable {
 
-    private VisualHandler visual;
+    private final ReceptionHandler receptionHandler;
+    private final KillerGame killergame;
 
-    public KillerClient() {
+    private static final String CONNECT_TO_CLIENT = "connect";
+    private static final String CONNECT_TO_PAD = "pad-connect";
+    private static final String STATUS_REQUEST = "ok";
 
-    }
-
-    public KillerClient(VisualHandler v) {
-        visual = v;
+    public KillerClient(ReceptionHandler receptionHandler, KillerGame killergame) {
+        this.receptionHandler = receptionHandler;
+        this.killergame = killergame;
     }
 
     @Override
     public void run() {
 
         while (true) {
-            if (visual.getSock() == null && visual.getIp() != null && visual.getOriginport() != 0) {
-                try {
-                    System.out.println("Conectando con " + visual.getIp()+"/"+visual.getOriginport());
-                    Socket sock = new Socket(visual.getIp(),visual.getOriginport());
-                    contact(sock);
-                    visual.setSock(sock);
-                 //   visual.alert("ok");
-                    System.out.println("Conexión establecida desde KillerClient.");
-                    
-                } catch (IOException ex) {
-                    System.err.println("Conexión con "+visual.getIp()+" fallida...");
-                }
-//            } else if (visual.getSock() != null) {
-//                try {
-//                 //   System.out.println(System.currentTimeMillis() - visual.time);
-//                    System.out.println(System.currentTimeMillis() - visual.time);
-//                    if (System.currentTimeMillis() - visual.time >= 5500) {
-//                        visual.nullSocket();
-//                    } else {
-//                        visual.alert("ok");
-//                        }
-//                } catch (Exception e) {
-//
-//                }
+            if (this.disconnected()) {
+                this.tryToConnect();
+            } else {
+                this.sendStatusRequest();
             }
             try {
-                Thread.sleep(200);
+                Thread.sleep(100);
             } catch (InterruptedException ex) {
             }
         }
     }
 
-    public void contact(Socket sock) throws IOException {
-        String dir = "R";
-        if (!visual.isRight()) {
-            dir = "L";
+    private boolean disconnected(){
+        return this.receptionHandler.getSocket() == null;
+    } 
+    
+    private void tryToConnect() {
+        try {
+            final Socket sock = new Socket(this.receptionHandler.getDestinationIp(), this.receptionHandler.getDestinationPort());
+            this.contact(sock);
+            this.receptionHandler.setSocket(sock);
+
+        } catch (Exception ex) {
         }
+    }
+
+    private void contact(final Socket sock) throws Exception {
+
+        final ConnectionResponse connectionResponse = ConnectionResponse.Builder.builder()
+                .withRight(((VisualHandler) this.receptionHandler).isRight())
+                .withOriginPort(this.killergame.getServer().getPort())
+                .build();
+        
+        final Message message = Message.Builder.builder(CONNECT_TO_CLIENT, KillerServer.getId())
+                .withConnection(connectionResponse)
+                .build();
 
         PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
-        out.println("fromV:" + dir + "&" + visual.getKillergame().getSERVERPORT());
+        out.println(Message.convertMessageToJson(message));
+    }
 
+    private void sendStatusRequest() {
+        this.receptionHandler.sendLine(STATUS_REQUEST);
     }
 
 }
