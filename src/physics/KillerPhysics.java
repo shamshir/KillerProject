@@ -11,7 +11,7 @@ import visibleObjects.*;
  *
  * @author Javi
  */
-public class KillerPhysics {
+public static class KillerPhysics {
 
     public static Controlled move(Controlled ship) {
 
