@@ -1,256 +1,111 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package communications;
 
-import visibleObjects.KillerShip;
+import visibleObjects.Controlled;
 import game.KillerGame;
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.Socket;
 
-/**
- *
- * @author berna
- */
-public class KillerPad implements Runnable {
+public class KillerPad extends ReceptionHandler implements Runnable {
 
-    Socket sock;
-    String ip;
-    int port;
-    KillerGame killergame;
-    BufferedReader in;
-    PrintWriter out;
+    private KillerClient client;
+    private final String id;
 
-    public KillerPad(Socket sock, String ip, KillerGame killergame, String user, String color) {
-        killergame.getKpads().add(this);
-        this.sock = sock;
-        this.ip = ip;
-        this.killergame = killergame;
-        port = sock.getPort();
-        KillerShip player = new KillerShip(killergame, Color.decode("#" + color), ip, user);
-        killergame.getObjects().add(player);
-        killergame.getKpads().add(this);
-        new Thread(player).start();
+    private static final String EMPTY_STRING = "";
+
+    private static final String STATUS_REQUEST = "ok";
+
+    private static final String ACTION_COMMAND = "action";
+    private static final String DAMAGE_COMMAND = "pad_damage";
+    private static final String DEATH_COMMAND = "pad_death";
+    private static final String KILL_COMMAND = "pad_kill";
+    private static final String MOVEMENT_COMMAND = "pad_move";
+    private static final String SHOOT_COMMAND = "pad_shoot";
+    private static final String DASH_COMMAND = "pad_dash";
+    private static final String POWERUP_COMMAND = "pad_powerup";
+    private static final String TURBO_COMMAND = "pad_turbo";
+    private static final String DISCONNECTION_COMMAND = "bye";
+
+    public KillerPad(final KillerGame killergame, final Socket sock, final String user, final String color, final String id) {
+        super(killergame, sock);
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     @Override
     public void run() {
         try {
-            in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            out = new PrintWriter(sock.getOutputStream(), true);
-            processClient(in, out);
-            removeShip("remove", killergame, ip, killergame.getIplocal());
-            KillerPad.removePad(killergame, ip, killergame.getIplocal());
-            System.out.println(ip + " connection closed");
 
-        } catch (IOException ex) {
+            this.listeningMessages();
+
+        } catch (Exception ex) {
 
         }
 
     }
 
-    public static void lifeShip(String msg, KillerGame kg, String ipShip, String ipOrig) {
-
-        KillerShip player = null;
-
-        for (int i = 0; i < kg.getObjects().size(); i++) {
-            if (kg.getObjects().get(i) instanceof KillerShip) {
-                KillerShip temporal = (KillerShip) kg.getObjects().get(i);
-                if (temporal.getIp().equals(ipShip)) {
-                    player = temporal;
-                }
-            }
-        }
-
-        if (player != null) {
-            if (msg.equals("death")) {
-                player.setDeath(true);
-                player.stop();
-            } else if (msg.equals("restart")) {
-                player.setDeath(false);
-            }
-        } else {
-            kg.getNk().sendMessage(kg.getNk().notifyVisual(msg, ipShip), "r", msg);
-        }
-    }
-
-    public void processClient(BufferedReader in, PrintWriter out) {
+    private void listeningMessages() {
         boolean done = false;
-        String line;
+
         while (!done) {
             try {
-                line = in.readLine();
-                if (line != null) {
-                    if (line.trim().equals("bye")) {
-                        done = true;
-                    } else {
-                        request(line, killergame, ip, killergame.getIplocal());
-                    }
-                } else {
-                    done = true;
-                }
-
+                done = !this.processLine(this.readLine());
             } catch (Exception ex) {
+                System.out.println(ex.getMessage());
                 done = true;
             }
-        }
 
+        }
+        this.setSocket(null);
     }
 
-    public static void request(String msg, KillerGame kg, String ipShip, String ipOrig) {
+    private boolean processLine(final String line) {
 
-        System.out.println(msg);
-
-        KillerShip player = null;
-
-        for (int i = 0; i < kg.getObjects().size(); i++) {
-            if (kg.getObjects().get(i) instanceof KillerShip) {
-                KillerShip temporal = (KillerShip) kg.getObjects().get(i);
-                if (temporal.getIp().equals(ipShip)) {
-                    player = temporal;
-                }
-            }
+        if (line == null || line.trim().equals(DISCONNECTION_COMMAND)) {
+            return false;
         }
-
-        if (msg.equals("hola?")) {
-            System.out.println(msg);
-            sendMessageToPad("ok", kg, ipShip, ipOrig);
+        if (!STATUS_REQUEST.equalsIgnoreCase(line)) {
+            this.processMessage(Message.readMessage(line));
         }
+        return true;
+    }
 
-        if (msg.equals("replay")) {
-            if (player != null) {
-                player.setDeath(false);
-            } else {
-                kg.getNk().sendMessage(kg.getNk().sendPadAction(msg, ipShip), "r", ipOrig);
-            }
-        }
+    private void processMessage(final Message message) {
 
-        if (msg.equals("death")) {
-            if (player != null) {
-                player.setDeath(true);
-            } else {
-                kg.getNk().sendMessage(kg.getNk().sendPadAction(msg, ipShip), "r", ipOrig);
-            }
-
-        }
-
-        if (msg.equals("shoot")) {
-            if (player != null) {
-                if (!player.isDeath()) {
-                    player.shoot();
-                }
-            } else {
-                kg.getNk().sendMessage(kg.getNk().sendPadAction(msg, ipShip), "r", ipOrig);
-            }
-        } else if (msg.equals("up") || msg.equals("down")
-                || msg.equals("left") || msg.equals("right")
-                || msg.equals("downright") || msg.equals("downleft")
-                || msg.equals("upright") || msg.equals("upleft")
-                || msg.equals("idle")) {
-            if (player != null) {
-                if (!player.isDeath()) {
-                    System.out.println("entra");
-                    player.setDirections(msg);
-                }
-            } else {
-                kg.getNk().sendMessage(kg.getNk().sendPadAction(msg, ipShip), "r", ipOrig);
-            }
+        if (ACTION_COMMAND.equalsIgnoreCase(message.getCommand())) {
+            sendActionToPlayer(message, this.getKillergame(), true);
         }
     }
 
-    public static void removeShip(String msg, KillerGame kg, String ipShip, String ipOrig) {
+    public static void sendActionToPlayer(final Message message,
+            final KillerGame kg,
+            final boolean sendNextModule) {
 
-        KillerShip player = null;
-
-        for (int i = 0; i < kg.getObjects().size(); i++) {
-            if (kg.getObjects().get(i).getGame().getObjects().get(i) instanceof KillerShip) {
-                KillerShip temporal = (KillerShip) kg.getObjects().get(i);
-                System.out.println("vuelta");
-                if (temporal.getIp().equals(ipShip)) {
-                    System.out.println("lo tengo");
-                    player = temporal;
-                }
-            }
-        }
-
+        Controlled player = kg.getShipByIP(message.getSenderId());
         if (player != null) {
-            player.die();
-            kg.getObjects().remove(player);
+            player.sendAction(message.getAction());
+        } else if (sendNextModule) {
+            sendPadCommandToNextModule(message, kg);
+        }
+    }
+
+    private static void sendPadCommandToNextModule(final Message message, final KillerGame kg) {
+
+        //final Message messageToSend = buildMessageWithRelay(message);
+        kg.getNextModule().sendMessage(message);
+
+    }
+
+    /* private static Message buildMessageWithRelay(final Message message){
+        if (message.isRelay()) {
+            return  message;
         } else {
-            kg.getNk().sendMessage(kg.getNk().notifyVisual(msg, ipShip), "r", msg);
+            return Message.Builder.builder(message.getCommand(), KillerServer.getId())
+                    .withAction(message.getAction())
+                    .withRelay(Boolean.TRUE)
+                    .withDamage(message.getDamage())
+                    .build();
         }
-    }
-
-    public static boolean removePad(KillerGame kg, String ipKpad, String ipOrig) {
-        for (int i = 0; i < kg.getKpads().size(); i++) {
-            if (kg.getKpads().get(i).ip.equals(ipKpad)) {
-                KillerPad kp = kg.getKpads().get(i);
-                kp.nullSock();
-                System.out.println("tengo el pad");
-                kg.getKpads().remove(i);
-                System.out.println(ipKpad + " borrado");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static void sendMessageToPad(String msg, KillerGame kg, String ipPad, String ipOrig) {
-
-        try {
-            Thread.sleep(20);
-        } catch (InterruptedException ex) {
-        }
-        KillerPad pad = null;
-
-        for (int i = 0; i < kg.getKpads().size(); i++) {
-            if (kg.getKpads().get(i) != null) {
-                KillerPad temporal = kg.getKpads().get(i);
-                if (temporal.ip.equals(ipPad)) {
-                    pad = temporal;
-                }
-            }
-        }
-
-        if (pad != null) {
-            pad.out.println(msg);
-        } else {
-            kg.getNk().sendMessage(kg.getNk().notifyPad(msg, ipPad), "r", ipOrig);
-        }
-
-    }
-
-    public Socket getSock() {
-        return sock;
-    }
-
-    public void nullSock() {
-        try {
-            this.sock.close();
-            this.sock = null;
-            this.in = null;
-            this.out = null;
-        } catch (NullPointerException | IOException ex) {
-        }
-    }
-
-    public void setSock(Socket sock) {
-        this.sock = sock;
-        try {
-            this.in = new BufferedReader(new InputStreamReader(this.sock.getInputStream()));
-            this.out = new PrintWriter(this.sock.getOutputStream(), true);
-        } catch (IOException ex) {
-
-        }
-    }
-
+    }*/
 }
