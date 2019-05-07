@@ -1,145 +1,139 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package visibleObjects;
 
 import communications.KillerPad;
 import game.KillerGame;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-/**
- *
- * @author berna
- */
-public class Shoot extends Automata implements Runnable {
+public class Shoot extends Autonomous {
 
-    private int radius;
-    private double speed;
-    private boolean frightdir;
-    private Controlled ship;
-    public Rectangle hitbox;
+    private KillerShip ship;
 
-    private boolean alive;
-
-    public Shoot(KillerGame kg, Color color, Controlled ship) {
-        super(kg, color);
+    public Shoot(KillerGame game, Color color, KillerShip ship) {
+        super(game);
+        type = "shoot";
+        this.color = color;
         this.ship = ship;
-        this.radius = (int) (Math.min(ship.HEIGHT, ship.WIDTH) / 2);
-        this.x = ship.getX();
-        this.y = ship.getY() + (this.radius / 2);
-        hitbox = new Rectangle((int) this.x, (int) this.y, this.radius, this.radius);
-        this.frightdir = ship.fright;
-        this.speed = 15;
-        alive = true;
 
+        // Modificar
+//        this.width = (int) (Math.min(ship.height, ship.width) / 2);
+//        this.height = (int) (Math.min(ship.height, ship.width) / 2);
+        this.width = 10;
+        this.height = 10;
+
+        //this.radius = (int) (Math.min(ship.height, ship.width) / 2);
+        // Segun como se calculen las colisiones hay que pintar la bala fuera de la nave
+//        this.x = ship.getX();
+        //this.y = ship.getY() + (this.radius / 2);
+//        this.y = ship.getY() + (this.height / 2);
+        //pintar la bala
+        // x = sin(angulo) * radio  !!angulo en radianes!!
+        // y = cos(angulo) * radio  !!angulo en radianes!!
+        double radio = this.ship.height / 2;
+
+        double sin = Math.sin(Math.toRadians(this.ship.getAngle()));
+        double cos = Math.cos(Math.toRadians(this.ship.getAngle()));
+
+        this.x = sin * radio;
+        this.y = cos * radio;
+
+        System.out.println("sin * radio: " + x);
+        System.out.println("cos * radio: " + y);
+
+        this.x += this.ship.getX() + this.ship.getWidth() / 2;
+        this.y = (this.ship.getY() + this.ship.getHeight() / 2) - this.y;
+
+        System.out.println("this.x: " + x + " -- " + "this.y: " + y + "\n");
+
+//        this.x = (Math.sin(Math.toRadians(this.ship.getAngle())) * this.ship.height / 2) + (this.ship.getX() + this.ship.getWidth() / 2);
+//        this.y = (Math.cos(Math.toRadians(this.ship.getAngle())) * this.ship.height / 2) + (this.ship.getY() + this.ship.getHeight() / 2);
+//        this.x = (Math.sin(this.ship.getAngle()) * this.ship.height / 2);
+//        this.y = (Math.cos(this.ship.getAngle()) * this.ship.height / 2);
+
+//        System.out.println("shoot pos x: " + this.x);
+//        System.out.println("shoot pos y: " + this.y);
+//
+//        System.out.println("shoot sin: " + Math.sin(this.ship.getAngle()) * this.ship.height / 2);
+//        System.out.println("shoot cos: " + Math.cos(this.ship.getAngle()) * this.ship.height / 2);
+
+        this.hitbox = new Rectangle((int) this.x, (int) this.y, this.width, this.height);
+        //this.frightdir = ship.fright;
+        //this.speed = 15;
+
+        if (ship.fright) {
+            this.speed = 15;
+        } else {
+            this.speed = -15;
+        }
+
+        time = System.nanoTime();
     }
 
     @Override
-    public void run() {
+    public void move() {
 
-        while (alive) {
-            move();
-            try {
-                Thread.sleep(15);
-            } catch (InterruptedException ex) {
-
-            }
-        }
-
+//        double timedif = (System.nanoTime() - time) / 10000000d;
+//        x += (int) speed * timedif;
+//
+//        updateHitBox();
+//
+//        time = System.nanoTime();
     }
 
-    public void death() {
+    @Override
+    public void updateHitBox() {
+        hitbox.setBounds((int) x, (int) y, width, height);
+    }
+
+    @Override
+    public void die() {
         ship.getShoots().remove(this);
         alive = false;
     }
 
-    public void move() {
-        kg.checkColision(this);
-        if (this.frightdir) {
-            x += (int) speed;
-        } else {
-            x -= (int) speed;
+    @Override
+    public void render(Graphics2D g2d) {
+        if (alive) {
+//            System.out.println("------------->PINTAR SHOOT");
+            g2d.setColor(color);
+            g2d.fillOval((int) x, (int) y, width, height);
+            // g.drawImage(,x, y,null);
         }
-        updateHitBox();
     }
 
     public void points(int points) {
-        KillerPad.sendMessageToPad("pnt" + points, kg, ship.getIp(), kg.getIplocal());
+        KillerPad.sendMessageToPad("pnt" + points, game, ship.getIp(), game.getIplocal());
     }
 
-    public void updateHitBox() {
-        hitbox.setBounds((int) x, (int) y, radius, radius);
-    }
-
-    public Controlled getControlled() {
+    // *********************
+    // * Getters & Setters *
+    // *********************
+    public KillerShip getControlled() {
         return ship;
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public boolean isFrightdir() {
-        return frightdir;
-    }
-
-    public void setFrightdir(boolean frightdir) {
-        this.frightdir = frightdir;
-    }
-
-    public Rectangle getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(Rectangle hitbox) {
-        this.hitbox = hitbox;
-    }
-
-    public Controlled getShip() {
+//    public int getRadius() {
+//        return radius;
+//    }
+//
+//    public void setRadius(int radius) {
+//        this.radius = radius;
+//    }
+//    public boolean isFrightdir() {
+//        return frightdir;
+//    }
+//
+//    public void setFrightdir(boolean frightdir) {
+//        this.frightdir = frightdir;
+//    }
+    public KillerShip getShip() {
         return ship;
     }
 
-    public void setShip(Controlled ship) {
+    public void setShip(KillerShip ship) {
         this.ship = ship;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
     }
 
 }

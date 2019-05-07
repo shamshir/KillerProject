@@ -13,6 +13,6 @@ import java.awt.Graphics;
  */
 public interface Renderizable {
     
-    public void draw(Graphics g);
+    public void render(Graphics g);
     
 }

@@ -1,40 +1,33 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game;
 
 import visualEffects.Viewer;
-import visibleObjects.Automata;
+import visibleObjects.Asteroid;
 import visibleObjects.VisibleObject;
 import visibleObjects.Alive;
 import visibleObjects.Shoot;
-import visibleObjects.Controlled;
+import visibleObjects.KillerShip;
 import communications.VisualHandler;
 import communications.KillerServer;
 import communications.KillerPad;
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import java.net.*;
+import visualEffects.Animacion;
 
-/**
- *
- * @author berna
- */
 public class KillerGame extends JFrame {
+
+    private int NUM_ASTEROIDS = 1;
 
     //Objetos a pintar + Canvas
     private ArrayList<VisibleObject> objects = new ArrayList<>();
@@ -63,7 +56,7 @@ public class KillerGame extends JFrame {
     public KillerGame() {
         //    portFrame();
         startServer();
-        ipframe();
+//        ipframe();
     }
 
     public static void main(String[] args) {
@@ -73,56 +66,67 @@ public class KillerGame extends JFrame {
     public void checkColision(Alive obj) {
 
         //colision con limites
-        if (obj instanceof Automata) {
-            if ((obj.y + obj.dy) >= viewer.getHeight() - obj.HEIGHT || (obj.y + obj.dy) <= 0) {
-                obj.dy *= -1;
-            } else if (((obj.x + obj.dx) >= viewer.getWidth() - obj.WIDTH && nk.getSock() == null)
-                    || ((obj.x + obj.dx) <= 0 && pk.getSock() == null)) {
+        if (obj instanceof Asteroid) {
+            if ((obj.getY() + obj.getDy()) >= viewer.getHeight() - obj.getHeight() || (obj.getY() + obj.getDy()) <= 0) {
+                //obj.dy *= -1;
+                obj.setDy(obj.getDy() * -1);
+            } else if (((obj.getX() + obj.getDx()) >= viewer.getWidth() - obj.getWidth() && nk.getSock() == null)
+                    || ((obj.getX() + obj.getDx()) <= 0 && pk.getSock() == null)) {
                 System.out.println("choque");
-                obj.dx *= -1;
+                //obj.dx *= -1;
+                obj.setDx(obj.getDx() * -1);
 
-            } else if ((obj.x + obj.dx) >= viewer.getWidth() - (obj.WIDTH * (1f / 4f)) && nk.getSock() != null) {
+            } else if ((obj.getX() + obj.getDx()) >= viewer.getWidth() - (obj.getWidth() * (1f / 4f)) && nk.getSock() != null) {
                 System.out.println("send");
-                nk.sendMessage(nk.sendAutomata((Automata) obj, false), "d", iplocal);
+                nk.sendMessage(nk.sendAutomata((Asteroid) obj, false), "d", iplocal);
                 obj.setAlive(false);
                 objects.remove(obj);
-            } else if ((obj.x + obj.dx) <= (-obj.WIDTH * (3f / 4f)) && pk.getSock() != null) {
+            } else if ((obj.getX() + obj.getDx()) <= (-obj.getWidth() * (3f / 4f)) && pk.getSock() != null) {
                 System.out.println("send");
-                pk.sendMessage(pk.sendAutomata((Automata) obj, true), "d", iplocal);
+                pk.sendMessage(pk.sendAutomata((Asteroid) obj, true), "d", iplocal);
                 obj.setAlive(false);
                 objects.remove(obj);
             }
 
-        } else if (obj instanceof Controlled) {
-            if ((obj.y + obj.dy) >= viewer.getHeight() - obj.HEIGHT) {
-                ((Controlled) obj).setWdown(true);
-                System.out.println(obj.x + obj.dx);
-            } else if (obj.y + obj.dy <= 0) {
-                ((Controlled) obj).setWup(true);
-                System.out.println(obj.x + obj.dx);
+        } else if (obj instanceof KillerShip) {
+
+            // La nave choca arriba
+            if ((obj.getY() + obj.getDy()) >= viewer.getHeight() - obj.getHeight()) {
+                ((KillerShip) obj).setWdown(true);
+                //System.out.println(obj.getX() + obj.dx);
+            } else if (obj.getY() + obj.getDy() <= 0) {
+                // La nave choca abajo
+                System.out.println("nave up");
+                ((KillerShip) obj).setWup(true);
+                //System.out.println(obj.getX() + obj.dx);
             }
 
-            if ((obj.x + obj.dx) >= viewer.getWidth() - obj.WIDTH && nk.getSock() == null) {
-                ((Controlled) obj).setWright(true);
+            // La nave choca derecha
+            if ((obj.getX() + obj.getDx()) >= viewer.getWidth() - obj.getWidth() && nk.getSock() == null) {
+                ((KillerShip) obj).setWright(true);
                 System.out.println("pum al lado der");
-            } else if ((obj.x + obj.dx) >= viewer.getWidth() - (obj.WIDTH * (1f / 4f)) && nk.getSock() != null) {
+            } else if ((obj.getX() + obj.getDx()) >= viewer.getWidth() - (obj.getWidth() * (1f / 4f)) && nk.getSock() != null) {
                 System.out.println("por la derecha!");
-                nk.sendMessage(nk.sendPlayer((Controlled) obj, false), "d", iplocal);
+                nk.sendMessage(nk.sendPlayer((KillerShip) obj, false), "d", iplocal);
                 obj.setAlive(false);
                 objects.remove(obj);
             }
 
-            if ((obj.x + obj.dx) <= 0 && pk.getSock() == null) {
-                ((Controlled) obj).setWleft(true);
+            // La nave choca izquierda
+            if ((obj.getX() + obj.getDx()) <= 0 && pk.getSock() == null) {
+                ((KillerShip) obj).setWleft(true);
                 System.out.println("pum al lado izq");
 
-            } else if ((obj.x + obj.dx) <= 0 - obj.WIDTH * (3f / 4f) && pk.getSock() != null) {
+            } else if ((obj.getX() + obj.getDx()) <= 0 - obj.getWidth() * (3f / 4f) && pk.getSock() != null) {
                 System.out.println("por la izquierda!");
-                pk.sendMessage(pk.sendPlayer((Controlled) obj, true), "d", iplocal);
+                pk.sendMessage(pk.sendPlayer((KillerShip) obj, true), "d", iplocal);
                 obj.setAlive(false);
                 objects.remove(obj);
             }
 
+        } else if (obj instanceof Shoot) {
+            // Añadido Maria
+            checkColision((Shoot) obj);
         }
 
         for (int i = 0; i < objects.size(); i++) {
@@ -134,7 +138,7 @@ public class KillerGame extends JFrame {
             }
 
             if (objCol instanceof Alive) {
-                if (obj.nextMove().intersects(((Alive) objCol).hitbox)) {
+                if (obj.nextMove().intersects(((Alive) objCol).getHitbox())) {
                     KillerRules.collision(obj, objCol);
                 }
 
@@ -144,11 +148,12 @@ public class KillerGame extends JFrame {
     }
 
     public void checkColision(Shoot obj) {
+//        System.out.println("KG: -----------------> DISPARO");
 
         //colision con limites
         if (obj.getY() >= viewer.getHeight() || obj.getY() <= 0
                 || obj.getX() >= viewer.getWidth() || obj.getX() <= 0) {
-            obj.death();
+            obj.die();
         }
 
         for (int i = 0; i < objects.size(); i++) {
@@ -159,7 +164,7 @@ public class KillerGame extends JFrame {
             }
 
             if (objCol instanceof Alive) {
-                if (obj.hitbox.intersects(((Alive) objCol).hitbox)) {
+                if (obj.getHitbox().intersects(((Alive) objCol).getHitbox())) {
                     KillerRules.collisionShoot(obj, (Alive) objCol);
 
                 }
@@ -169,14 +174,14 @@ public class KillerGame extends JFrame {
         }
     }
 
-    public void createControlled(Controlled contr) {
+    public void createControlled(KillerShip contr) {
 
         objects.add(contr);
         new Thread(contr).start();
 
     }
 
-    public void createAutomata(Automata auto) {
+    public void createAutomata(Asteroid auto) {
         objects.add(auto);
         new Thread(auto).start();
 
@@ -194,11 +199,12 @@ public class KillerGame extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         //setUndecorated(true);
         getContentPane().add(viewer = new Viewer(this));
-        viewer.images();
+        viewer.paintBackground();
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
+
 
         new Thread(viewer).start();
 
@@ -326,6 +332,7 @@ public class KillerGame extends JFrame {
         portframe.setResizable(false);
         portframe.setLocationRelativeTo(null);
         portframe.setVisible(true);
+
     }
 
     public void startServer() {
@@ -356,11 +363,12 @@ public class KillerGame extends JFrame {
         new Thread(pk).start();
 
         frame();
-        for (int i = 0; i < 3; i++) {
-            objects.add(new Automata(this, Color.red));
+
+        for (int i = 0; i < this.NUM_ASTEROIDS; i++) {
+            objects.add(new Asteroid(this));
         }
 
-        // objects.add(new Controlled(this, Color.pink, 1));
+        // objects.add(new KillerShip(this, Color.pink, 1));
         startThreads();
     }
 

@@ -1,38 +1,52 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package visibleObjects;
 
+import game.KillerGame;
 import java.awt.Color;
 import java.awt.Rectangle;
 
-/**
- *
- * @author berna
- */
 public abstract class Alive extends VisibleObject implements Runnable {
 
-    public double dx;
-    public double dy;
-    public double speed;
-
-    public Rectangle hitbox;
-    public Color color;
-    public String colorhex;
-
-    public boolean alive;
+    protected double dx;
+    protected double dy;
+    protected double speed;
+    protected long time;
     
-    public long time;
+    public Alive(KillerGame game) {
+        super(game);
+    }
+
+    @Override
+    public void run() {
+        
+        while (this.alive) {
+
+            game.checkColision(this);
+            move();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+
+            }
+        }
+    }
+
+    protected void updateHitBox() {
+        hitbox.setBounds((int) x, (int) y, width, height);
+    }
 
     public abstract void move();
-
-    public abstract void collision();
     
+    // TODAS las clases que heredan han de implementarlo
+    public abstract void collision();
+
     public abstract Rectangle nextMove();
 
-    public abstract void death();
+    public abstract void die();
+    
+    
+    // *********************
+    // * Getters & Setters *
+    // *********************
 
     public double getDx() {
         return dx;
@@ -66,21 +80,4 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.hitbox = hitbox;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
-    
-    
 }

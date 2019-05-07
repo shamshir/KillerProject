@@ -5,11 +5,11 @@
  */
 package game;
 
-import visibleObjects.Automata;
+import visibleObjects.Asteroid;
 import visibleObjects.VisibleObject;
 import visibleObjects.Alive;
 import visibleObjects.Shoot;
-import visibleObjects.Controlled;
+import visibleObjects.KillerShip;
 
 /**
  *
@@ -27,34 +27,34 @@ public class KillerRules {
 
 //        obj1.collision();
 //        obj2.collision();
-        if (obj1 instanceof Controlled && obj2 instanceof Controlled) {
+        if (obj1 instanceof KillerShip && obj2 instanceof KillerShip) {
 
-            if (!((Controlled) obj1).isDeath() && !((Controlled) obj2).isDeath()) {
-//                ((Controlled) obj2).kill();
-//                ((Controlled) obj1).kill();
+            if (!((KillerShip) obj1).isDeath() && !((KillerShip) obj2).isDeath()) {
+//                ((KillerShip) obj2).kill();
+//                ((KillerShip) obj1).kill();
 //                System.out.println("muertos");
 //            } else {
-//                if (!((Controlled) obj1).isDeath() && ((Controlled) obj1).isDeath()) {
+//                if (!((KillerShip) obj1).isDeath() && ((KillerShip) obj1).isDeath()) {
 //                    System.out.println("muerto1");
-//                    ((Controlled) obj2).kill();
+//                    ((KillerShip) obj2).kill();
 //                }
-//                if (!((Controlled) obj2).isDeath() && !((Controlled) obj1).isDeath()) {
+//                if (!((KillerShip) obj2).isDeath() && !((KillerShip) obj1).isDeath()) {
 //                    System.out.println("muerto2");
-//                    ((Controlled) obj1).kill();
+//                    ((KillerShip) obj1).kill();
 //                }
             }
 
         } else  {
-            if (obj1 instanceof Controlled && obj2 instanceof Automata
-                    && !((Controlled) obj1).isDeath()) {
-                ((Controlled) obj1).kill();
-                obj1.death();
+            if (obj1 instanceof KillerShip && obj2 instanceof Asteroid
+                    && !((KillerShip) obj1).isDeath()) {
+                ((KillerShip) obj1).kill();
+                obj1.die();
             }
 
-            if (obj2 instanceof Controlled && obj1 instanceof Automata
-                    && !((Controlled) obj2).isDeath()) {
-                ((Controlled) obj2).kill();
-                obj1.death();
+            if (obj2 instanceof KillerShip && obj1 instanceof Asteroid
+                    && !((KillerShip) obj2).isDeath()) {
+                ((KillerShip) obj2).kill();
+                obj1.die();
             }
 
         }
@@ -62,20 +62,32 @@ public class KillerRules {
     }
 
     public static void collisionShoot(Shoot obj1, Alive obj2) {
+//        System.out.println("RULES: colision shoot");
 
-        if (obj2 instanceof Controlled && !((Controlled) obj2).isDeath()) {
-            System.out.println(obj1.getShip().getIp()
-            +"/"+((Controlled) obj2).getIp());
-            if (!obj1.getShip().getIp().equals(((Controlled) obj2).getIp())) {
-                ((Controlled) obj2).kill();
+        if (obj2 instanceof KillerShip && !((KillerShip) obj2).isDeath()) {
+//            System.out.println(obj1.getShip().getIp()
+//            +"/"+((KillerShip) obj2).getIp());
+            
+            if (!obj1.getShip().getIp().equals(((KillerShip) obj2).getIp())) {
+                ((KillerShip) obj2).kill();
                 obj1.points(5);
             }
-        } else if (obj2 instanceof Automata) {
-            obj2.death();
+        } else if (obj2 instanceof Asteroid) {
+            obj2.die();
             obj1.points(2);
         }
 
-        obj1.death();
+        // -----------------------> original
+        //obj1.die();
+        
+        // ----------------> added
+        // para que la bala no mate a su nave
+        // pintar bien la bala
+        if (obj2 instanceof KillerShip && !((KillerShip) obj2).isDeath()) {            
+            if (!obj1.getShip().getIp().equals(((KillerShip) obj2).getIp())) {
+                obj1.die();
+            }
+        }
     }
 
 }
