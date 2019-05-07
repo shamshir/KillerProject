@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import physics.KillerPhysics;
 
-public class Shoot extends Autonomous {
+public class Shoot extends Automata {
 
     private KillerShip ship;
 

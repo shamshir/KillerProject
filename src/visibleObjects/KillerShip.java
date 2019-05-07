@@ -1,5 +1,6 @@
 package visibleObjects;
 
+import communications.KillerAction;
 import game.KillerGame;
 import java.awt.BasicStroke;
 import java.awt.Color;
