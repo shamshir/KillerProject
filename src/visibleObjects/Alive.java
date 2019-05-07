@@ -1,38 +1,63 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package visibleObjects;
 
-import java.awt.Color;
-import java.awt.Rectangle;
+import game.KillerGame;
+import physics.KillerPhysics;
 
-/**
- *
- * @author berna
- */
-public abstract class Alive extends VisibleObject implements Runnable {
+public abstract class Alive extends VisibleObject implements Runnable, Destructible {
 
-    public double dx;
-    public double dy;
-    public double speed;
+    // Físicas: son necesarios los mismos atributos en todos los Alive?
+    // En VisibleObject --> protected double angle; ... this.angle = Math.toRadians(0);
+    protected double a;
+    protected double dx;
+    protected double dy;
+    protected double vx;
+    protected double vy;
+    protected double maxspeed;
 
-    public Rectangle hitbox;
-    public Color color;
-    public String colorhex;
+    protected int health;
 
-    public boolean alive;
-    
-    public long time;
+    public Alive() {
+    }
 
-    public abstract void move();
+    public Alive(KillerGame game, double x, double y) {
+        super(game, x, y);
+        this.a = 0.01;
+    }
 
+    // TO DO: constructor común para instanciar objetos Alive recibidos de otro pc
+    // Valores necesarios para físicas?
+//    public Alive(KillerGame game, double x, double y, double angle, double dx, double dy, int health) {
+//        super(game, x, y);        
+//        this.a = 0.01;
+//        this.angle = angle;
+//        this.dx = dx;
+//        this.dy = dy;
+//        this.health = health;
+//    }
+    // TO DO: descomentar si es el mismo método de físicas para todos los objetos
+    protected abstract void move();
+//    protected void move() {
+//        KillerPhysics.move(this);
+//    }
+
+    /**
+     * Método para lo que hacen los objetos al chocar con los bordes
+     */
     public abstract void collision();
-    
-    public abstract Rectangle nextMove();
 
-    public abstract void death();
+    // ********************************************************
+    // *                     Interfaces                       *
+    // ********************************************************
+    // *********************
+    // * Getters & Setters *
+    // *********************
+    public double getA() {
+        return a;
+    }
+
+    public void setA(double a) {
+        this.a = a;
+    }
 
     public double getDx() {
         return dx;
@@ -50,37 +75,36 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.dy = dy;
     }
 
-    public double getSpeed() {
-        return speed;
+    public double getVx() {
+        return vx;
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public void setVx(double vx) {
+        this.vx = vx;
     }
 
-    public Rectangle getHitbox() {
-        return hitbox;
+    public double getVy() {
+        return vy;
     }
 
-    public void setHitbox(Rectangle hitbox) {
-        this.hitbox = hitbox;
+    public void setVy(double vy) {
+        this.vy = vy;
     }
 
-    public Color getColor() {
-        return color;
+    public double getMaxspeed() {
+        return maxspeed;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public void setMaxspeed(double maxspeed) {
+        this.maxspeed = maxspeed;
     }
 
-    public boolean isAlive() {
-        return alive;
+    public int getHealth() {
+        return health;
     }
 
-    public void setAlive(boolean alive) {
-        this.alive = alive;
+    public void setHealth(int health) {
+        this.health = health;
     }
-    
-    
+
 }
