@@ -1,145 +1,110 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package visibleObjects;
 
-import communications.KillerPad;
 import game.KillerGame;
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.Graphics2D;
+import physics.KillerPhysics;
 
-/**
- *
- * @author berna
- */
-public class Shoot extends Automata implements Runnable {
+public class Shoot extends Autonomous {
 
-    private int radius;
-    private double speed;
-    private boolean frightdir;
-    private Controlled ship;
-    public Rectangle hitbox;
+    private KillerShip ship;
 
-    private boolean alive;
-
-    public Shoot(KillerGame kg, Color color, Controlled ship) {
-        super(kg, color);
+    /**
+     * 
+     * @param game
+     * @param ship 
+     */
+    public Shoot(KillerGame game, KillerShip ship) {
+        super();
         this.ship = ship;
-        this.radius = (int) (Math.min(ship.HEIGHT, ship.WIDTH) / 2);
-        this.x = ship.getX();
-        this.y = ship.getY() + (this.radius / 2);
-        hitbox = new Rectangle((int) this.x, (int) this.y, this.radius, this.radius);
-        this.frightdir = ship.fright;
-        this.speed = 15;
-        alive = true;
+        this.state = AutonomousState.ALIVE;
+        // Posición según la posición del morro de la nave
+        this.x = this.ship.tx;
+        this.y = this.ship.ty;  
+        
+        this.maxspeed = 7;
+        this.health = 1;
 
+        this.imgHeight = 15;
+        this.imgWidth = 15;
+        this.m = 30;
+        
+    }
+
+    /**
+     * 
+     * @param game
+     * @param x
+     * @param y
+     * @param angle
+     * @param dx
+     * @param dy
+     * @param vx
+     * @param vy
+     * @param ship
+     * @param state 
+     */
+    public Shoot(KillerGame game, double x, double y, double angle, double dx, double dy, double vx, double vy, KillerShip ship, AutonomousState state) {
+        super(game, x, y);        
+        this.a = 0.01;
+        
+        this.angle = angle;
+        this.dx = dx;
+        this.dy = dy;
+        this.vx = vx;
+        this.vy = vy;
+        this.m = 30;
+        
+        this.ship = ship;
+        this.state = state;
+        
+        this.maxspeed = 7;
+        this.health = 1;
+
+        // Modificar con imgSize, añadir img
+        this.imgWidth = 10;
+        this.imgHeight = 10;
     }
 
     @Override
-    public void run() {
+    public void collision() {
+        // TO DO
+    }
 
-        while (alive) {
-            move();
-            try {
-                Thread.sleep(15);
-            } catch (InterruptedException ex) {
+    @Override
+    protected void move() {
+        KillerPhysics.move(this);
+    }
 
-            }
-        }
+    @Override
+    protected void setImage() {
 
     }
 
-    public void death() {
-        ship.getShoots().remove(this);
-        alive = false;
+    // ********************************************************
+    // *                     Interfaces                       *
+    // ********************************************************
+    // INTERFAZ Renderizable
+    @Override
+    public void render(Graphics2D g2d) {
+        g2d.setColor(Color.CYAN);
+        g2d.fillOval((int) x, (int) y, imgWidth, imgHeight);
+
     }
 
-    public void move() {
-        kg.checkColision(this);
-        if (this.frightdir) {
-            x += (int) speed;
-        } else {
-            x -= (int) speed;
-        }
-        updateHitBox();
-    }
-
-    public void points(int points) {
-        KillerPad.sendMessageToPad("pnt" + points, kg, ship.getIp(), kg.getIplocal());
-    }
-
-    public void updateHitBox() {
-        hitbox.setBounds((int) x, (int) y, radius, radius);
-    }
-
-    public Controlled getControlled() {
+    // *********************
+    // * Getters & Setters *
+    // *********************
+    public KillerShip getControlled() {
         return ship;
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public boolean isFrightdir() {
-        return frightdir;
-    }
-
-    public void setFrightdir(boolean frightdir) {
-        this.frightdir = frightdir;
-    }
-
-    public Rectangle getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(Rectangle hitbox) {
-        this.hitbox = hitbox;
-    }
-
-    public Controlled getShip() {
+    public KillerShip getShip() {
         return ship;
     }
 
-    public void setShip(Controlled ship) {
+    public void setShip(KillerShip ship) {
         this.ship = ship;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
     }
 
 }
