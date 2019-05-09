@@ -76,8 +76,6 @@ public class KillerPad extends ReceptionHandler implements Runnable {
         }
         if (!STATUS_REQUEST.equalsIgnoreCase(line)) {
             this.processMessage(Message.readMessage(line));
-        }else{
-            this.sendLine(STATUS_REQUEST);
         }
         return true;
     }
