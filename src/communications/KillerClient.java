@@ -36,25 +36,27 @@ public class KillerClient implements Runnable {
 
     private boolean disconnected(){
         return this.receptionHandler.getSocket() == null;
-    } 
-    
-    private void tryToConnect() {
-        try {
-            final Socket sock = new Socket(this.receptionHandler.getDestinationIp(), this.receptionHandler.getDestinationPort());
-            this.contact(sock);
-            this.receptionHandler.setSocket(sock);
+    }
 
-        } catch (Exception ex) {
+    private void tryToConnect() {
+        if(receptionHandler instanceof VisualHandler) {
+            try {
+                final Socket sock = new Socket(this.receptionHandler.getDestinationIp(), this.receptionHandler.getDestinationPort());
+                this.contact(sock);
+                this.receptionHandler.setSocket(sock);
+
+            } catch (Exception ex) {
+            }
         }
     }
 
     private void contact(final Socket sock) throws Exception {
 
         final ConnectionResponse connectionResponse = ConnectionResponse.Builder.builder()
-                .withRight(((VisualHandler) this.receptionHandler).isRight())
+                .withRight(!((VisualHandler) this.receptionHandler).isRight())
                 .withOriginPort(this.killergame.getServer().getPort())
                 .build();
-        
+
         final Message message = Message.Builder.builder(CONNECT_TO_CLIENT, KillerServer.getId())
                 .withConnection(connectionResponse)
                 .build();

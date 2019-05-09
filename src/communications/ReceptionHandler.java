@@ -54,11 +54,11 @@ public class ReceptionHandler {
     }
 
     public void sendLine(final String line) {
-        this.out.println(line);
+       if(out!=null) this.out.println(line);
     }
     
     public void sendMessage(final Message message) {
-        this.out.println(Message.convertMessageToJson(message));
+        if(out!=null) this.out.println(Message.convertMessageToJson(message));
     }
 
     public synchronized boolean setSocket(final Socket socket) {
