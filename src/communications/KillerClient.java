@@ -39,12 +39,14 @@ public class KillerClient implements Runnable {
     }
 
     private void tryToConnect() {
-        try {
-            final Socket sock = new Socket(this.receptionHandler.getDestinationIp(), this.receptionHandler.getDestinationPort());
-            this.contact(sock);
-            this.receptionHandler.setSocket(sock);
+        if(receptionHandler instanceof VisualHandler) {
+            try {
+                final Socket sock = new Socket(this.receptionHandler.getDestinationIp(), this.receptionHandler.getDestinationPort());
+                this.contact(sock);
+                this.receptionHandler.setSocket(sock);
 
-        } catch (Exception ex) {
+            } catch (Exception ex) {
+            }
         }
     }
 
