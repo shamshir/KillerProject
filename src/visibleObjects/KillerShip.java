@@ -59,7 +59,7 @@ public class KillerShip extends Controlled {
 
     /**
      * Constructor para instanciar la nave si viene de otro pc; por defecto son
-     * invencibles
+     * invencibles. Muchos de los parámetros los quitaré cuando me los confirmen
      * @param game
      * @param x
      * @param y
@@ -78,7 +78,7 @@ public class KillerShip extends Controlled {
      * @param health 
      */
     public KillerShip(KillerGame game, double x, double y, double angle, 
-            double dx, double dy, double vx, double vy, double lx, double ly, 
+            double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, 
             double rx, double ry, String ip, String user, ShipType type, 
             int health) {
         super(game, x, y);
@@ -89,6 +89,8 @@ public class KillerShip extends Controlled {
         this.dy = dy;
         this.vx = vx;
         this.vy = vy;
+        this.vx = tx;
+        this.vy = ty;
         this.vx = lx;
         this.vy = ly;
         this.vx = rx;
@@ -189,7 +191,7 @@ public class KillerShip extends Controlled {
      * Método para decirle al KG que cree un obj Shoot para la nave
      */
     private void shoot() {
-        this.game.addKillerShoot(this);
+        this.game.newShoot(this);
     }
 
     /**

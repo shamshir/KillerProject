@@ -32,7 +32,7 @@ public class Shoot extends Automata {
     }
 
     /**
-     * 
+     * Algunos de los parámetros los quitaré o añadiré cuando me los confirmen
      * @param game
      * @param x
      * @param y
