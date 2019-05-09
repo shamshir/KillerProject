@@ -1,7 +1,7 @@
 package communications;
 
 import game.KillerGame;
-import visibleObjects.Controlled;
+import visibleObjects.KillerShip;
 import java.net.Socket;
 
 public class KillerPad extends ReceptionHandler implements Runnable {
@@ -93,7 +93,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
         System.out.println("ACTION RECIBIDA: "+message.getAction().getCommand()+ "   "+ message.getCommand());
 
 
-        Controlled player = kg.getShipByIP(message.getSenderId());
+        KillerShip player = kg.getShipByIP(message.getSenderId());
         if (player != null) {
             player.doAction(message.getAction());
         } else if (sendNextModule) {
