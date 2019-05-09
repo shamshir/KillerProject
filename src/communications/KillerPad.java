@@ -1,7 +1,7 @@
 package communications;
 
-import visibleObjects.Controlled;
 import game.KillerGame;
+import visibleObjects.Controlled;
 import java.net.Socket;
 
 public class KillerPad extends ReceptionHandler implements Runnable {
@@ -40,8 +40,9 @@ public class KillerPad extends ReceptionHandler implements Runnable {
         while (!disconnected) {
             if (this.getSocket() != null) {
                 disconnectTime = 0;
-                System.out.println("Connected");
+                System.out.println("PAD-Connected");
                 this.listeningMessages();
+                System.out.println("PAD-DesConnected");
             }
             try {
                 Thread.sleep(100);
@@ -70,7 +71,6 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     }
 
     private boolean processLine(final String line) {
-
         if (line == null || line.trim().equals(DISCONNECTION_COMMAND)) {
             return false;
         }
@@ -90,6 +90,8 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     public static void sendActionToPlayer(final Message message,
                                           final KillerGame kg,
                                           final boolean sendNextModule) {
+        System.out.println("ACTION RECIBIDA: "+message.getAction().getCommand()+ "   "+ message.getCommand());
+
 
         Controlled player = kg.getShipByIP(message.getSenderId());
         if (player != null) {

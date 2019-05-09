@@ -67,10 +67,10 @@ public class ConnectionHandler implements Runnable {
         try {
             final PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
             final Message message = this.getReplyMessage(connectionResponse, senderId);
-            out.print(Message.convertMessageToJson(message));
+            out.println(Message.convertMessageToJson(message));
 
         } catch (Exception ex) {
-
+            System.out.println("error sending replying connection message");
         }
     }
 
@@ -79,6 +79,7 @@ public class ConnectionHandler implements Runnable {
         if (this.kg.newKillerPad( this.socket, connectionResponse.getColor(), connectionResponse.getUserName(), senderId)) {
             this.kg.newKillerShip(senderId);
             message = Message.Builder.builder(PAD_CONNECTED, KillerServer.getId()).build();
+            System.out.println("Connectado:" + senderId + " " + connectionResponse.getUserName());
         } else {
             KillerPad pad = this.kg.getPadByIP(senderId);
             if (pad != null) {

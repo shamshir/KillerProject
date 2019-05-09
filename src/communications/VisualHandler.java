@@ -40,8 +40,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         while (true) {
             try {
                 if (this.getSocket() != null) {
-                    System.out.println("Connected");
+                    System.out.println("Connected is right:" + right);
                     this.listeningMessages();
+                    System.out.println("Disconnected is right:" + right);
                 }
                 Thread.sleep(100);
             } catch (InterruptedException ex) {
