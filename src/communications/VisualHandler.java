@@ -40,6 +40,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         while (true) {
             try {
                 if (this.getSocket() != null) {
+                    System.out.println("Connected");
                     this.listeningMessages();
                 }
                 Thread.sleep(100);
@@ -59,12 +60,10 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         while (!done) {
             try {
                 done = !this.processLine(this.readLine());
-
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
                 done = true;
             }
-
         }
         this.setSocket(null);
     }
@@ -185,7 +184,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         if (KillerServer.getId().equals(message.getSenderId())) {
             this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId()).build());
         } else {
-            this.sendMessage(message);
+            this.getKillergame().getNextModule().sendMessage(message);
         }
     }
 
@@ -195,10 +194,10 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             this.getKillergame().start();
         }
     }
-    
+
     private void processQuitGame(final Message message){
         if (!KillerServer.getId().equals(message.getSenderId())) {
-            this.sendMessage(message);        
+            this.sendMessage(message);
            //TODO this.getKillergame().quitGame();
         }
     }

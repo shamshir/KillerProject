@@ -49,7 +49,7 @@ public class ConnectionHandler implements Runnable {
     private void clientConnect(final ConnectionResponse connectionResponse) {
 
         final VisualHandler visualHandler = getVisualHandler(connectionResponse.isRight());
-        
+
         visualHandler.setSocket(this.socket);
         visualHandler.setDestinationPort(connectionResponse.getOriginPort());
         //TODO enviar configuracion
@@ -66,7 +66,7 @@ public class ConnectionHandler implements Runnable {
     private void padConnect(final ConnectionResponse connectionResponse, final String senderId) {
         try {
             final PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
-            final Message message = this.tryToCreatePad(connectionResponse, senderId);
+            final Message message = this.getReplyMessage(connectionResponse, senderId);
             out.print(Message.convertMessageToJson(message));
 
         } catch (Exception ex) {
@@ -74,13 +74,19 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
-    private Message tryToCreatePad(final ConnectionResponse connectionResponse, final String senderId) {
+    private Message getReplyMessage(final ConnectionResponse connectionResponse, final String senderId) {
         final Message message;
-        if (this.kg.newKillerPad(senderId)) {
+        if (this.kg.newKillerPad( this.socket, connectionResponse.getColor(), connectionResponse.getUserName(), senderId)) {
             this.kg.newKillerShip(senderId);
             message = Message.Builder.builder(PAD_CONNECTED, KillerServer.getId()).build();
         } else {
-            message = Message.Builder.builder(PAD_NOT_CONNECTED, KillerServer.getId()).build();
+            KillerPad pad = this.kg.getPadByIP(senderId);
+            if (pad != null) {
+                pad.setSocket(socket);
+                message = Message.Builder.builder(PAD_CONNECTED, KillerServer.getId()).build();
+            } else {
+                message = Message.Builder.builder(PAD_NOT_CONNECTED, KillerServer.getId()).build();
+            }
         }
         return message;
     }
