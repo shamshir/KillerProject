@@ -62,7 +62,7 @@ public class KillerSound {
 
     public static Clip getSound(String file) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("C:\\Users\\Christian\\Desktop\\editados 2\\" + file));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/sound/soundsGame/" + file));
             AudioFormat format = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             Clip sound = (Clip) AudioSystem.getLine(info);
