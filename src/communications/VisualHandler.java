@@ -166,18 +166,18 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private ObjectResponse convertObjectToObjectResponse(final Alive object) {
         //TODO rellenar con los datos que se pida
         if (object instanceof Shoot) {
-            return this.buildObjectResponseFromShoot((Shoot) object);
+        //    return this.buildObjectResponseFromShoot((Shoot) object);
         }
         return ObjectResponse.Builder.builder(EMPTY_STRING).build();
     }
 
-    private ObjectResponse buildObjectResponseFromShoot(final Shoot shoot) {
-        return ObjectResponse.Builder.builder(SHOOT_TYPE)
-                .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
-                .build();
-    }
+//    private ObjectResponse buildObjectResponseFromShoot(final Shoot shoot) {
+//        return ObjectResponse.Builder.builder(SHOOT_TYPE)
+//                .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
+//                .build();
+//    }
 
-    public void startGame() {
+    public void checkReady() {
         this.sendMessage(Message.Builder.builder(READY_TO_START, KillerServer.getId()).build());
     }
 
@@ -190,10 +190,11 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     private void processStart(final Message message) {
+        System.out.println("started");
         if (!KillerServer.getId().equals(message.getSenderId())) {
-            this.sendMessage(message);
-            this.getKillergame().start();
+            this.sendMessage(message); 
         }
+          //  this.getKillergame().start();
     }
 
     private void processQuitGame(final Message message){
