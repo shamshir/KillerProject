@@ -40,9 +40,9 @@ public class PowerUp extends Static implements Destructible {
     }
 
     /**
-     * 
+     * Método para cambiar la imagen del powerUp al quedarse sin vida
      */
-    private void unwrapper() {
+    public void unwrapper() {
         this.setImage();
         this.setImgSize();
     }
@@ -50,14 +50,14 @@ public class PowerUp extends Static implements Destructible {
     @Override
     protected void setImage() {
         if (wrappered) {
-            this.loadImg("img/wrapper.png");
+            this.loadImg("./img/wrapper.png");
         } else {
             switch (type.name()) {
                 case "HEALTH":
-                   this.loadImg("img/health.png");
+                   this.loadImg("./img/health.png");
                    break;
                 case "SAFE":
-                   this.loadImg("img/safe.png");
+                   this.loadImg("./img/safe.png");
                    break;
             }
         }

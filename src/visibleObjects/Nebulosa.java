@@ -24,7 +24,7 @@ public class Nebulosa extends Static {
 
     @Override
     protected void setImage() {
-        this.loadImg("img/nebulosa.png");
+        this.loadImg("./img/nebulosa.png");
     }
     
     // TO DO --> frenar(Alive obj) ??

@@ -42,7 +42,7 @@ public class Asteroid extends Automata {
      */
     @Override
     protected void move() {
-//        KillerPhysics.move(this);
+        KillerPhysics.move(this);
     }
 
     private void divide() {
@@ -52,7 +52,7 @@ public class Asteroid extends Automata {
 
     @Override
     protected void setImage() {
-        this.loadImg("img/asteroid2.png");
+        this.loadImg("./img/asteroid2.png");
     }
 
     @Override

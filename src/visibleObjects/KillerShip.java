@@ -26,10 +26,10 @@ public class KillerShip extends Controlled {
     // Físicas
     protected double tx; // posición del morro de la nave
     protected double ty; // posición del morro de la nave
-    protected double lx; // posición del morro de la nave
-    protected double ly; // posición del morro de la nave
-    protected double rx; // posición del morro de la nave
-    protected double ry; // posición del morro de la nave
+    protected double lx;
+    protected double ly;
+    protected double rx;
+    protected double ry;
 
     /**
      *
@@ -60,6 +60,7 @@ public class KillerShip extends Controlled {
     /**
      * Constructor para instanciar la nave si viene de otro pc; por defecto son
      * invencibles. Muchos de los parámetros los quitaré cuando me los confirmen
+     *
      * @param game
      * @param x
      * @param y
@@ -75,11 +76,11 @@ public class KillerShip extends Controlled {
      * @param ip
      * @param user
      * @param type
-     * @param health 
+     * @param health
      */
-    public KillerShip(KillerGame game, double x, double y, double angle, 
-            double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, 
-            double rx, double ry, String ip, String user, ShipType type, 
+    public KillerShip(KillerGame game, double x, double y, double angle,
+            double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly,
+            double rx, double ry, String ip, String user, ShipType type,
             int health) {
         super(game, x, y);
         // Físicas ---> que parámetros pasan?
@@ -133,18 +134,20 @@ public class KillerShip extends Controlled {
 
     /**
      * Método llamado por el KillerPad para mandar la info que llega del mando.
-     * El KillerShip la ha de descodificsr
+     * El KillerShip la ha de descodificsr. Ajustar valores a lo que se envía
      *
-     * @param action
+     * @param kAction
      */
-    public void doAction(KillerAction action) {
-        // String acion = action.getCommand();
-        // switch (action)
-        //      case "shoot":
-        //          this.shoot();
-        //          break;
-        //  ...
-        System.out.println("KillerShip: doAction() --> hola marc :-)");
+    public void doAction(KillerAction kAction) {
+        String action = kAction.getCommand();
+        switch (action) {
+            case "shoot":
+                this.shoot();
+                break;
+            case "move":
+                this.moveShip();
+                break;
+        }
     }
 
     /**
@@ -160,7 +163,6 @@ public class KillerShip extends Controlled {
      * Método para poner escudo a la nave durante un tiempo al coger el powerUp
      * SAFE
      *
-     * @param health cantidad de salud que se suma
      */
     public void beSafe() {
         this.state = ShipState.SAFE;
@@ -181,9 +183,9 @@ public class KillerShip extends Controlled {
     @Override
     protected void setImage() {
         if (type == ShipType.FAST) {
-            this.loadImg("img/fastShip.png");
+            this.loadImg("./img/fastShip.png");
         } else if (type == ShipType.BIG) {
-            this.loadImg("img/bigShip.png");
+            this.loadImg("./img/bigShip.png");
         }
     }
 
@@ -208,14 +210,14 @@ public class KillerShip extends Controlled {
     private void checkSafe() {
         if (System.currentTimeMillis() - timer > 5000) {
             this.state = ShipState.ALIVE;
-            setImage();
+            this.setImage();
             // Adapto las coordenadas para la hitbox a la img
             this.setImgSize();
         }
     }
 
     /**
-     * Doy valor a health, maxSpeed, y url de imágenes según el tipo de nave
+     * Método para inicializar health y maxSpeed según el tipo de nave
      */
     private void configureShip() {
         switch (this.type.name()) {

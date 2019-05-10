@@ -34,6 +34,6 @@ public class Planeta extends Static {
 
     @Override
     protected void setImage() {
-        this.loadImg("img/planet1.png");
+        this.loadImg("./img/planet1.png");
     }
 }
