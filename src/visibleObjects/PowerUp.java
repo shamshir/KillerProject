@@ -22,10 +22,10 @@ public class PowerUp extends Static implements Destructible {
      * @param x
      * @param y
      * @param height
-     * @param weight
+     * @param m
      * @param power 
      */
-    public PowerUp(KillerGame game, double x, double y, int height, int weight, Power power) {
+    public PowerUp(KillerGame game, double x, double y, int height, int m, Power power) {
         super(game, x, y);
         
         this.type = power;
@@ -33,7 +33,7 @@ public class PowerUp extends Static implements Destructible {
 
         this.imgHeight = height;
         this.setImgSize();
-        this.m = weight;
+        this.m = m;
 
         this.wrappered = true;
         this.health = 400;

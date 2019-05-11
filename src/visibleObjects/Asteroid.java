@@ -28,7 +28,7 @@ public class Asteroid extends Automata {
     // TO DO: qué parámetros hay que mandar de físicas?     
 //    public Asteroid(KillerGame game, double x, double y, double dx, double dy, double speed, double health, int imgHeight, int m, String state) {
 //        super(game, x, y, dx, speed, dy, health);
-//
+//      //radians?
 //        this.setImage();
 //
 //        this.imgHeight = imgHeight;
