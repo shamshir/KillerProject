@@ -22,10 +22,10 @@ public class PowerUp extends Static implements Destructible {
      * @param x
      * @param y
      * @param height
-     * @param weight
+     * @param m
      * @param power 
      */
-    public PowerUp(KillerGame game, double x, double y, int height, int weight, Power power) {
+    public PowerUp(KillerGame game, double x, double y, int height, int m, Power power) {
         super(game, x, y);
         
         this.type = power;
@@ -33,16 +33,16 @@ public class PowerUp extends Static implements Destructible {
 
         this.imgHeight = height;
         this.setImgSize();
-        this.m = weight;
+        this.m = m;
 
         this.wrappered = true;
         this.health = 400;
     }
 
     /**
-     * 
+     * Método para cambiar la imagen del powerUp al quedarse sin vida
      */
-    private void unwrapper() {
+    public void unwrapper() {
         this.setImage();
         this.setImgSize();
     }
@@ -50,14 +50,14 @@ public class PowerUp extends Static implements Destructible {
     @Override
     protected void setImage() {
         if (wrappered) {
-            this.loadImg("img/wrapper.png");
+            this.loadImg("./img/wrapper.png");
         } else {
             switch (type.name()) {
                 case "HEALTH":
-                   this.loadImg("img/health.png");
+                   this.loadImg("./img/health.png");
                    break;
                 case "SAFE":
-                   this.loadImg("img/safe.png");
+                   this.loadImg("./img/safe.png");
                    break;
             }
         }

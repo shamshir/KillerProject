@@ -7,7 +7,7 @@ import physics.KillerPhysics;
 
 public class Shoot extends Automata {
 
-    private KillerShip ship;
+    private String id;
 
     /**
      * 
@@ -16,11 +16,11 @@ public class Shoot extends Automata {
      */
     public Shoot(KillerGame game, KillerShip ship) {
         super();
-        this.ship = ship;
+        this.id = ship.getId();
         this.state = AutonomousState.ALIVE;
         // Posición según la posición del morro de la nave
-        this.x = this.ship.tx;
-        this.y = this.ship.ty;  
+        this.x = ship.tx;
+        this.y = ship.ty;  
         
         this.maxspeed = 7;
         this.health = 1;
@@ -32,31 +32,26 @@ public class Shoot extends Automata {
     }
 
     /**
-     * 
+     * Constructor para replicar objeto enviado desde otro pc
      * @param game
      * @param x
      * @param y
-     * @param angle
-     * @param dx
-     * @param dy
+     * @param radians
      * @param vx
      * @param vy
-     * @param ship
-     * @param state 
+     * @param id
      */
-    public Shoot(KillerGame game, double x, double y, double angle, double dx, double dy, double vx, double vy, KillerShip ship, AutonomousState state) {
+    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id) {
         super(game, x, y);        
         this.a = 0.01;
         
-        this.angle = angle;
-        this.dx = dx;
-        this.dy = dy;
+        this.radians = radians;
         this.vx = vx;
         this.vy = vy;
         this.m = 30;
         
-        this.ship = ship;
-        this.state = state;
+        this.id = id;
+        this.state = AutonomousState.ALIVE;
         
         this.maxspeed = 7;
         this.health = 1;
@@ -95,16 +90,13 @@ public class Shoot extends Automata {
     // *********************
     // * Getters & Setters *
     // *********************
-    public KillerShip getControlled() {
-        return ship;
+
+    public String getId() {
+        return id;
     }
 
-    public KillerShip getShip() {
-        return ship;
-    }
-
-    public void setShip(KillerShip ship) {
-        this.ship = ship;
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

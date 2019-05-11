@@ -26,7 +26,7 @@ public class Wall extends Static {
     }
 
     private void setBorder(KillerGame game, Limit position) {
-        switch (position) {
+        switch (position) { // Revisar coordenadas y tamaño
             case NORTH:
                 this.x = 0;
                 this.y = 0;

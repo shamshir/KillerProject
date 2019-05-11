@@ -9,12 +9,12 @@ import javax.imageio.ImageIO;
 
 public abstract class VisibleObject implements Renderizable {
 
-    protected double angle;
+    protected double radians;
     protected BufferedImage img;
     protected KillerGame game;
     protected int imgHeight;
     protected int imgWidth;
-    protected double m; // peso o masa...
+    protected double m; // masa
     protected double x;
     protected double y;
 
@@ -25,7 +25,7 @@ public abstract class VisibleObject implements Renderizable {
         this.game = game;
         this.x = x;
         this.y = y;
-        this.angle = Math.toRadians(0);
+        this.radians = 0;
     }
 
     /**
@@ -107,12 +107,12 @@ public abstract class VisibleObject implements Renderizable {
         this.imgWidth = imgWidth;
     }
 
-    public double getAngle() {
-        return angle;
+    public double getRadians() {
+        return radians;
     }
 
-    public void setAngle(double angle) {
-        this.angle = angle;
+    public void setRadians(double radians) {
+        this.radians = radians;
     }
 
 }
