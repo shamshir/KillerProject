@@ -95,6 +95,7 @@ public class Viewer extends Canvas implements Runnable {
 
     }
 
+  /*
     public void drawConnectionInfo(Graphics2D g) {
 
         double height = (int) getHeight() / 20;
@@ -139,6 +140,7 @@ public class Viewer extends Canvas implements Runnable {
         }
 
     }
+    */
 
     public void paintBackground() {
         //creamos una nueva imagen del tamaño del canvas

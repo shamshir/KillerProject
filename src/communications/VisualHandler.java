@@ -40,7 +40,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         while (true) {
             try {
                 if (this.getSocket() != null) {
+                    System.out.println("Connected is right:" + right);
                     this.listeningMessages();
+                    System.out.println("Disconnected is right:" + right);
                 }
                 Thread.sleep(100);
             } catch (InterruptedException ex) {
@@ -59,12 +61,10 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         while (!done) {
             try {
                 done = !this.processLine(this.readLine());
-
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
                 done = true;
             }
-
         }
         this.setSocket(null);
     }
@@ -166,18 +166,18 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private ObjectResponse convertObjectToObjectResponse(final Alive object) {
         //TODO rellenar con los datos que se pida
         if (object instanceof Shoot) {
-            return this.buildObjectResponseFromShoot((Shoot) object);
+        //    return this.buildObjectResponseFromShoot((Shoot) object);
         }
         return ObjectResponse.Builder.builder(EMPTY_STRING).build();
     }
 
-    private ObjectResponse buildObjectResponseFromShoot(final Shoot shoot) {
-        return ObjectResponse.Builder.builder(SHOOT_TYPE)
-                .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
-                .build();
-    }
+//    private ObjectResponse buildObjectResponseFromShoot(final Shoot shoot) {
+//        return ObjectResponse.Builder.builder(SHOOT_TYPE)
+//                .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
+//                .build();
+//    }
 
-    public void startGame() {
+    public void checkReady() {
         this.sendMessage(Message.Builder.builder(READY_TO_START, KillerServer.getId()).build());
     }
 
@@ -185,20 +185,21 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         if (KillerServer.getId().equals(message.getSenderId())) {
             this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId()).build());
         } else {
-            this.sendMessage(message);
+            this.getKillergame().getNextModule().sendMessage(message);
         }
     }
 
     private void processStart(final Message message) {
+        System.out.println("started");
         if (!KillerServer.getId().equals(message.getSenderId())) {
-            this.sendMessage(message);
-            this.getKillergame().start();
+            this.sendMessage(message); 
         }
+          //  this.getKillergame().start();
     }
-    
+
     private void processQuitGame(final Message message){
         if (!KillerServer.getId().equals(message.getSenderId())) {
-            this.sendMessage(message);        
+            this.sendMessage(message);
            //TODO this.getKillergame().quitGame();
         }
     }
