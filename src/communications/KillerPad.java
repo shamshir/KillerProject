@@ -29,10 +29,16 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     public KillerPad(final KillerGame killergame, final Socket sock, final String user, final String color) {
         super(killergame, sock);
         this.id = sock.getInetAddress().getHostAddress();
+        this.startClient();
     }
 
     public String getId() {
         return this.id;
+    }
+    
+    private void startClient() {
+        this.client = new KillerClient(this, this.getKillergame());
+        new Thread(this.client).start();
     }
 
     @Override
