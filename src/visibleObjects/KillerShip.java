@@ -2,6 +2,7 @@ package visibleObjects;
 
 import communications.KillerAction;
 import game.KillerGame;
+import game.KillerRules;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,26 +11,27 @@ import physics.KillerPhysics;
 public class KillerShip extends Controlled {
 
     public enum ShipState {
-        SAFE, ALIVE, DIE
+        SAFE, ALIVE, DEAD
     }
 
     public enum ShipType {
-        FAST, BIG
+        TANK, NORMAL, STRONG
     }
 
-    protected ShipState state;
-    protected ShipType type;
-    protected String id;
-    protected String user;
-    protected long timer;
+    private ShipState state;
+    private ShipType type;
+    private String id;
+    private String user;
+    private long timer;
+    private int damage;
 
     // Físicas
-    protected double tx; // posición del morro de la nave
-    protected double ty; // posición del morro de la nave
-    protected double lx;
-    protected double ly;
-    protected double rx;
-    protected double ry;
+    private double tx; // posición del morro de la nave
+    private double ty; // posición del morro de la nave
+    private double lx;
+    private double ly;
+    private double rx;
+    private double ry;
 
     /**
      *
@@ -47,12 +49,13 @@ public class KillerShip extends Controlled {
         this.type = type;
         this.state = ShipState.SAFE;
 
-        this.configureShip(); // health y maxspeed según el tipo de nave
+        this.configureShip(); // health y damage según el tipo de nave
         this.setImage();
 
         this.imgHeight = 80;
         this.setImgSize();
         this.m = 100;
+        this.maxspeed = 4;
 
         this.timer = System.currentTimeMillis();
     }
@@ -97,6 +100,7 @@ public class KillerShip extends Controlled {
         this.ly = ly;
         this.rx = rx;
         this.ry = ry;
+        this.maxspeed = 4;
         //-------
 
         this.id = id;
@@ -116,7 +120,7 @@ public class KillerShip extends Controlled {
 
     @Override
     public void run() {
-        while (state != ShipState.DIE) {
+        while (state != ShipState.DEAD) {
 
             if (state != ShipState.SAFE) {
                 this.checkSafe();
@@ -131,6 +135,8 @@ public class KillerShip extends Controlled {
                 ex.printStackTrace();
             }
         }
+        
+        this.game.removeObject(this);
     }
 
     /**
@@ -142,13 +148,42 @@ public class KillerShip extends Controlled {
     public void doAction(KillerAction kAction) {
         String action = kAction.getCommand();
         switch (action) {
-            case "shoot":
+            case "pad_shoot":
                 this.shoot();
                 break;
-            case "move":
-                this.moveShip();
+            case "pad_move":                
+                this.moveShip(kAction.getSpeedX(), kAction.getSpeedY());
+                break;
+            case "pad_dash":
+                
+                break;
+            case "pad_powerup":
+                
+                break;
+            case "pad_turbo_start":
+                
+                break;
+            case "pad_turbo_end":
+                
                 break;
         }
+    }
+    
+    public void changeState(ShipState state) {
+        this.state = state;
+    }
+
+    @Override
+    public void collision() {
+        // TO DO
+    }
+
+    /**
+     * Método aumentar el daño de la nave al coger el powerUp DAMAGE
+     *
+     */
+    public void powerUpDamage() {
+        // TO DO
     }
 
     /**
@@ -156,37 +191,29 @@ public class KillerShip extends Controlled {
      *
      * @param health cantidad de salud que se suma
      */
-    public void increaseHealth(int health) {
+    public void powerUpHealth(int health) {
         this.health += health;
-    }
-
-    /**
-     * Método para poner escudo a la nave durante un tiempo al coger el powerUp
-     * SAFE
-     *
-     */
-    public void beSafe() {
-        this.state = ShipState.SAFE;
-        this.timer = System.currentTimeMillis();
-    }
-
-    @Override
-    public void collision() {
-        // TO DO
-        System.out.println("KillerShip: collision()");
     }
 
     @Override
     protected void move() {
         KillerPhysics.move(this);
     }
-
+    
     @Override
     protected void setImage() {
-        if (type == ShipType.FAST) {
-            this.loadImg("./img/fastShip.png");
-        } else if (type == ShipType.BIG) {
-            this.loadImg("./img/bigShip.png");
+        switch (type) {
+            case TANK:
+                this.loadImg("./img/fastShip.png");
+                break;
+            case NORMAL:
+                this.loadImg("./img/normalShip.png");
+                break;
+            case STRONG:
+                this.loadImg("./img/bigShip.png");
+                break;
+            default:
+                break;
         }
     }
 
@@ -201,10 +228,10 @@ public class KillerShip extends Controlled {
      * Cambiará los valores de dirección y ángulo en función de la info enviada
      * por el mando. Parámetros aún por decidir según la info recibida
      */
-    private void moveShip() {
-        // TO DO
-        // Modificar dx, dy o lo que sea
-        // Modificar ángulo para Animación
+    private void moveShip(int dx, int dy) {
+        // Marc lo tiene como int, yo como double... REVISAR
+        this.dx = dx;
+        this.dy = dy;
     }
 
     private void checkSafe() {
@@ -215,19 +242,27 @@ public class KillerShip extends Controlled {
             this.setImgSize();
         }
     }
+/*
+        TANK, NORMAL, STRONG*/
 
     /**
      * Método para inicializar health y maxSpeed según el tipo de nave
      */
     private void configureShip() {
         switch (this.type.name()) {
-            case "FAST":
-                this.health = 100;
-                this.maxspeed = 6;
+            case "TANK":
+                this.health = KillerRules.TANK_SHIP_HEALTH;
+                this.damage = KillerRules.TANK_SHIP_DAMAGE;
                 break;
-            case "BIG":
-                this.health = 150;
-                this.maxspeed = 4;
+            case "NORMAL":
+                this.health = KillerRules.NORMAL_SHIP_HEALTH;
+                this.damage = KillerRules.NORMAL_SHIP_DAMAGE;
+                break;
+            case "STRONG":
+                this.health = KillerRules.STRONG_SHIP_HEALTH;
+                this.damage = KillerRules.STRONG_SHIP_DAMAGE;
+                break;
+            default:
                 break;
         }
     }
@@ -357,6 +392,14 @@ public class KillerShip extends Controlled {
 
     public void setRy(double ry) {
         this.ry = ry;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
 }
