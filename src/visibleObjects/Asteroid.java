@@ -1,6 +1,7 @@
 package visibleObjects;
 
 import game.KillerGame;
+import physics.KillerPhysics;
 
 public class Asteroid extends Automata {
 
@@ -12,16 +13,18 @@ public class Asteroid extends Automata {
      * @param imgHeight
      * @param m
      * @param health 
+     * @param maxspeed 
      */
-    public Asteroid(KillerGame game, double x, double y, int imgHeight, double m, int health) {
+    public Asteroid(KillerGame game, double x, double y, int imgHeight, double m, int health, double maxspeed) {
         super(game, x, y);
 
         this.setImage();
         this.imgHeight = imgHeight;
         this.setImgSize();
-        this.m = m;
+        this.m = m;        
 
         this.health = health;
+        this.maxspeed = maxspeed;
     }
 
     // Constructor para instanciar el obj si viene de otro pc
