@@ -12,12 +12,15 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private KillerClient client;
     private final boolean right;
-
+    private String destinationId;
     private static final String EMPTY_STRING = "";
 
     private static final String STATUS_REQUEST = "ok";
 
     private static final String SEND_OBJECT_COMMAND = "object";
+    private static final String SYNC_REQUEST = "sync";
+    private static final String SYNC_CONFIRMATION = "sync-confirm";
+    private static final String SYNC_CHECK = "sync-check";
     private static final String START_GAME = "start";
     private static final String READY_TO_START = "ready";
     private static final String QUIT_GAME = "quit";
@@ -53,6 +56,10 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     public boolean isRight() {
         return this.right;
+    }
+
+    public String getDestinationId() {
+        return this.destinationId;
     }
 
     private void listeningMessages() {
@@ -96,6 +103,15 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 break;
             case ACTION_COMMAND:
                 this.processPadCommand(message);
+                break;
+            case SYNC_REQUEST:
+                this.processSyncRequest(message.getSenderId(), message.getServersQuantity());
+                break;
+            case SYNC_CONFIRMATION:
+                this.processSyncConfirmation(message);
+                break;
+            case SYNC_CHECK:
+                this.processSyncCheck(message);
                 break;
             default:
                 final String command = message.getCommand();
@@ -148,11 +164,10 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return super.getSocket();
     }
 
-    @Override
-    public synchronized boolean setSocket(final Socket sock) {
+    public synchronized boolean setSocket(final Socket sock, final String destinationId) {
 
-        if (super.setSocket(sock)) {
-
+        if (this.setSocket(sock)) {
+            this.destinationId = destinationId;
             //TODO Llamar método para actualizar el panel
             try {
                 this.getSocket().setSoTimeout(3500);
@@ -166,7 +181,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private ObjectResponse convertObjectToObjectResponse(final Alive object) {
         //TODO rellenar con los datos que se pida
         if (object instanceof Shoot) {
-        //    return this.buildObjectResponseFromShoot((Shoot) object);
+            //    return this.buildObjectResponseFromShoot((Shoot) object);
         }
         return ObjectResponse.Builder.builder(EMPTY_STRING).build();
     }
@@ -176,13 +191,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 //                .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
 //                .build();
 //    }
-
     public void checkReady() {
         this.sendMessage(Message.Builder.builder(READY_TO_START, KillerServer.getId()).build());
     }
 
     private void processReady(final Message message) {
-        if (KillerServer.getId().equals(message.getSenderId())) {
+        if (isMessageMine(message.getSenderId())) {
             this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId()).build());
         } else {
             this.getKillergame().getNextModule().sendMessage(message);
@@ -191,16 +205,16 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private void processStart(final Message message) {
         System.out.println("started");
-        if (!KillerServer.getId().equals(message.getSenderId())) {
-            this.sendMessage(message); 
+        if (!isMessageMine(message.getSenderId())) {
+            this.sendMessage(message);
         }
-          //  this.getKillergame().start();
+        this.getKillergame().start();
     }
 
-    private void processQuitGame(final Message message){
-        if (!KillerServer.getId().equals(message.getSenderId())) {
+    private void processQuitGame(final Message message) {
+        if (!isMessageMine(message.getSenderId())) {
             this.sendMessage(message);
-           //TODO this.getKillergame().quitGame();
+            //TODO this.getKillergame().quitGame();
         }
     }
 
@@ -211,5 +225,42 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         } else {
             this.getKillergame().getNextModule().sendMessage(message);
         }
+    }
+
+    private void processSyncRequest(final String senderId, final int quantity) {
+        final Message messageToSend;
+        if (this.isMessageMine(senderId)) {
+            this.client.resetSyncTimeOut();
+            this.getKillergame().setSyncronized(true);
+            this.getKillergame().setServersQuantity(quantity);
+            messageToSend = Message.Builder.builder(SYNC_CONFIRMATION, senderId)
+                    .withServersQuantity(quantity)
+                    .build();
+        } else {
+            messageToSend = Message.Builder.builder(SYNC_REQUEST, senderId)
+                    .withServersQuantity(quantity + 1)
+                    .build();
+        }
+        this.getKillergame().getNextModule().sendMessage(messageToSend);
+    }
+
+    private void processSyncConfirmation(final Message message) {
+        if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().getNextModule().sendMessage(message);
+            this.client.resetSyncTimeOut();
+            this.getKillergame().setSyncronized(true);
+            this.getKillergame().setServersQuantity(message.getServersQuantity());
+        }
+    }
+
+    private void processSyncCheck(final Message message) {
+        if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
+        this.client.resetSyncTimeOut();
+    }
+
+    private boolean isMessageMine(final String id) {
+        return KillerServer.getId().equals(id);
     }
 }

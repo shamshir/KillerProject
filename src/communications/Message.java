@@ -16,6 +16,7 @@ public class Message {
     private ObjectResponse objectResponse;
     private ConnectionResponse connectionResponse;
     private int damage;
+    private int serversQuantity;
     private String configRoom;
 
     private static final String EMPTY_STRING = "";
@@ -32,6 +33,7 @@ public class Message {
         this.objectResponse = builder.objectResponse;
         this.connectionResponse = builder.connectionResponse;
         this.damage = builder.damage;
+        this.serversQuantity = builder.serversQuantity;
         this.configRoom = builder.configRoom;
     }
 
@@ -70,7 +72,15 @@ public class Message {
     public String getConfigRoom() {
         return configRoom;
     }
-
+    
+    public int getServersQuantity(){
+        return this.serversQuantity;
+    }
+    
+    public void setServersQuantity(final int quantity){
+        this.serversQuantity = quantity;
+    }
+    
     public static Message readMessage(final String jsonStr) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -102,6 +112,7 @@ public class Message {
         private ObjectResponse objectResponse;
         private ConnectionResponse connectionResponse;
         private int damage;
+        private int serversQuantity;
         private String configRoom;
 
         public Builder(final String command, final String senderId) {
@@ -145,6 +156,11 @@ public class Message {
 
         public Builder withConfigRoom(final String configRoom) {
             this.configRoom = configRoom;
+            return this;
+        }
+        
+        public Builder withServersQuantity(final int quantity){
+            this.serversQuantity = quantity;
             return this;
         }
 
