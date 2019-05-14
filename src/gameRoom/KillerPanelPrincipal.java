@@ -26,17 +26,21 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     
     public void setFeedbackConnetionLeft(Boolean aux){
         if(aux == true){
-         jLabelConFeedackL.setForeground(Color.GREEN);      
+         jLabelConFeedackL.setForeground(Color.GREEN);
+         jLabelConFeedackL.setText("CONECTADO");
     }else{
-         jLabelConFeedackL.setForeground(Color.RED);  
+         jLabelConFeedackL.setForeground(Color.RED);
+         jLabelConFeedackL.setText("DESCONECTADO");
         }
     }
     
     public void setFeedbackConnetionRight(Boolean aux){
         if(aux == true){
-         jLabelConFeedackR.setForeground(Color.GREEN);      
+         jLabelConFeedackR.setForeground(Color.GREEN);
+         jLabelConFeedackL.setText("CONECTADO");
     }else{
-         jLabelConFeedackR.setForeground(Color.RED);   
+         jLabelConFeedackR.setForeground(Color.RED);
+         jLabelConFeedackL.setText("DESCONECTADO");
         }
     }
 
