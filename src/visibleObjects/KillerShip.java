@@ -19,30 +19,30 @@ public class KillerShip extends Controlled {
 
     protected ShipState state;
     protected ShipType type;
-    protected String ip;
+    protected String id;
     protected String user;
     protected long timer;
 
     // Físicas
     protected double tx; // posición del morro de la nave
     protected double ty; // posición del morro de la nave
-    protected double lx; // posición del morro de la nave
-    protected double ly; // posición del morro de la nave
-    protected double rx; // posición del morro de la nave
-    protected double ry; // posición del morro de la nave
+    protected double lx;
+    protected double ly;
+    protected double rx;
+    protected double ry;
 
     /**
      *
      * @param game
      * @param x
      * @param y
-     * @param ip
+     * @param id
      * @param user
      * @param type
      */
-    public KillerShip(KillerGame game, double x, double y, String ip, String user, ShipType type) {
+    public KillerShip(KillerGame game, double x, double y, String id, String user, ShipType type) {
         super(game, x, y);
-        this.ip = ip;
+        this.id = id;
         this.user = user;
         this.type = type;
         this.state = ShipState.SAFE;
@@ -59,43 +59,47 @@ public class KillerShip extends Controlled {
 
     /**
      * Constructor para instanciar la nave si viene de otro pc; por defecto son
-     * invencibles
+     * invencibles.
+     *
      * @param game
      * @param x
      * @param y
-     * @param angle
+     * @param radians
      * @param dx
      * @param dy
-     * @param vx
+     * @param vx 
      * @param vy
-     * @param lx
-     * @param ly
-     * @param rx
-     * @param ry
-     * @param ip
+     * @param tx hitbox
+     * @param ty hitbox
+     * @param lx hitbox
+     * @param ly hitbox
+     * @param rx hitbox
+     * @param ry hitbox
+     * @param id
      * @param user
      * @param type
-     * @param health 
+     * @param health
      */
-    public KillerShip(KillerGame game, double x, double y, double angle, 
-            double dx, double dy, double vx, double vy, double lx, double ly, 
-            double rx, double ry, String ip, String user, ShipType type, 
-            int health) {
+    public KillerShip(KillerGame game, double x, double y, double radians,
+            double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly,
+            double rx, double ry, String id, String user, ShipType type, int health) {
         super(game, x, y);
         // Físicas ---> que parámetros pasan?
         this.a = 0.01;
-        this.angle = angle;
+        this.radians = radians;
         this.dx = dx;
         this.dy = dy;
         this.vx = vx;
         this.vy = vy;
-        this.vx = lx;
-        this.vy = ly;
-        this.vx = rx;
-        this.vy = ry;
+        this.tx = tx;
+        this.ty = ty;
+        this.lx = lx;
+        this.ly = ly;
+        this.rx = rx;
+        this.ry = ry;
         //-------
 
-        this.ip = ip;
+        this.id = id;
         this.user = user;
         this.type = type;
         this.state = ShipState.SAFE;
@@ -131,18 +135,20 @@ public class KillerShip extends Controlled {
 
     /**
      * Método llamado por el KillerPad para mandar la info que llega del mando.
-     * El KillerShip la ha de descodificsr
+     * El KillerShip la ha de descodificsr. Ajustar valores a lo que se envía
      *
-     * @param action
+     * @param kAction
      */
-    public void doAction(KillerAction action) {
-        // String acion = action.getCommand();
-        // switch (action)
-        //      case "shoot":
-        //          this.shoot();
-        //          break;
-        //  ...
-        System.out.println("KillerShip: doAction() --> hola marc :-)");
+    public void doAction(KillerAction kAction) {
+        String action = kAction.getCommand();
+        switch (action) {
+            case "shoot":
+                this.shoot();
+                break;
+            case "move":
+                this.moveShip();
+                break;
+        }
     }
 
     /**
@@ -158,7 +164,6 @@ public class KillerShip extends Controlled {
      * Método para poner escudo a la nave durante un tiempo al coger el powerUp
      * SAFE
      *
-     * @param health cantidad de salud que se suma
      */
     public void beSafe() {
         this.state = ShipState.SAFE;
@@ -179,9 +184,9 @@ public class KillerShip extends Controlled {
     @Override
     protected void setImage() {
         if (type == ShipType.FAST) {
-            this.loadImg("img/fastShip.png");
+            this.loadImg("./img/fastShip.png");
         } else if (type == ShipType.BIG) {
-            this.loadImg("img/bigShip.png");
+            this.loadImg("./img/bigShip.png");
         }
     }
 
@@ -189,7 +194,7 @@ public class KillerShip extends Controlled {
      * Método para decirle al KG que cree un obj Shoot para la nave
      */
     private void shoot() {
-        this.game.addKillerShoot(this);
+        this.game.newShoot(this);
     }
 
     /**
@@ -198,22 +203,21 @@ public class KillerShip extends Controlled {
      */
     private void moveShip() {
         // TO DO
-        // Modificar dx, dy o lo que
+        // Modificar dx, dy o lo que sea
         // Modificar ángulo para Animación
-        System.out.println("KillerShip: moveShip()");
     }
 
     private void checkSafe() {
         if (System.currentTimeMillis() - timer > 5000) {
             this.state = ShipState.ALIVE;
-            setImage();
+            this.setImage();
             // Adapto las coordenadas para la hitbox a la img
             this.setImgSize();
         }
     }
 
     /**
-     * Doy valor a health, maxSpeed, y url de imágenes según el tipo de nave
+     * Método para inicializar health y maxSpeed según el tipo de nave
      */
     private void configureShip() {
         switch (this.type.name()) {
@@ -256,9 +260,12 @@ public class KillerShip extends Controlled {
         g2d.setColor(Color.white);
         g2d.drawString(this.user, (int) x, (int) y - 10);
         g2d.drawImage(this.img, (int) x, (int) y, imgWidth, imgHeight, null);
-        g2d.setColor(Color.magenta);
-        g2d.setStroke(new BasicStroke(2));
-        g2d.drawOval((int) x - 6, (int) y - 6, imgWidth + 12, imgHeight + 12);
+        // Pintar indicador de escudo si la nave está SAFE
+        if (this.state == ShipState.SAFE) {
+            g2d.setColor(Color.magenta);
+            g2d.setStroke(new BasicStroke(2));
+            g2d.drawOval((int) x - 6, (int) y - 6, imgWidth + 12, imgHeight + 12);
+        }
     }
 
     // *********************
@@ -280,12 +287,12 @@ public class KillerShip extends Controlled {
         this.type = type;
     }
 
-    public String getIp() {
-        return ip;
+    public String getId() {
+        return id;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUser() {
@@ -318,6 +325,38 @@ public class KillerShip extends Controlled {
 
     public void setTy(double ty) {
         this.ty = ty;
+    }
+
+    public double getLx() {
+        return lx;
+    }
+
+    public void setLx(double lx) {
+        this.lx = lx;
+    }
+
+    public double getLy() {
+        return ly;
+    }
+
+    public void setLy(double ly) {
+        this.ly = ly;
+    }
+
+    public double getRx() {
+        return rx;
+    }
+
+    public void setRx(double rx) {
+        this.rx = rx;
+    }
+
+    public double getRy() {
+        return ry;
+    }
+
+    public void setRy(double ry) {
+        this.ry = ry;
     }
 
 }

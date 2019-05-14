@@ -11,51 +11,91 @@ import visibleObjects.*;
  *
  * @author Javi
  */
-public static class KillerPhysics {
+public class KillerPhysics {
 
-    public static Controlled move(Controlled ship) {
+    public static void move(KillerShip ship) {
 
-        double maxspeedX = ship.maxspeed * ship.dx;
-        double maxspeedY = ship.maxspeed * ship.dy;
+        double x = ship.getX();
+        double y = ship.getY();
+        double maxspeedX = ship.getMaxspeed() * ship.getDx();
+        double maxspeedY = ship.getMaxspeed() * ship.getDy();
+        double vx = ship.getVx();
+        double vy = ship.getVy();
+        double a = ship.getA();
 
-        if (ship.vx + ship.a <= maxspeedX) {
-            ship.vx += ship.a;
-        } else if (ship.vx - ship.a > maxspeedX) {
-            ship.vx -= ship.a;
+        if (vx + a <= maxspeedX) {
+            vx += a;
+        } else if (vx - a > maxspeedX) {
+            vx -= a;
         } else {
         }
 
-        if (ship.vy + ship.a < maxspeedY) {
-            ship.vy += ship.a;
-        } else if (ship.vy - ship.a > maxspeedY) {
-            ship.vy -= ship.a;
+        if (vy + a < maxspeedY) {
+            vy += a;
+        } else if (vy - a > maxspeedY) {
+            vy -= a;
         } else {
         }
 
-        return updateHitBox(ship);
+        x += vx;
+        y += vy;
+        
+        ship.setX(x);
+        ship.setY(y);
+
+        updateHitBox(ship);
     }
 
-    public static Controlled updateHitBox(Controlled ship) {
-        ship.x += ship.vx;
-        ship.y += ship.vy;
+    public static void updateHitBox(KillerShip ship) {
+        
+        double x = ship.getX();
+        double y = ship.getY();
+        
+        double tX = ship.getTx();
+        double tY = ship.getTy();
+        
+        double lX = ship.getLx();
+        double lY = ship.getLy();
+        
+        double rX = ship.getRx();
+        double rY = ship.getRy();
+        
+        double radians = ship.getRadians();
+        
+        int WIDTH = ship.getImgWidth();
+        int HEIGHT = ship.getImgHeight();
 
-        ship.tX = (ship.x + ship.WIDTH / 2) - (Math.sin(ship.radians) * (ship.HEIGHT / 2));
-        ship.tY = (ship.y + ship.HEIGHT / 2) - (Math.cos(ship.radians) * (ship.HEIGHT / 2));
+        tX = (x + WIDTH / 2) - (Math.sin(radians) * (HEIGHT / 2));
+        tY = (y + HEIGHT / 2) - (Math.cos(radians) * (HEIGHT / 2));
 
-        ship.lX = (ship.x + ship.WIDTH / 2) + (Math.sin(ship.radians) * (ship.HEIGHT / 2)) + (Math.sin(ship.radians + Math.PI / 2) * (ship.WIDTH / 2));
-        ship.lX = (ship.y + ship.HEIGHT / 2) + (Math.cos(ship.radians) * (ship.HEIGHT / 2)) + (Math.cos(ship.radians + Math.PI / 2) * (ship.WIDTH / 2));
+        lX = (x + WIDTH / 2) + (Math.sin(radians) * (HEIGHT / 2)) + (Math.sin(radians + Math.PI / 2) * (WIDTH / 2));
+        lX = (y + HEIGHT / 2) + (Math.cos(radians) * (HEIGHT / 2)) + (Math.cos(radians + Math.PI / 2) * (WIDTH / 2));
 
-        ship.rX = (ship.x + ship.WIDTH / 2) + (Math.sin(ship.radians) * (ship.HEIGHT / 2)) - (Math.sin(ship.radians + Math.PI / 2) * (ship.WIDTH / 2));
-        ship.rY = (ship.y + ship.HEIGHT / 2) + (Math.cos(ship.radians) * (ship.HEIGHT / 2)) - (Math.cos(ship.radians + Math.PI / 2) * (ship.WIDTH / 2));
-
-        return ship;
+        rX = (x + WIDTH / 2) + (Math.sin(radians) * (HEIGHT / 2)) - (Math.sin(radians + Math.PI / 2) * (WIDTH / 2));
+        rY = (y + HEIGHT / 2) + (Math.cos(radians) * (HEIGHT / 2)) - (Math.cos(radians + Math.PI / 2) * (WIDTH / 2));
+        
+        ship.setTx(tX);
+        ship.setTy(tY);
+        
+        ship.setRx(rX);
+        ship.setRy(rY);
+        
+        ship.setLx(lX);
+        ship.setLy(lY);
     }
 
-    public static Shoot move(Shoot bullet) {
+    public static void move(Shoot bullet) {
+        
+        double x = bullet.getX();
+        double y = bullet.getY();
+        double radians = bullet.getRadians();
+        double speed = bullet.getMaxspeed();
 
-        bullet.x += bullet.speed * Math.cos(bullet.radians);
-        bullet.y += bullet.speed * Math.sin(bullet.radians) * -1;
+        x += speed * Math.cos(radians);
+        y += speed * Math.sin(radians) * -1;
+        
+        bullet.setX(x);
+        bullet.setY(y);
 
-        return bullet;
     }
 }

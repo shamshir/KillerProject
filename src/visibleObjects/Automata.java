@@ -19,7 +19,6 @@ public abstract class Automata extends Alive {
     }
     
     // TO DO: constructor común para instanciar objetos Autonomous recibidos de otro pc
-    // Valores necesarios para físicas?
 
     @Override
     public void run() {
@@ -41,7 +40,10 @@ public abstract class Automata extends Alive {
     // *                     Interfaces                       *
     // ********************************************************
     
-    // Interfaz Destructible    
+    /**
+     * Método para restar vida, no cambia ningún estado ni comprueba nada...
+     * @param damage vida que quita
+     */    
     @Override
     public void quitarVida(int damage) {
 //        if (state != AutonomousState.DYING) {
@@ -64,5 +66,13 @@ public abstract class Automata extends Alive {
     // *********************
     // * Getters & Setters *
     // *********************
-    
+
+    public AutonomousState getState() {
+        return state;
+    }
+
+    public void setState(AutonomousState state) {
+        this.state = state;
+    }    
+        
 }
