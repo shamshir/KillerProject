@@ -131,10 +131,10 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         portIzq = Integer.parseInt(jTextFieldPortIzq.getText());
         ipDer = jTextFieldIpDer.getText();
         portDer = Integer.parseInt(jTextFieldPortDer.getText());
-        /*kg.setPortPrev();
+        kg.setPortPrev();
         kg.setPortNext();
         kg.setIpPrev();
-        kg.setIpNext();*/
+        kg.setIpNext();
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
