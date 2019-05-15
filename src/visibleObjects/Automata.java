@@ -5,7 +5,7 @@ import game.KillerGame;
 public abstract class Automata extends Alive {
     
     public enum AutonomousState{
-        ALIVE, DIE
+        ALIVE, DEAD
     }
     
     protected AutonomousState state;
@@ -23,7 +23,7 @@ public abstract class Automata extends Alive {
     @Override
     public void run() {
 
-        while (state != AutonomousState.DIE) {
+        while (state != AutonomousState.DEAD) {
 
             this.move();
             game.checkColision(this);

@@ -8,6 +8,7 @@ import physics.KillerPhysics;
 public class Shoot extends Automata {
 
     private String id;
+    private int damage;
 
     /**
      * 
@@ -19,8 +20,9 @@ public class Shoot extends Automata {
         this.id = ship.getId();
         this.state = AutonomousState.ALIVE;
         // Posición según la posición del morro de la nave
-        this.x = ship.tx;
-        this.y = ship.ty;  
+        this.x = ship.getTx();
+        this.y = ship.getTy(); 
+        this.damage = ship.getDamage();
         
         this.maxspeed = 7;
         this.health = 1;
@@ -40,8 +42,9 @@ public class Shoot extends Automata {
      * @param vx
      * @param vy
      * @param id
+     * @param damage 
      */
-    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id) {
+    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id, int damage) {
         super(game, x, y);        
         this.a = 0.01;
         
@@ -52,6 +55,7 @@ public class Shoot extends Automata {
         
         this.id = id;
         this.state = AutonomousState.ALIVE;
+        this.damage = damage;
         
         this.maxspeed = 7;
         this.health = 1;

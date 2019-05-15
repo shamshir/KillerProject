@@ -9,7 +9,7 @@ import game.KillerGame;
 public class PowerUp extends Static implements Destructible {
 
     public enum Power {
-        HEALTH, SAFE
+        HEALTH, DAMAGE
     }
 
     private boolean wrappered;
@@ -56,7 +56,7 @@ public class PowerUp extends Static implements Destructible {
                 case "HEALTH":
                    this.loadImg("./img/health.png");
                    break;
-                case "SAFE":
+                case "DAMAGE":
                    this.loadImg("./img/safe.png");
                    break;
             }
