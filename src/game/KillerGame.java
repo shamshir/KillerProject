@@ -69,8 +69,6 @@ public class KillerGame extends JFrame {
     public static void main(String[] args) {
         new KillerGame();
     }
-    
-    public void 
 
     public void checkColision(Alive obj) {
 
