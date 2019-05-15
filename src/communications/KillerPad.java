@@ -103,27 +103,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
         if (player != null) {
             player.doAction(message.getAction());
         } else if (sendNextModule) {
-            sendPadCommandToNextModule(message, kg);
-        }
-    }
-
-    private static void sendPadCommandToNextModule(final Message message, final KillerGame kg) {
-
-        //final Message messageToSend = buildMessageWithRelay(message);
-        if (kg.getPadByIP(message.getSenderId()) == null) {
             kg.getNextModule().sendMessage(message);
         }
     }
-
-    /* private static Message buildMessageWithRelay(final Message message){
-        if (message.isRelay()) {
-            return  message;
-        } else {
-            return Message.Builder.builder(message.getCommand(), KillerServer.getId())
-                    .withAction(message.getAction())
-                    .withRelay(Boolean.TRUE)
-                    .withDamage(message.getDamage())
-                    .build();
-        }
-    }*/
 }

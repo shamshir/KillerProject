@@ -7,6 +7,7 @@ import game.KillerGame;
 import java.net.Socket;
 import visibleObjects.Shoot;
 import visibleObjects.Alive;
+import visibleObjects.KillerShip;
 
 public class VisualHandler extends ReceptionHandler implements Runnable {
 
@@ -22,7 +23,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String SYNC_CONFIRMATION = "sync-confirm";
     private static final String SYNC_CHECK = "sync-check";
     private static final String START_GAME = "start";
-    private static final String READY_TO_START = "ready";
     private static final String QUIT_GAME = "quit";
     private static final String PAD_COMMAND = "pad(.*)";
     private static final String DAMAGE_COMMAND = "pad_damage";
@@ -31,27 +31,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String ACTION_COMMAND = "action";
 
     private static final String SHOOT_TYPE = "shoot";
+    private static final String SHIP_TYPE = "ship";
 
     public VisualHandler(final KillerGame killergame, final boolean right) {
         super(killergame);
         this.right = right;
         this.startClient();
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                if (this.getSocket() != null) {
-                    System.out.println("Connected is right:" + right);
-                    this.listeningMessages();
-                    System.out.println("Disconnected is right:" + right);
-                }
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-
-            }
-        }
     }
 
     public boolean isRight() {
@@ -62,7 +47,23 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return this.destinationId;
     }
 
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                if (this.getSocket() != null) {
+                    this.listeningMessages();
+                }
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+
+            }
+        }
+    }
+
     private void listeningMessages() {
+        System.out.println("Connected is right:" + right);
+        this.updateRoom(true);
         boolean done = false;
 
         while (!done) {
@@ -74,6 +75,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             }
         }
         this.setSocket(null);
+        this.updateRoom(false);
+        System.out.println("Disconnected is right:" + right);
     }
 
     private boolean processLine(final String line) {
@@ -95,9 +98,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case START_GAME:
                 this.processStart(message);
                 break;
-            case READY_TO_START:
-                this.processReady(message);
-                break;
             case QUIT_GAME:
                 this.processQuitGame(message);
                 break;
@@ -116,7 +116,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             default:
                 final String command = message.getCommand();
                 if (command != null && command.matches(PAD_COMMAND)) {
-                    if (!KillerServer.getId().equals(message.getSenderId())) {
+                    if (!this.isMessageMine(message.getSenderId())) {
                         this.sendInfoMessageToPad(message);
                     }
                 } else {
@@ -135,9 +135,11 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private void receiveObject(final ObjectResponse object) {
 
         switch (object.getObjectType()) {
+            case SHIP_TYPE:
+                this.createShip(object);
+                break;
             case SHOOT_TYPE:
-                //TODO crear bala con los datos del response
-                //new (object.getId)
+                this.createShoot(object);
                 break;
             default:
                 System.out.println("ERROR: OBJETO DESCONOCIDO" + object.getObjectType());
@@ -149,7 +151,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     public void sendObject(final Alive object) {
         final Message message = Message.Builder.builder(SEND_OBJECT_COMMAND, KillerServer.getId())
-                .withObject(this.convertObjectToObjectResponse(object))
+                .withObject(ObjectResponse.convertObjectToObjectResponse(object))
                 .build();
         this.sendMessage(message);
     }
@@ -168,7 +170,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
         if (this.setSocket(sock)) {
             this.destinationId = destinationId;
-            //TODO Llamar método para actualizar el panel
             try {
                 this.getSocket().setSoTimeout(3500);
             } catch (Exception ex) {
@@ -178,37 +179,15 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return false;
     }
 
-    private ObjectResponse convertObjectToObjectResponse(final Alive object) {
-        //TODO rellenar con los datos que se pida
-        if (object instanceof Shoot) {
-            //    return this.buildObjectResponseFromShoot((Shoot) object);
-        }
-        return ObjectResponse.Builder.builder(EMPTY_STRING).build();
-    }
-
-//    private ObjectResponse buildObjectResponseFromShoot(final Shoot shoot) {
-//        return ObjectResponse.Builder.builder(SHOOT_TYPE)
-//                .withPosicionYInPercent(shoot.y / shoot.getKg().getViewer().getHeight())
-//                .build();
-//    }
-    public void checkReady() {
-        this.sendMessage(Message.Builder.builder(READY_TO_START, KillerServer.getId()).build());
-    }
-
-    private void processReady(final Message message) {
-        if (isMessageMine(message.getSenderId())) {
-            this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId()).build());
-        } else {
-            this.getKillergame().getNextModule().sendMessage(message);
-        }
+    public void sendStart() {
+        this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId()).build());
     }
 
     private void processStart(final Message message) {
-        System.out.println("started");
         if (!isMessageMine(message.getSenderId())) {
             this.sendMessage(message);
         }
-        this.getKillergame().start();
+        this.getKillergame().startGame();
     }
 
     private void processQuitGame(final Message message) {
@@ -262,5 +241,29 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private boolean isMessageMine(final String id) {
         return KillerServer.getId().equals(id);
+    }
+
+    private void createShip(ObjectResponse object) {
+        this.getKillergame().reciveKillerShip(object.getX(), object.getY(), object.getRadians(),
+                object.getDx(), object.getDy(),
+                object.getVx(), object.getVy(),
+                object.getTx(), object.getTy(),
+                object.getLx(), object.getLy(),
+                object.getRx(), object.getRy(),
+                object.getId(), object.getUser(),
+                object.getType(), object.getHealth());
+    }
+
+    private void createShoot(ObjectResponse object) {
+        this.getKillergame().reciveShoot(object.getX(), object.getY(), object.getRadians(),
+                object.getDx(), object.getDy(), object.getId());
+    }
+    
+    private void updateRoom(boolean connected){
+        if(this.right){
+            //TODO this.getKillergame().getRoom().setFeedbackConnetionRight(connected);
+        }else{
+            //TODO this.getKillergame().getRoom().setFeedbackConnetionLeft(connected);            
+        }
     }
 }

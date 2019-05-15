@@ -76,7 +76,7 @@ public class KillerClient implements Runnable {
 
     private void checkSyncTimeOut(final int i) {
         if (this.killergame.getStatus() == KillerGame.Status.room
-                && this.killergame.isSyncronized()) {
+                && this.killergame.isSynchronized()) {
             if (i >= 3 && !this.disconnected()) {
                 this.sendSyncCheck();
             }

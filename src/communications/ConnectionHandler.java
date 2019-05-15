@@ -51,7 +51,6 @@ public class ConnectionHandler implements Runnable {
     private void clientConnect(final ConnectionResponse connectionResponse, final String senderId) {
 
         final VisualHandler visualHandler = getVisualHandler(connectionResponse.isRight());
-        //Es posible conectarse o reconectarse?
         if (this.kg.getStatus() == KillerGame.Status.room) {
             this.setVisualHandler(visualHandler, connectionResponse);
             this.sendSyncRequest();
@@ -98,7 +97,9 @@ public class ConnectionHandler implements Runnable {
     private Message getReplyMessage(final ConnectionResponse connectionResponse, final String senderId) {
         final Message message;
         if (this.kg.newKillerPad(senderId, this.socket, connectionResponse.getUserName(), connectionResponse.getColor())) {
-            this.kg.newKillerShip(senderId, Color.decode(connectionResponse.getColor()), connectionResponse.getUserName());
+            this.kg.newKillerShip(senderId, Color.decode(connectionResponse.getColor()),
+                    connectionResponse.getUserName(), connectionResponse.getShipType());
+            
             message = Message.Builder.builder(PAD_CONNECTED, KillerServer.getId()).build();
             System.out.println("Connectado:" + senderId + " " + connectionResponse.getUserName());
         } else {
