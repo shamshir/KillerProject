@@ -18,13 +18,6 @@ import javax.sound.sampled.DataLine;
  */
 public class KillerSound {
     
-    static int i = 0;
-    
-    // Songs
-    static Clip soundBattleSong = getSound("battle.wav");
-    static Clip soundMenuSong = getSound("manu.wav");
-    static Clip soundEndingSong = getSound("ending.wav");
-
     // Shots
     static Clip soundShot = getSound("shot.wav");
     static Clip soundRocket = getSound("cohete.wav");
@@ -62,9 +55,7 @@ public class KillerSound {
     
     // Collision
     static boolean stopLoop = false;
-    static int algo = 0;
-    
-    //static Clip sound2 = getSound("battle.wav");
+    static int loops = 0;
 
     public static Clip getSound(String file) {
         try {
@@ -88,23 +79,4 @@ public class KillerSound {
     public static void stopSound(Clip clip) {
         clip.stop();
     }
-
-    public static void loopSound(Clip clip) {
-        //playSound(clip);
-        
-            //if (auxSound == true) {
-            if (algo == 0){
-                playSound(clip);
-                
-                algo ++;
-            }
-            if (clip.getFrameLength() == clip.getFramePosition()) {
-                playSound(clip);
-            } else {
-                //stopSound(clip);
-            
-            //}
-        }
-    }
-
 }

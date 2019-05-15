@@ -15,19 +15,20 @@ public class KillerRules {
     
     /**
      * @author Alvaro
+     * @param game
      * @param alive
      * @param object 
      */
-    public static void collision(Alive alive, VisibleObject object) {
-        
+    public static void collision(KillerGame game, Alive alive, VisibleObject object) {
+
         if (alive instanceof KillerShip) {
-            KillerRules.collisionShip((KillerShip) (alive), object);
+            KillerRules.collisionShip(game, (KillerShip) (alive), object);
         }
-        
+
         if (alive instanceof Shoot) {
-            KillerRules.collisionShoot((Shoot) (alive), object);
+            KillerRules.collisionShoot(game ,(Shoot) (alive), object);
         }
-        
+
     }
     
     /**
@@ -35,16 +36,16 @@ public class KillerRules {
      * @param ship
      * @param object 
      */
-    private static void collisionShip(KillerShip ship, VisibleObject object) {
+    private static void collisionShip(KillerGame game, KillerShip ship, VisibleObject object) {
         
         // Collision with Wall
         if (object instanceof Wall) {
-            KillerRules.collisionShipWithWall(ship, (Wall) (object));
+            KillerRules.collisionShipWithWall(game, ship, (Wall) (object));
         }
         
         // Collision with Ship
         if (object instanceof KillerShip) {
-            KillerRules.collisionShipWithShip(ship, (KillerShip) (ship));
+            KillerRules.collisionShipWithShip(game, ship, (KillerShip) (ship));
         }
         
         // Collision with Asteroid
@@ -79,7 +80,7 @@ public class KillerRules {
         
         // Collision with PowerUp
         if (object instanceof Shoot) {
-            KillerRules.collisionShipWithShoot(ship, (Shoot) (object));
+            KillerRules.collisionShipWithShoot(game, ship, (Shoot) (object));
         }
         
     }
@@ -89,16 +90,16 @@ public class KillerRules {
      * @param shoot
      * @param object 
      */
-    private static void collisionShoot(Shoot shoot, VisibleObject object) {
+    private static void collisionShoot(KillerGame game, Shoot shoot, VisibleObject object) {
         
         // Collision with Wall
         if (object instanceof Wall) {
-            KillerRules.collisionShootWithWall(shoot, (Wall) (object));
+            KillerRules.collisionShootWithWall(game, shoot, (Wall) (object));
         }
         
         // Collision with Ship
         if (object instanceof KillerShip) {
-            KillerRules.collisionShootWithShip(shoot, (KillerShip) (object));
+            KillerRules.collisionShipWithShoot(game, (KillerShip) (object), shoot);
         }
         
         // Collision with Asteroid
@@ -133,23 +134,101 @@ public class KillerRules {
         
         // Collision with PowerUp
         if (object instanceof Shoot) {
-            KillerRules.collisionShootWithShoot(shoot, (Shoot) (object));
+            KillerRules.collisionShootWithShoot(game, shoot, (Shoot) (object));
         }
         
     }
     
     // Collisions Ship
-    private static void collisionShipWithWall(KillerShip ship, Wall wall) {}
     
-    private static void collisionShipWithShip(KillerShip ship, KillerShip ship2) {}
+    /**
+     * @author Christian
+     * @param game
+     * @param ship
+     * @param wall 
+     */
+    private static void collisionShipWithWall(KillerGame game, KillerShip ship, Wall wall) {
+        // Detect wall type
+        if (wall.getType() == Wall.Limit.NORTH){
+            // Teleport to down
+            ship.setY(0 + ship.getImgHeight());
+        }
+        if (wall.getType() == Wall.Limit.SOUTH){
+            // Teleport to top
+            ship.setY((game.getHeight()) + (ship.getImgWidth()));
+        }
+        if (wall.getType() == Wall.Limit.EAST){
+            // Remove from the array
+            game.removeObject(ship);
+            // Send Ship to the prev module
+            game.sendObjectToPrev(ship);
+        }
+        if (wall.getType() == Wall.Limit.WEST){
+            // Delete from the array
+            game.removeObject(ship);
+            // Send ship to the next module
+            game.sendObjectToNext(ship);
+        }
+    }
     
-    private static void collisionShipWithShoot(KillerShip ship, Shoot shoot) {}
+    private static void collisionShipWithShip(KillerGame game, KillerShip ship, KillerShip ship2) {}
+    
+    /**
+     * @author Christian
+     * @param shoot
+     * @param ship
+     */
+    private static void collisionShipWithShoot(KillerGame game, KillerShip ship, Shoot shoot) {
+        
+        // Substract heatlh to ship
+        ship.quitarVida(shoot.getDamage());
+        
+        // Remove shot from the array
+        game.removeObject(shoot);
+        
+    }
     
     // Collision Shoot
-    private static void collisionShootWithWall(Shoot shoot, Wall wall) {}
+    /**
+     * @author Christian
+     * @param game
+     * @param shoot
+     * @param wall 
+     */
+    private static void collisionShootWithWall(KillerGame game, Shoot shoot, Wall wall) {
+
+        // Detect wall type
+        if (wall.getType() == Wall.Limit.NORTH){
+            // Teleport to bottom
+            shoot.setY((game.getHeight()) + (shoot.getImgWidth()));
+        }
+        if (wall.getType() == Wall.Limit.SOUTH){
+            // Teleport to top
+            shoot.setY(0 + shoot.getImgHeight());
+        }
+        if (wall.getType() == Wall.Limit.EAST){
+            // Delete from the array
+            game.removeObject(shoot);
+            // Send shoot to the prev module
+            game.sendObjectToPrev(shoot);
+        }
+        if (wall.getType() == Wall.Limit.WEST){
+            // Delete from the array
+            game.removeObject(shoot);
+            // Send shoot to the next module
+            game.sendObjectToNext(shoot);
+        }
+    }
     
-    private static void collisionShootWithShip(Shoot shoot, KillerShip ship) {}
-    
-    private static void collisionShootWithShoot(Shoot shoot, Shoot shoot2) {}
+    /**
+     * @author Christian
+     * @param shoot
+     * @param shoot2
+     */
+    private static void collisionShootWithShoot(KillerGame game, Shoot shoot, Shoot shoot2) {
+        //reventar ambos shots
+        game.removeObject(shoot);
+        game.removeObject(shoot2);
+    }
 
 }
