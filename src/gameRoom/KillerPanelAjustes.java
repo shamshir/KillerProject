@@ -5,21 +5,27 @@
  */
 package gameRoom;
 
-import game.KillerGame;
+
 
 /**
  *
  * @author Yeray
  */
 public class KillerPanelAjustes extends javax.swing.JPanel {
-    //Variable Killer Game
-     KillerGame kg;
+    
+    //Variables jPanel
+     KillerPanelPrincipal kpp;
+    
     /**
      * Creates new form KillerPanelAjustes
      */
-    public KillerPanelAjustes(KillerGame kg) {
-        this.kg = kg;
+    public KillerPanelAjustes(KillerPanelPrincipal kpp) {
+        this.kpp = kpp;
         initComponents();
+    }
+    
+    public KillerPanelAjustes getKillerPanelAjustes(){
+        return this;
     }
 
     /**
@@ -65,6 +71,8 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
+        this.setVisible(false);
+        kpp.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
