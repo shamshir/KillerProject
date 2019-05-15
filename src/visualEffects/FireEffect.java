@@ -40,14 +40,18 @@ public class FireEffect extends KillerImage {
         } catch (IOException ex) {
             Logger.getLogger(FireEffect.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        // setear paleta de colores para el fuego
+        this.setPaCo();
 
         this.fireImage = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
         this.sparks = sourceSparks;
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth() - this.getOriginalImage().getWidth()];
-        this.setPaCo();
-
         this.effectImg = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-    }   
+        
+        // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
+        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
+    }
 
     public void setPaCo() {
         this.paCo = new MyColor[256];
@@ -137,10 +141,10 @@ public class FireEffect extends KillerImage {
     public void run() {
 
         while (this.checkObjectEffect()) {
-            
+
             this.construirImg();
             this.getGraphics().drawImage(this.effectImg, 0, 0, null);
-            
+
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ex) {
