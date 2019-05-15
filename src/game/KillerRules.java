@@ -1,81 +1,155 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game;
 
-import visibleObjects.Automata;
-import visibleObjects.VisibleObject;
-import visibleObjects.Alive;
-import visibleObjects.Shoot;
-import visibleObjects.Controlled;
+import visibleObjects.*;
 
 /**
- *
- * @author berna
+ * @author Alvaro & Christian
  */
 public class KillerRules {
-
-    public static void collision(VisibleObject obj1, VisibleObject obj2) {
-        if (obj1 instanceof Alive && obj2 instanceof Alive) {
-            collisionAlive((Alive) obj1, (Alive) obj2);
+    
+    // Static Constants Normal Ship
+    public static final int NORMAL_SHIP_HEALTH = 100;
+    public static final int NORMAL_SHIP_DAMAGE = 10;
+    
+    // Static Methods
+    
+    /**
+     * @author Alvaro
+     * @param alive
+     * @param object 
+     */
+    public static void collision(Alive alive, VisibleObject object) {
+        
+        if (alive instanceof KillerShip) {
+            KillerRules.collisionShip((KillerShip) (alive), object);
         }
-    }
-
-    public static void collisionAlive(Alive obj1, Alive obj2) {
-
-//        obj1.collision();
-//        obj2.collision();
-        if (obj1 instanceof Controlled && obj2 instanceof Controlled) {
-
-            if (!((Controlled) obj1).isDeath() && !((Controlled) obj2).isDeath()) {
-//                ((Controlled) obj2).kill();
-//                ((Controlled) obj1).kill();
-//                System.out.println("muertos");
-//            } else {
-//                if (!((Controlled) obj1).isDeath() && ((Controlled) obj1).isDeath()) {
-//                    System.out.println("muerto1");
-//                    ((Controlled) obj2).kill();
-//                }
-//                if (!((Controlled) obj2).isDeath() && !((Controlled) obj1).isDeath()) {
-//                    System.out.println("muerto2");
-//                    ((Controlled) obj1).kill();
-//                }
-            }
-
-        } else  {
-            if (obj1 instanceof Controlled && obj2 instanceof Automata
-                    && !((Controlled) obj1).isDeath()) {
-                ((Controlled) obj1).kill();
-                obj1.death();
-            }
-
-            if (obj2 instanceof Controlled && obj1 instanceof Automata
-                    && !((Controlled) obj2).isDeath()) {
-                ((Controlled) obj2).kill();
-                obj1.death();
-            }
-
+        
+        if (alive instanceof Shoot) {
+            KillerRules.collisionShoot((Shoot) (alive), object);
         }
-
+        
     }
-
-    public static void collisionShoot(Shoot obj1, Alive obj2) {
-
-        if (obj2 instanceof Controlled && !((Controlled) obj2).isDeath()) {
-            System.out.println(obj1.getShip().getIp()
-            +"/"+((Controlled) obj2).getIp());
-            if (!obj1.getShip().getIp().equals(((Controlled) obj2).getIp())) {
-                ((Controlled) obj2).kill();
-                obj1.points(5);
-            }
-        } else if (obj2 instanceof Automata) {
-            obj2.death();
-            obj1.points(2);
+    
+    /**
+     * @author Alvaro
+     * @param ship
+     * @param object 
+     */
+    private static void collisionShip(KillerShip ship, VisibleObject object) {
+        
+        // Collision with Wall
+        if (object instanceof Wall) {
+            KillerRules.collisionShipWithWall(ship, (Wall) (object));
+        }
+        
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            KillerRules.collisionShipWithShip(ship, (KillerShip) (ship));
+        }
+        
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            
+        }
+        
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            
         }
 
-        obj1.death();
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            
+        }
+        
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            
+        }
+        
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            
+        }
+        
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            
+        }
+        
+        // Collision with PowerUp
+        if (object instanceof Shoot) {
+            KillerRules.collisionShipWithShoot(ship, (Shoot) (object));
+        }
+        
     }
+    
+    /**
+     * @author Alvaro
+     * @param shoot
+     * @param object 
+     */
+    private static void collisionShoot(Shoot shoot, VisibleObject object) {
+        
+        // Collision with Wall
+        if (object instanceof Wall) {
+            KillerRules.collisionShootWithWall(shoot, (Wall) (object));
+        }
+        
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            KillerRules.collisionShootWithShip(shoot, (KillerShip) (object));
+        }
+        
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            
+        }
+        
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            
+        }
+        
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            
+        }
+        
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            
+        }
+        
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            
+        }
+        
+        // Collision with PowerUp
+        if (object instanceof Shoot) {
+            KillerRules.collisionShootWithShoot(shoot, (Shoot) (object));
+        }
+        
+    }
+    
+    // Collisions Ship
+    private static void collisionShipWithWall(KillerShip ship, Wall wall) {}
+    
+    private static void collisionShipWithShip(KillerShip ship, KillerShip ship2) {}
+    
+    private static void collisionShipWithShoot(KillerShip ship, Shoot shoot) {}
+    
+    // Collision Shoot
+    private static void collisionShootWithWall(Shoot shoot, Wall wall) {}
+    
+    private static void collisionShootWithShip(Shoot shoot, KillerShip ship) {}
+    
+    private static void collisionShootWithShoot(Shoot shoot, Shoot shoot2) {}
 
 }

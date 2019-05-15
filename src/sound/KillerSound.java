@@ -5,12 +5,21 @@
  */
 package sound;
 
+import java.io.File;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+
 /**
  *
- * @author Javi
+ * @author Christian
  */
 public class KillerSound {
-        static int i = 0;
+    
+    static int i = 0;
+    
     // Songs
     static Clip soundBattleSong = getSound("battle.wav");
     static Clip soundMenuSong = getSound("manu.wav");
@@ -52,12 +61,9 @@ public class KillerSound {
     static Clip soundPowerUp = getSound("powerUp.wav");
     
     // Collision
-    
-
-    
-    
     static boolean stopLoop = false;
     static int algo = 0;
+    
     //static Clip sound2 = getSound("battle.wav");
 
     public static Clip getSound(String file) {
