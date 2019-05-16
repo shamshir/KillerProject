@@ -5,7 +5,7 @@
  */
 package gameRoom;
 
-import game.KillerGame;
+
 
 /**
  *
@@ -18,14 +18,20 @@ public class KillerPanelConectar extends javax.swing.JPanel {
      private int portIzq;
      private int portDer;
      
-     //Variable Killer Game
-     KillerGame kg;
+     //Variables jPanel
+     KillerPanelPrincipal kpp;
+     
+     
     /**
      * Creates new form NewJPanelConectar
      */
-    public KillerPanelConectar(KillerGame kg) {
-        this.kg = kg;
+    public KillerPanelConectar(KillerPanelPrincipal kpp) {
+        this.kpp = kpp;
         initComponents();
+    }
+    
+    public KillerPanelConectar getKillerPanelConectar(){
+        return this;
     }
 
     /**
@@ -131,15 +137,17 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         portIzq = Integer.parseInt(jTextFieldPortIzq.getText());
         ipDer = jTextFieldIpDer.getText();
         portDer = Integer.parseInt(jTextFieldPortDer.getText());
-        /*kg.setPortPrev();
+        kg.setPortPrev();
         kg.setPortNext();
         kg.setIpPrev();
-        kg.setIpNext();*/
+        kg.setIpNext();
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
+        this.setVisible(false);
+        kpp.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

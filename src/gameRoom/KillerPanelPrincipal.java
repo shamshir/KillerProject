@@ -15,13 +15,25 @@ import java.awt.Color;
 public class KillerPanelPrincipal extends javax.swing.JPanel {
     //Variable Killer Game
     private KillerGame kg;
+    
+    //Variables jPanel
+    private KillerPanelConectar kpc;
+    private KillerPanelAjustes kpa;
+    
+    //getKillerShips()  para la lista
+    
     /**
      * Creates new form KillerPanelPrincipal
      * @param kg
      */
     public KillerPanelPrincipal(KillerGame kg) {
         this.kg = kg;
+        jButtonJugar.setEnabled(false);
         initComponents();
+        KillerPanelConectar kpc = new KillerPanelConectar(this);
+        kpc.setVisible(false);
+        KillerPanelAjustes kpa = new KillerPanelAjustes(this);
+        kpa.setVisible(false);
     }
     
     public void setFeedbackConnetionLeft(Boolean aux){
@@ -41,6 +53,18 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     }else{
          jLabelConFeedackR.setForeground(Color.RED);
          jLabelConFeedackL.setText("DESCONECTADO");
+        }
+    }
+    
+    public KillerPanelPrincipal getKillerPanelPrincipal(){
+        return this;
+    }
+    
+    public void setButtonPlay(Boolean aux){
+        if (aux == true) {
+            jButtonJugar.setEnabled(true);
+        } else {
+            jButtonJugar.setEnabled(false);
         }
     }
 
@@ -135,15 +159,19 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
     private void jButtonAjustesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjustesActionPerformed
         // AJUSTES
+        this.setVisible(false);
+        kpa.setVisible(true);
     }//GEN-LAST:event_jButtonAjustesActionPerformed
 
     private void jButtonConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarActionPerformed
         // CONECTAR
+        this.setVisible(false);
+        kpc.setVisible(true);
     }//GEN-LAST:event_jButtonConectarActionPerformed
 
     private void jButtonJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJugarActionPerformed
         // JUGAR
-        //kg.sendReady();
+        kg.sendStart();
     }//GEN-LAST:event_jButtonJugarActionPerformed
 
 
