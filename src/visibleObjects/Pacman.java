@@ -14,7 +14,7 @@ public class Pacman extends Automata {
     private boolean mouthOpened;
 
     /**
-     * Toda la clase es provisional, pa que se vea algo
+     * 
      * @param game
      * @param x
      * @param y 

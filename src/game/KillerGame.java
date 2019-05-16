@@ -4,137 +4,170 @@ package game;
 import visualEffects.*;
 import visibleObjects.*;
 import communications.*;
+import gameRoom.*;
+import sound.*;
 // Other imports
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.net.Socket;
 import java.util.ArrayList;
 import javax.swing.*;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 /**
- * @author Alvaro
+ * @author Alvaro & Christian
  */
 public class KillerGame extends JFrame {
-    
-    // Attributes
-    
-    // Game
+
+    // Game Attributes
     public enum Status {
-        room, starting, game
+        room, game
     };
 
     private Status status;
-    
-    // Lista de objetos
+
+    // Object list
     private ArrayList<VisibleObject> objects = new ArrayList<>();
-    
-    // Lista de naves de naves | IP del mando al que pertenece, Nave
-    private Hashtable<String, Controlled> ships = new Hashtable();
-    
+
+    // KillerShip list | <ip, ship>
+    private Hashtable<String, KillerShip> ships = new Hashtable();
+
     // Server
     private KillerServer server;
-    
+
     // Visual Handlers
     private VisualHandler nextModule;
     private VisualHandler prevModule;
 
-    // Gamepad List | IP del mando, Mando
+    /**
+     * Communication Handlers Estas variables son usadas por el modulo de comunicaciones.
+     */
+    private int serversQuantity = 0;
+    private boolean synchro = false;
+
+    // Gamepad List | <ip, pads>
     private Hashtable<String, KillerPad> pads = new Hashtable();
-    
+
     // Viewer
     private Viewer viewer;
+    
+    // Room
+    private KillerPanelPrincipal room;
 
     // Constructors 
     public KillerGame() {
         
-        // Update game status
+        // Show window
+        this.showWindow();
+
+        // Open communications
+        this.generateComunnications();
+        
+        // Set game status
         this.status = Status.room;
         
-        // Open left and right modules
-        this.newPrevModule();
-        this.newPrevModule();
-        
-        // Open server
-        this.newServer();
-        
-        // Show window
-        
-        // Start room
-        
+        // Show room
+        this.newKillerRoom();
+
     }
 
-    // Methods
-    public void checkColision(Alive obj) {
-        
-        // TODO
-
-        // Bernat Code //  Este codigo sera eliminado //
-        for (int i = 0; i < objects.size(); i++) {
-
-            VisibleObject objCol = null;
-
-            if (objects.get(i) != obj) {
-                objCol = objects.get(i);
-            }
-
-            if (objCol instanceof Alive) {
-                if (obj.nextMove().intersects(((Alive) objCol).hitbox)) {
-                    KillerRules.collision(obj, objCol);
-                }
-
-            }
-
-        }
-        // Bernat Code // Este codigo sera eliminado //
-        
-    }
-
-    // Bernat Code // Este metodo sera eliminado //
-    public void checkColision(Shoot obj) {
-        //colision con limites
-        if (obj.getY() >= viewer.getHeight() || obj.getY() <= 0
-                || obj.getX() >= viewer.getWidth() || obj.getX() <= 0) {
-            obj.death();
-        }
-        for (int i = 0; i < objects.size(); i++) {
-            VisibleObject objCol = null;
-            if (objects.get(i) != obj.getControlled()) {
-                objCol = objects.get(i);
-            }
-            if (objCol instanceof Alive) {
-                if (obj.hitbox.intersects(((Alive) objCol).hitbox)) {
-                    KillerRules.collisionShoot(obj, (Alive) objCol);
-                }
+    // KillerGame methods
+    
+    /**
+     * @author Christian & Alvaro
+     * @param alive
+     */
+    public void checkColision(Alive alive) {
+        for (int inc = 0; inc < this.objects.size(); inc++) {
+            VisibleObject object = this.objects.get(inc);
+            if (KillerPhysiscs.collision(alive, object)) {
+                KillerRules.collision(this, alive, this.objects.get(inc));
             }
         }
     }
-    // Bernat Code // Este metodo sera eliminado //
+    
+    public void startGame() {
+        
+        // Change Status
+        this.status = KillerGame.Status.game;
+        
+        // Add walls
+        addWalls();
+        
+        // Add Viewer
+        this.newViewer();
+        
+    }
+    
+    /**
+     * @author Christian
+     * @param object 
+     */
+    public void removeObject(VisibleObject object) {
+        try {
+            this.objects.remove(this);
+        } catch (Exception e) {
+            System.out.println("Este objecto no se encuentra en la array");
+        }
+    }
+    
+    // Communication methods
+    
+    /**
+     * @author Christian
+     */
+    private void generateComunnications() {
+        newPrevModule();
+        newNextModule();
+        newServer();
+    }
     
     public void sendMessageToPrev(Message message) {
-        // TODO
+        this.prevModule.sendMessage(message);
     }
-    
+
     public void sendMessageToNext(Message message) {
-        // TODO
+        this.nextModule.sendMessage(message);
     }
-    
+
     public void sendObjectToPrev(Alive object) {
-        // TODO
+        this.prevModule.sendObject(object);
     }
-    
+
     public void sendObjectToNext(Alive object) {
-        // TODO
+        this.nextModule.sendObject(object);
     }
-    
-    public void StartGame() {
+
+    public void sendStart() {
         if (this.status == Status.room) {
-            this.status = Status.starting;
-            // TODO
+            this.nextModule.sendStart();
             this.status = Status.game;
         }
     }
     
+    // Window methods
+    public void showWindow() {
+        this.setSize(1120, 630);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.getContentPane().setLayout(new GridLayout());
+        this.setResizable(false);
+        this.setUndecorated(true);
+        this.setVisible(true);
+    }
+    
+    private void addWalls() {
+        // Add walls
+        this.newWall(Wall.Limit.EAST);
+        this.newWall(Wall.Limit.NORTH);
+        this.newWall(Wall.Limit.SOUTH);
+        this.newWall(Wall.Limit.WEST);
+    }
+    
     // Methods new
+    
+    // New communications
     private void newServer() {
         try {
             this.server = new KillerServer(this, 8000);
@@ -155,41 +188,120 @@ public class KillerGame extends JFrame {
     }
 
     public boolean newKillerPad(String ip, Socket socket, String user, String color) {
-        
+
         boolean result = false;
-        
+
         if (this.status == Status.room) {
             KillerPad pad = new KillerPad(this, socket, user, color);
             this.pads.put(ip, pad);
             new Thread(pad).start();
             result = true;
         }
-        
+
         return result;
-        
+
     }
 
-    public void newKillerShip(String ip, Color color, String user) {
-        Controlled ship = new Controlled(this, color, ip, user);
+    // New VisibleObjects
+    public void newKillerShip(String ip, Color color, String user, int x, int y, KillerShip.ShipType type) {
+        KillerShip ship = new KillerShip(this, x, y, ip, user, type);
         this.ships.put(ip, ship);
         this.objects.add(ship);
         new Thread(ship).start();
     }
-    
-    public void newShoot(Color color, Controlled ship) {
-        Shoot shoot = new Shoot(this, color, ship);
+
+    /**
+     *
+     * Este metodo sirve para crear una nave cuando venga desde otra pantalla.
+     *
+     * @param x
+     * @param y
+     * @param radians
+     * @param dx
+     * @param dy
+     * @param vx
+     * @param vy
+     * @param tx
+     * @param ty
+     * @param lx
+     * @param ly
+     * @param rx
+     * @param ry
+     * @param ip
+     * @param user
+     * @param type
+     * @param health
+     */
+    public void reciveKillerShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health) {
+        KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health);
+        this.ships.put(ip, ship);
+        this.objects.add(ship);
+        new Thread(ship).start();
+    }
+
+    public void newShoot(KillerShip ship) {
+        Shoot shoot = new Shoot(this, ship);
         this.objects.add(shoot);
         new Thread(shoot).start();
     }
 
-    // Este metodo sera eliminado //
-    public void createControlled(Controlled contr) {
-        objects.add(contr);
-        new Thread(contr).start();
+    public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
+        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage);
+        this.objects.add(shoot);
+        new Thread(shoot).start();
     }
-    // Este metodo sera eliminado //
 
-    // Methods get    
+    public void newWall(Wall.Limit limit) {
+        Wall wall = new Wall(this, limit);
+        this.objects.add(wall);
+    }
+
+    // New room
+    /**
+     * @author Chirtsian
+     */
+    public void newKillerRoom() {
+        this.room = new KillerPanelPrincipal(this);
+        this.setSize(525, 525);
+        this.setLocationRelativeTo(null);
+        this.add(room, 0, 0);
+    }
+
+    // New Viewer
+    private void newViewer() {
+        this.viewer = new Viewer(this);
+        this.add(this.viewer, 0, 0);
+        new Thread(this.viewer).start();
+    }
+
+    // Methods get
+    
+    // Methods get Objects
+    public KillerShip getShipByIP(String ip) {
+        return this.ships.get(ip);
+    }
+    
+    public Hashtable<String, KillerShip> getKillerShips() {
+        return this.ships;
+    }
+
+    public ArrayList<VisibleObject> getObjects() {
+        return this.objects;
+    }
+
+    // Methods get Communications
+    public KillerServer getServer() {
+        return this.server;
+    }
+
+    public VisualHandler getPrevModule() {
+        return this.prevModule;
+    }
+
+    public VisualHandler getNextModule() {
+        return this.nextModule;
+    }
+
     public KillerPad getPadByIP(String ip) {
         return this.pads.get(ip);
     }
@@ -198,43 +310,79 @@ public class KillerGame extends JFrame {
         return pads;
     }
 
-    public Controlled getShipByIP(String ip) {
-        return this.ships.get(ip);
+    public int getServersQuantity() {
+        return serversQuantity;
     }
-    
-    public KillerServer getServer() {
-        return this.server;
+
+    public boolean isSynchronized() {
+        return synchro;
     }
-    
-    /**
-     * El nombre de este metodo sera cambiado por getPrevModule()
-     * @return Modulo previo.
-     */
-    public VisualHandler getPk() {
-        return this.prevModule;
-    }
-    
-    /**
-     * El nombre de este metodo sera cambiado por getNextModule()
-     * @return Modulo siguiente.
-     */
-    public VisualHandler getNk() {
-        return this.nextModule;
-    }
-    
+
+    // Get viewer
     public Viewer getViewer() {
         return this.viewer;
     }
-    
+
     public Status getStatus() {
         return this.status;
     }
-    
-    // Methods set
-    
+        
+    // Get room
+    public KillerPanelPrincipal getRoom() {
+        return room;
+    }
+
+    // Methods set Communications
+    public void setPortPrev(int port) {
+        this.prevModule.setDestinationPort(port);
+    }
+
+    public void setPortNext(int port) {
+        this.nextModule.setDestinationPort(port);
+    }
+
+    public void setIpPrev(String ip) {
+        this.prevModule.setDestinationIp(ip);
+    }
+
+    public void setIpNext(String ip) {
+        this.prevModule.setDestinationIp(ip);
+    }
+
+    public void setServersQuantity(int serversQuantity) {
+        this.serversQuantity = serversQuantity;
+    }
+
+    public void setSyncronized(boolean synchro) {
+        this.synchro = synchro;
+        this.room.setButtonPlay(synchro);
+    }
+
     // Main activity
     public static void main(String[] args) {
+        
+        /*
+        // New KillerGame
         KillerGame game = new KillerGame();
+
+        // Create a Scanner object
+        Scanner scanner = new Scanner(System.in);
+
+        // Read user input
+        System.out.println("Enter IP. ");
+        String ip = scanner.nextLine();
+        System.out.println("IP to connect is: " + ip);
+
+        // Read PORT
+        System.out.println("Enter PORT. ");
+        int port = Integer.parseInt(scanner.nextLine());
+        System.out.println("IP to connect is: " + port);
+
+        // Set to next module
+        game.getNextModule().setDestinationPort(port);
+        game.getNextModule().setDestinationIp(ip);
+        */
+        
     }
 
 }

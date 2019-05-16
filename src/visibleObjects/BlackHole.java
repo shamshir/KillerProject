@@ -10,22 +10,22 @@ public class BlackHole extends Static {
      * @param x
      * @param y
      * @param height
-     * @param weight 
+     * @param m 
      */
-    public BlackHole(KillerGame game, double x, double y, int height, int weight) {
+    public BlackHole(KillerGame game, double x, double y, int height, int m) {
         super(game, x, y);
 
         this.setImage();
 
         this.imgHeight = height;
         this.setImgSize();
-        this.m = weight;
+        this.m = m;
 
     }
 
     @Override
     protected void setImage() {
-        this.loadImg("img/blackhole.png");
+        this.loadImg("./img/blackhole.png");
     }
 
     // ********************************************************

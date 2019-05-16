@@ -1,7 +1,6 @@
 package visibleObjects;
 
 import game.KillerGame;
-import physics.KillerPhysics;
 
 public abstract class Alive extends VisibleObject implements Runnable, Destructible {
 

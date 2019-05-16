@@ -10,16 +10,16 @@ public class Planeta extends Static {
      * @param x
      * @param y
      * @param height
-     * @param weight 
+     * @param m 
      */
-    public Planeta(KillerGame game, double x, double y, int height, int weight) {
+    public Planeta(KillerGame game, double x, double y, int height, int m) {
         super(game, x, y);
 
         this.setImage();
 
         this.imgHeight = height;
         this.setImgSize();
-        this.m = weight;
+        this.m = m;
     }
 
     // ********************************************************
@@ -34,6 +34,6 @@ public class Planeta extends Static {
 
     @Override
     protected void setImage() {
-        this.loadImg("img/planet1.png");
+        this.loadImg("./img/planet1.png");
     }
 }

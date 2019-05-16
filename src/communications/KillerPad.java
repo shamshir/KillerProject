@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class KillerPad extends ReceptionHandler implements Runnable {
 
-    private KillerClient client;
+    private KillerClientPad client;
     private final String id;
     private boolean disconnected = false;
     private int disconnectTime = 300;
@@ -29,10 +29,16 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     public KillerPad(final KillerGame killergame, final Socket sock, final String user, final String color) {
         super(killergame, sock);
         this.id = sock.getInetAddress().getHostAddress();
+        this.startClient();
     }
 
     public String getId() {
         return this.id;
+    }
+    
+    private void startClient() {
+        this.client = new KillerClientPad(this);
+        new Thread(this.client).start();
     }
 
     @Override
@@ -46,9 +52,10 @@ public class KillerPad extends ReceptionHandler implements Runnable {
             }
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException ex) {}
+            } catch (InterruptedException ex) {
+            }
 
-            if(disconnectTime-- <0){
+            if (disconnectTime-- < 0) {
                 this.disconnected = true;
             }
         }
@@ -88,35 +95,15 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     }
 
     public static void sendActionToPlayer(final Message message,
-                                          final KillerGame kg,
-                                          final boolean sendNextModule) {
-        System.out.println("ACTION RECIBIDA: "+message.getAction().getCommand()+ "   "+ message.getCommand());
-
+            final KillerGame kg,
+            final boolean sendNextModule) {
+        System.out.println("ACTION RECIBIDA: " + message.getAction().getCommand() + "   " + message.getCommand());
 
         KillerShip player = kg.getShipByIP(message.getSenderId());
         if (player != null) {
             player.doAction(message.getAction());
         } else if (sendNextModule) {
-            sendPadCommandToNextModule(message, kg);
+            kg.getNextModule().sendMessage(message);
         }
     }
-
-    private static void sendPadCommandToNextModule(final Message message, final KillerGame kg) {
-
-        //final Message messageToSend = buildMessageWithRelay(message);
-        kg.getNextModule().sendMessage(message);
-
-    }
-
-    /* private static Message buildMessageWithRelay(final Message message){
-        if (message.isRelay()) {
-            return  message;
-        } else {
-            return Message.Builder.builder(message.getCommand(), KillerServer.getId())
-                    .withAction(message.getAction())
-                    .withRelay(Boolean.TRUE)
-                    .withDamage(message.getDamage())
-                    .build();
-        }
-    }*/
 }
