@@ -2,6 +2,7 @@ package communications;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import visibleObjects.KillerShip;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class ConnectionResponse {
@@ -10,7 +11,7 @@ public class ConnectionResponse {
     private int originPort;
     private String color;
     private String userName;
-    private String shipType;
+    private KillerShip.ShipType shipType;
 
     public ConnectionResponse() {
 
@@ -40,7 +41,7 @@ public class ConnectionResponse {
         return userName;
     }
 
-    public String getShipType() {
+    public KillerShip.ShipType getShipType() {
         return shipType;
     }
     
@@ -50,7 +51,7 @@ public class ConnectionResponse {
         private int originPort;
         private String color;
         private String userName;
-        private String shipType;
+        private KillerShip.ShipType shipType;
 
         public Builder() {
         }
@@ -79,7 +80,7 @@ public class ConnectionResponse {
             return this;
         }
 
-        public Builder withShipType(final String shipType){
+        public Builder withShipType(final KillerShip.ShipType shipType){
             this.shipType = shipType;
             return this;
         }
