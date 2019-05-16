@@ -6,7 +6,7 @@ import java.net.*;
 
 public class KillerClient implements Runnable {
 
-    private final ReceptionHandler visualHandler;
+    private final VisualHandler visualHandler;
     private final KillerGame killergame;
     private int syncTimeOut;
 
@@ -58,7 +58,7 @@ public class KillerClient implements Runnable {
     private void contact(final Socket sock) throws Exception {
 
         final ConnectionResponse connectionResponse = ConnectionResponse.Builder.builder()
-                .withRight(!((VisualHandler) this.visualHandler).isRight())
+                .withRight(!this.visualHandler.isRight())
                 .withOriginPort(this.killergame.getServer().getPort())
                 .build();
 

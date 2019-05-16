@@ -37,7 +37,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     }
     
     private void startClient() {
-        this.client = new KillerClientPad(this, this.getKillergame());
+        this.client = new KillerClientPad(this);
         new Thread(this.client).start();
     }
 

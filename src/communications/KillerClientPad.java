@@ -5,13 +5,11 @@ import game.KillerGame;
 public class KillerClientPad implements Runnable {
 
     private final KillerPad pad;
-    private final KillerGame killergame;
 
     private static final String STATUS_REQUEST = "ok";
 
-    public KillerClientPad(KillerPad pad, KillerGame killergame) {
+    public KillerClientPad(KillerPad pad) {
         this.pad = pad;
-        this.killergame = killergame;
     }
 
     @Override
