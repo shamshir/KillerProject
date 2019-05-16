@@ -17,7 +17,6 @@ public class KillerRadio implements Runnable {
     private Clip clip;
 
     public enum ClipType {
-
         battle, menu, ending
     }
     private Hashtable<ClipType, String> clips = new Hashtable<ClipType, String>();

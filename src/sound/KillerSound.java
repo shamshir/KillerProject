@@ -81,33 +81,20 @@ public class KillerSound implements Runnable {
 
     @Override
     public void run() {
-
-        System.out.println("Hola5");
-
         while (true) {
-
-            System.out.println("Hola27");
-
             for (int i = 0; i < clips.size(); i++) {
                 Clip clip = clips.get(i);
-                System.out.println("Hola");
                 try {
                     if (clip.getFramePosition() == clip.getFrameLength()) {
                         this.stopSound(clip);
                     } else if (!clip.isActive()) {
-                        System.out.println("Hola2");
                         clip.setFramePosition(0);
                         clip.start();
                     }
-
                 } catch (Exception e) {
-                    System.out.println("Hola42");
                 }
-
             }
-
         }
-
     }
 
 }

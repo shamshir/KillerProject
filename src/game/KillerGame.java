@@ -245,8 +245,8 @@ public class KillerGame extends JFrame {
         new Thread(shoot).start();
     }
 
-    public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip) {
-        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip);
+    public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
+        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage);
         this.objects.add(shoot);
         new Thread(shoot).start();
     }
