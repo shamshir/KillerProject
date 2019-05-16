@@ -6,6 +6,8 @@
 package sound;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -16,50 +18,51 @@ import javax.sound.sampled.DataLine;
  *
  * @author Christian
  */
-public class KillerSound {
-    
-    // Shots
-    static Clip soundShot = getSound("shot.wav");
-    static Clip soundRocket = getSound("cohete.wav");
+public class KillerSound implements Runnable {
 
-    // Skills
-    static Clip soundNitro = getSound("nitro.wav");
-    static Clip soundDash = getSound("salto.wav");
-    
+    private ArrayList<Clip> clips;
 
-    // Explosion
-    static Clip soundExplosion = getSound("explosion.wav");
+    public enum ClipType {
 
-    // PacMan
-    static Clip soundPacManDie = getSound("PacManDie.wav");
-    static Clip soundPacManMove = getSound("PacManMove.wav");
-    static Clip soundPacManEat = getSound("PacManEat.wav");
-    
-    //Clicks
-    static Clip soundclicMobile = getSound("mobileClic.wav");
-    static Clip soundclicPC = getSound("clicPc.wav");
+        shot, rocket, boost, jump, explosion, pacManDie, pacManMove, pacManEat, mobileClic, pcClic, deadGTA, deadSouls,
+        tp, powerUp
+    }
 
-    // Collision
-    static Clip sound2 = getSound("menu.wav");
-    static Clip sound = getSound("nitro.wav");
-    
-    // Dead
-    static Clip soundDieGTA = getSound("deadGTA.wav");
-    static Clip soundDieDark = getSound("deadSouls.wav");
-    
-    //Dark Hole
-    static Clip soundTp = getSound("tp.wav");
-    
-    //powerUp
-    static Clip soundPowerUp = getSound("powerUp.wav");
-    
-    // Collision
-    static boolean stopLoop = false;
-    static int loops = 0;
+    private Hashtable<ClipType, String> clipNames = new Hashtable<ClipType, String>();
 
-    public static Clip getSound(String file) {
+    public KillerSound() {
+
+        this.clips = new ArrayList<Clip>();
+
+        clipNames.put(ClipType.shot, "shot.wav");
+        clipNames.put(ClipType.rocket, "cohete.wav");
+        clipNames.put(ClipType.boost, "nitro.wav");
+        clipNames.put(ClipType.jump, "salto.wav");
+        clipNames.put(ClipType.explosion, "explosion.wav");
+        clipNames.put(ClipType.pacManDie, "pacManDie.wav");
+        clipNames.put(ClipType.pacManMove, "pacManMove.wav");
+        clipNames.put(ClipType.pacManEat, "pacManEat.wav");
+        clipNames.put(ClipType.mobileClic, "mobileClic.wav");
+        clipNames.put(ClipType.pcClic, "clicPc.wav");
+        clipNames.put(ClipType.deadGTA, "deadGTA.wav");
+        clipNames.put(ClipType.deadSouls, "deadSouls.wav");
+        clipNames.put(ClipType.tp, "tp.wav");
+        clipNames.put(ClipType.powerUp, "powerUp.wav");
+
+    }
+
+    public Clip createSound(KillerSound.ClipType clipType) {
+        return getSound(this.clipNames.get(clipType));
+    }
+
+    public void addSound(Clip clip) {
+        this.clips.add(clip);
+    }
+
+    public Clip getSound(String file) {
+
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/sound/soundsGame/" + file));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/soundsGame/" + file));
             AudioFormat format = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             Clip sound = (Clip) AudioSystem.getLine(info);
@@ -68,15 +71,43 @@ public class KillerSound {
         } catch (Exception e) {
             return null;
         }
+
     }
 
-    public static void playSound(Clip clip) {
+    public void stopSound(Clip clip) {
+        this.clips.remove(clip);
         clip.stop();
-        clip.setFramePosition(0);
-        clip.start();
     }
 
-    public static void stopSound(Clip clip) {
-        clip.stop();
+    @Override
+    public void run() {
+
+        System.out.println("Hola5");
+
+        while (true) {
+
+            System.out.println("Hola27");
+
+            for (int i = 0; i < clips.size(); i++) {
+                Clip clip = clips.get(i);
+                System.out.println("Hola");
+                try {
+                    if (clip.getFramePosition() == clip.getFrameLength()) {
+                        this.stopSound(clip);
+                    } else if (!clip.isActive()) {
+                        System.out.println("Hola2");
+                        clip.setFramePosition(0);
+                        clip.start();
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("Hola42");
+                }
+
+            }
+
+        }
+
     }
+
 }

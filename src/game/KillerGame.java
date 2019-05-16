@@ -326,8 +326,11 @@ public class KillerGame extends JFrame {
     public Status getStatus() {
         return this.status;
     }
-    
+        
     // Get room
+    public KillerPanelPrincipal getRoom() {
+        return room;
+    }
 
     // Methods set Communications
     public void setPortPrev(int port) {
