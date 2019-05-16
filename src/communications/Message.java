@@ -100,6 +100,19 @@ public class Message {
             System.out.println("Error al convertir mensaje a Json");
         }
         return EMPTY_STRING;
+    }   
+         
+    public static Message buildInfoMessageToPad(final String command , final String padIp){
+        return Message.Builder.builder(command, KillerServer.getId())
+                .withReceiverId(padIp)
+                .build();
+    }
+    
+    public static Message buildDamageMessageToPad(final String command, final String padIp, final int damage){
+        return Message.Builder.builder(command, KillerServer.getId())
+                .withReceiverId(padIp)
+                .withDamage(damage)
+                .build();
     }
 
     public static class Builder {

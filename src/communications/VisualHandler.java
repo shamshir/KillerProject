@@ -28,6 +28,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String DAMAGE_COMMAND = "pad_damage";
     private static final String DEATH_COMMAND = "pad_death";
     private static final String KILL_COMMAND = "pad_kill";
+    private static final String GET_POWERUP_COMMAND = "pad_get_powerup";
     private static final String ACTION_COMMAND = "action";
 
     private static final String SHOOT_TYPE = "shoot";
@@ -117,7 +118,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 final String command = message.getCommand();
                 if (command != null && command.matches(PAD_COMMAND)) {
                     if (!this.isMessageMine(message.getSenderId())) {
-                        this.sendInfoMessageToPad(message);
+                        this.processInfoMessageToPad(message);
                     }
                 } else {
                     System.out.println("COMANDO DESCONOCIDO");
@@ -197,15 +198,23 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
-    public void sendInfoMessageToPad(final Message message) {
+    private void processInfoMessageToPad(final Message message) {
         final KillerPad pad = this.getKillergame().getPadByIP(message.getReceiverId());
         if (pad != null) {
             pad.sendMessage(message);
         } else {
             this.getKillergame().getNextModule().sendMessage(message);
         }
+    }    
+    
+    public void sendInfoMessageToPad(final String command, final String padIp){
+        this.processInfoMessageToPad(Message.buildInfoMessageToPad(command, padIp));        
     }
-
+    
+    public void sendInfoDamageMessageToPad(final String padIp, final int damage){
+        this.processInfoMessageToPad(Message.buildDamageMessageToPad(DAMAGE_COMMAND, padIp, damage));     
+    }
+    
     private void processSyncRequest(final String senderId, final int quantity) {
         final Message messageToSend;
         if (this.isMessageMine(senderId)) {
