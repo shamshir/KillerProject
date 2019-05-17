@@ -22,8 +22,8 @@ public class KillerImage extends BufferedImage implements Runnable {
     protected int[][] colorMap;
     public AffineTransform at;
 
-    public KillerImage(VisibleObject vo, BufferedImage oi) {
-        super(oi.getWidth(), oi.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+    public KillerImage(VisibleObject vo, BufferedImage oi, int plusWidth, int plusHeight) {
+        super(oi.getWidth() + plusWidth, oi.getHeight() + plusHeight, BufferedImage.TYPE_4BYTE_ABGR);
         this.visibleObject = vo;
         this.originalImage = oi;
         this.raster = this.getKillerRaster(this);
@@ -145,5 +145,8 @@ public class KillerImage extends BufferedImage implements Runnable {
     public void setColorMap(int[][] colorMap) {
         this.colorMap = colorMap;
     }
+    
+   
+    
 
 }
