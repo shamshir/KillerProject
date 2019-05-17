@@ -60,6 +60,10 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         return this;
     }
     
+    public KillerGame getKg(){
+        return this.kg;
+    }
+    
     public void setButtonPlay(Boolean aux){
         if (aux == true) {
             jButtonJugar.setEnabled(true);
