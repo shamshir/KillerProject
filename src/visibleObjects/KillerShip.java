@@ -6,7 +6,7 @@ import game.KillerRules;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import physics.KillerPhysics;
+import physics.CollidePhysics;
 
 public class KillerShip extends Controlled {
 
@@ -197,7 +197,7 @@ public class KillerShip extends Controlled {
 
     @Override
     protected void move() {
-        KillerPhysics.move(this);
+        CollidePhysics.move(this);
     }
     
     @Override

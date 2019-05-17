@@ -1,7 +1,7 @@
 package visibleObjects;
 
 import game.KillerGame;
-import physics.KillerPhysics;
+import physics.CollidePhysics;
 
 public class Asteroid extends Automata {
 
@@ -45,7 +45,7 @@ public class Asteroid extends Automata {
      */
     @Override
     protected void move() {
-        KillerPhysics.move(this);
+        CollidePhysics.move(this);
     }
 
     private void divide() {
