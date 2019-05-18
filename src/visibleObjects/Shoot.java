@@ -3,7 +3,7 @@ package visibleObjects;
 import game.KillerGame;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import physics.KillerPhysics;
+import physics.CollidePhysics;
 
 public class Shoot extends Automata {
 
@@ -72,7 +72,7 @@ public class Shoot extends Automata {
 
     @Override
     protected void move() {
-        KillerPhysics.move(this);
+        CollidePhysics.move(this);
     }
 
     @Override

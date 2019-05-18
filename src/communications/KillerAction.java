@@ -8,8 +8,8 @@ public class KillerAction {
 
     private String command;
     private String direction;
-    private int speedX;
-    private int speedY;
+    private double speedX;
+    private double speedY;
 
     public KillerAction(){
         
@@ -30,11 +30,11 @@ public class KillerAction {
         return direction;
     }
 
-    public int getSpeedX() {
+    public double getSpeedX() {
         return speedX;
     }
 
-    public int getSpeedY() {
+    public double getSpeedY() {
         return speedY;
     }
     
@@ -42,8 +42,8 @@ public class KillerAction {
 
         private String command;
         private String direction;
-        private int speedX;
-        private int speedY;
+        private double speedX;
+        private double speedY;
 
         public Builder(final String command) {
             this.command = command;
@@ -58,12 +58,12 @@ public class KillerAction {
             return this;
         }
 
-        public Builder withSpeedX(final int speedX) {
+        public Builder withSpeedX(final double speedX) {
             this.speedX = speedX;
             return this;
         }
 
-        public Builder withSpeedY(final int speedY) {
+        public Builder withSpeedY(final double speedY) {
             this.speedY = speedY;
             return this;
         }

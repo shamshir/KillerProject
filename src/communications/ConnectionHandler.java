@@ -16,6 +16,7 @@ public class ConnectionHandler implements Runnable {
     private static final String CONNECTION_FROM_PAD = "pad-connect";
     private static final String PAD_CONNECTED = "padConnected";
     private static final String PAD_NOT_CONNECTED = "padNotConnected";
+    private static final String SYNC_REQUEST = "sync";
     private static final String EMPTY_STRING = "";
 
     public ConnectionHandler(final Socket socket, final KillerGame kg) {
@@ -31,7 +32,7 @@ public class ConnectionHandler implements Runnable {
     private void connect() {
         final Message messageReceived = this.readConnectionMessage();
         if (CONNECTION_FROM_CLIENT.equalsIgnoreCase(messageReceived.getCommand())) {
-            this.clientConnect(messageReceived.getConnectionResponse());
+            this.clientConnect(messageReceived.getConnectionResponse(), messageReceived.getSenderId());
         } else if (CONNECTION_FROM_PAD.equalsIgnoreCase(messageReceived.getCommand())) {
             this.padConnect(messageReceived.getConnectionResponse(), messageReceived.getSenderId());
         }
@@ -47,13 +48,17 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
-    private void clientConnect(final ConnectionResponse connectionResponse) {
+    private void clientConnect(final ConnectionResponse connectionResponse, final String senderId) {
 
         final VisualHandler visualHandler = getVisualHandler(connectionResponse.isRight());
-
-        visualHandler.setSocket(this.socket);
-        visualHandler.setDestinationPort(connectionResponse.getOriginPort());
-        //TODO enviar configuracion
+        if (this.kg.getStatus() == KillerGame.Status.room) {
+            this.setVisualHandler(visualHandler, connectionResponse);
+            this.sendSyncRequest();
+        } else {
+            if (visualHandler.getDestinationId().equalsIgnoreCase(senderId)) {
+                this.setVisualHandler(visualHandler, connectionResponse);
+            }
+        }
     }
 
     private VisualHandler getVisualHandler(final boolean isRight) {
@@ -62,6 +67,20 @@ public class ConnectionHandler implements Runnable {
         }
         return this.kg.getPrevModule();
 
+    }
+
+    private void setVisualHandler(VisualHandler visualHandler, final ConnectionResponse connectionResponse) {
+
+        visualHandler.setSocket(this.socket);
+        visualHandler.setDestinationPort(connectionResponse.getOriginPort());
+        //TODO enviar configuracion
+    }
+
+    private void sendSyncRequest() {
+        final Message message = Message.Builder.builder(SYNC_REQUEST, KillerServer.getId())
+                .withServersQuantity(1)
+                .build();
+        this.kg.getNextModule().sendMessage(message);
     }
 
     private void padConnect(final ConnectionResponse connectionResponse, final String senderId) {
@@ -77,8 +96,10 @@ public class ConnectionHandler implements Runnable {
 
     private Message getReplyMessage(final ConnectionResponse connectionResponse, final String senderId) {
         final Message message;
-        if (this.kg.newKillerPad( senderId, this.socket, connectionResponse.getUserName(), connectionResponse.getColor() )) {
-            this.kg.newKillerShip(senderId, Color.decode(connectionResponse.getColor()), connectionResponse.getUserName());
+        if (this.kg.newKillerPad(senderId, this.socket, connectionResponse.getUserName(), connectionResponse.getColor())) {
+            this.kg.newKillerShip(senderId, Color.decode(connectionResponse.getColor()),
+                    connectionResponse.getUserName(), connectionResponse.getShipType());
+            
             message = Message.Builder.builder(PAD_CONNECTED, KillerServer.getId()).build();
             System.out.println("Connectado:" + senderId + " " + connectionResponse.getUserName());
         } else {
