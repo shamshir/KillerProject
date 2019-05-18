@@ -17,14 +17,22 @@ public class KillerRadio implements Runnable {
     private Clip clip;
 
     public enum ClipType {
-        battle, menu, ending
+        BATTLE, 
+        MENU, 
+        ENDING,
+        PACMAN_DIE, 
+        PACMAN_MOVE, 
+        PACMAN_EAT
     }
-    private Hashtable<ClipType, String> clips = new Hashtable<ClipType, String>();
+    private Hashtable<ClipType, String> clipNames = new Hashtable<ClipType, String>();
 
     public KillerRadio() {
-        clips.put(ClipType.battle, "battle.wav");
-        clips.put(ClipType.menu, "menu.wav");
-        clips.put(ClipType.ending, "ending.wav");
+        clipNames.put(ClipType.BATTLE, "battle.wav");
+        clipNames.put(ClipType.MENU, "menu.wav");
+        clipNames.put(ClipType.ENDING, "ending.wav");
+        clipNames.put(ClipType.PACMAN_DIE, "pacman_die.wav");
+        clipNames.put(ClipType.PACMAN_MOVE, "pacman_move.wav");
+        clipNames.put(ClipType.PACMAN_EAT, "pacman_eat.wav");
     }
 
     public void setClip(ClipType ct) {
@@ -33,7 +41,7 @@ public class KillerRadio implements Runnable {
         this.stopSound();
 
         // Changes the new Song
-        this.clip = getSound(this.clips.get(ct));
+        this.clip = getSound(this.clipNames.get(ct));
 
         this.playSound();
     }
