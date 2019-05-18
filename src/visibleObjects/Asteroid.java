@@ -1,9 +1,10 @@
 package visibleObjects;
 
 import game.KillerGame;
-import physics.CollidePhysics;
+import physics.PhysicsAsteroid;
 
 public class Asteroid extends Automata {
+    private PhysicsAsteroid physicsAsteroid;
 
     /**
      * 
@@ -25,6 +26,8 @@ public class Asteroid extends Automata {
 
         this.health = health;
         this.maxspeed = maxspeed;
+        this.physicsAsteroid = new PhysicsAsteroid(this); // han de estar inicializadas todas las variables de fisicas
+
     }
 
     // Constructor para instanciar el obj si viene de otro pc
@@ -45,7 +48,7 @@ public class Asteroid extends Automata {
      */
     @Override
     protected void move() {
-        CollidePhysics.move(this);
+        physicsAsteroid.move();
     }
 
     private void divide() {
@@ -69,4 +72,12 @@ public class Asteroid extends Automata {
     // *********************
     // * Getters & Setters *
     // *********************
+
+    public PhysicsAsteroid getPhysicsAsteroid() {
+        return physicsAsteroid;
+    }
+
+    public void setPhysicsAsteroid(PhysicsAsteroid physicsAsteroid) {
+        this.physicsAsteroid = physicsAsteroid;
+    }
 }

@@ -6,7 +6,7 @@ import game.KillerRules;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import physics.CollidePhysics;
+import physics.PhysicsShip;
 
 public class KillerShip extends Controlled {
 
@@ -24,6 +24,7 @@ public class KillerShip extends Controlled {
     private String user;
     private long timer;
     private int damage;
+    private PhysicsShip physicsShip;
 
     // Físicas
     private double tx; // posición del morro de la nave
@@ -56,6 +57,7 @@ public class KillerShip extends Controlled {
         this.setImgSize();
         this.m = 100;
         this.maxspeed = 4;
+        this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
 
         this.timer = System.currentTimeMillis();
     }
@@ -101,7 +103,6 @@ public class KillerShip extends Controlled {
         this.rx = rx;
         this.ry = ry;
         this.maxspeed = 4;
-        //-------
 
         this.id = id;
         this.user = user;
@@ -114,6 +115,7 @@ public class KillerShip extends Controlled {
         this.imgHeight = 80;
         this.setImgSize();
         this.m = 100;
+        this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
 
         this.timer = System.currentTimeMillis();
     }
@@ -197,7 +199,7 @@ public class KillerShip extends Controlled {
 
     @Override
     protected void move() {
-        CollidePhysics.move(this);
+        physicsShip.move();
     }
     
     @Override
@@ -400,6 +402,14 @@ public class KillerShip extends Controlled {
 
     public void setDamage(int damage) {
         this.damage = damage;
+    }
+
+    public PhysicsShip getPhysicsShip() {
+        return physicsShip;
+    }
+
+    public void setPhysicsShip(PhysicsShip physicsShip) {
+        this.physicsShip = physicsShip;
     }
 
 }
