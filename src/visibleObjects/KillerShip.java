@@ -125,7 +125,7 @@ public class KillerShip extends Controlled {
     public void run() {
         while (state != ShipState.DEAD) {
 
-            if (state != ShipState.SAFE) {
+            if (state == ShipState.SAFE) {
                 this.checkSafe();
             }
 

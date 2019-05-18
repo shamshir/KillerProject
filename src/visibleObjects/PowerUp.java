@@ -29,13 +29,11 @@ public class PowerUp extends Static implements Destructible {
         super(game, x, y);
         
         this.type = power;
+        this.wrappered = true;
         this.setImage();
-
         this.imgHeight = height;
         this.setImgSize();
         this.m = m;
-
-        this.wrappered = true;
         this.health = 400;
     }
 
