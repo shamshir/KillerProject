@@ -72,7 +72,7 @@ public class KillerShip extends Controlled {
      * @param radians
      * @param dx
      * @param dy
-     * @param vx 
+     * @param vx
      * @param vy
      * @param tx hitbox
      * @param ty hitbox
@@ -138,7 +138,7 @@ public class KillerShip extends Controlled {
                 ex.printStackTrace();
             }
         }
-        
+
         this.game.removeObject(this);
     }
 
@@ -154,24 +154,24 @@ public class KillerShip extends Controlled {
             case "pad_shoot":
                 this.shoot();
                 break;
-            case "pad_move":                
+            case "pad_move":
                 this.moveShip(kAction.getSpeedX(), kAction.getSpeedY());
                 break;
             case "pad_dash":
-                
+
                 break;
             case "pad_powerup":
-                
+
                 break;
             case "pad_turbo_start":
-                
+
                 break;
             case "pad_turbo_end":
-                
+
                 break;
         }
     }
-    
+
     public void changeState(ShipState state) {
         this.state = state;
     }
@@ -202,7 +202,7 @@ public class KillerShip extends Controlled {
     protected void move() {
         physicsShip.move();
     }
-    
+
     @Override
     protected void setImage() {
         switch (type) {
@@ -273,10 +273,7 @@ public class KillerShip extends Controlled {
     // Interfaz Destructible    
     @Override
     public void quitarVida(int damage) {
-        // No quitamos vida si la nave está muriendo o si está a salvo
-        if (state != ShipState.SAFE) {
-            this.health -= damage;
-        }
+        this.health -= damage;
     }
 
     @Override

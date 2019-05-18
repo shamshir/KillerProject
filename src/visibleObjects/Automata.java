@@ -34,6 +34,12 @@ public abstract class Automata extends Alive {
                 ex.printStackTrace();
             }
         }
+
+        this.game.removeObject(this);
+    }
+
+    public void changeState(AutonomousState state) {
+        this.state = state;
     }
 
     // ********************************************************
