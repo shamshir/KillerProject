@@ -15,7 +15,7 @@ public class KillerShip extends Controlled {
     }
 
     public enum ShipType {
-        TANK, NORMAL, STRONG
+        OCTANE, BATMOBILE, MARAUDER
     }
 
     private ShipState state;
@@ -84,10 +84,11 @@ public class KillerShip extends Controlled {
      * @param user
      * @param type
      * @param health
+     * @param damage
      */
     public KillerShip(KillerGame game, double x, double y, double radians,
             double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly,
-            double rx, double ry, String id, String user, ShipType type, int health) {
+            double rx, double ry, String id, String user, ShipType type, int health, int damage) {
         super(game, x, y);
         // Físicas ---> que parámetros pasan?
         this.a = 0.01;
@@ -108,8 +109,8 @@ public class KillerShip extends Controlled {
         this.user = user;
         this.type = type;
         this.state = ShipState.SAFE;
-        this.configureShip(); // --> TO DO
-        this.health = health; // --> TO DO, escribe dos veces
+        this.health = health;
+        this.damage = damage;
         this.setImage();
 
         this.imgHeight = 80;
@@ -205,13 +206,13 @@ public class KillerShip extends Controlled {
     @Override
     protected void setImage() {
         switch (type) {
-            case TANK:
+            case OCTANE:
                 this.loadImg("./img/fastShip.png");
                 break;
-            case NORMAL:
+            case BATMOBILE:
                 this.loadImg("./img/normalShip.png");
                 break;
-            case STRONG:
+            case MARAUDER:
                 this.loadImg("./img/bigShip.png");
                 break;
             default:
@@ -231,7 +232,6 @@ public class KillerShip extends Controlled {
      * por el mando. Parámetros aún por decidir según la info recibida
      */
     private void moveShip(double dx, double dy) {
-        // Marc lo tiene como int, yo como double... REVISAR
         this.dx = dx;
         this.dy = dy;
     }
@@ -244,25 +244,23 @@ public class KillerShip extends Controlled {
             this.setImgSize();
         }
     }
-/*
-        TANK, NORMAL, STRONG*/
 
     /**
      * Método para inicializar health y maxSpeed según el tipo de nave
      */
     private void configureShip() {
-        switch (this.type.name()) {
-            case "TANK":
-                this.health = KillerRules.TANK_SHIP_HEALTH;
-                this.damage = KillerRules.TANK_SHIP_DAMAGE;
+        switch (type) {
+            case OCTANE:
+                this.health = KillerRules.OCTANE_HEALTH;
+                this.damage = KillerRules.OCTANE_DAMAGE;
                 break;
-            case "NORMAL":
-                this.health = KillerRules.NORMAL_SHIP_HEALTH;
-                this.damage = KillerRules.NORMAL_SHIP_DAMAGE;
+            case BATMOBILE:
+                this.health = KillerRules.BATMOBILE_HEALTH;
+                this.damage = KillerRules.BATMOBILE_DAMAGE;
                 break;
-            case "STRONG":
-                this.health = KillerRules.STRONG_SHIP_HEALTH;
-                this.damage = KillerRules.STRONG_SHIP_DAMAGE;
+            case MARAUDER:
+                this.health = KillerRules.MARAUDER_HEALTH;
+                this.damage = KillerRules.MARAUDER_DAMAGE;
                 break;
             default:
                 break;
