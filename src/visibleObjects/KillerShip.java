@@ -228,7 +228,7 @@ public class KillerShip extends Controlled {
      * Cambiará los valores de dirección y ángulo en función de la info enviada
      * por el mando. Parámetros aún por decidir según la info recibida
      */
-    private void moveShip(int dx, int dy) {
+    private void moveShip(double dx, double dy) {
         // Marc lo tiene como int, yo como double... REVISAR
         this.dx = dx;
         this.dy = dy;
