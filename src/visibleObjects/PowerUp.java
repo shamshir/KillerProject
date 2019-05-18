@@ -50,14 +50,14 @@ public class PowerUp extends Static implements Destructible {
     @Override
     protected void setImage() {
         if (wrappered) {
-            this.loadImg("./img/wrapper.png");
+            this.loadImg("src/visibleObjects/img/wrapper.png");
         } else {
             switch (type.name()) {
                 case "HEALTH":
-                   this.loadImg("./img/health.png");
+                   this.loadImg("src/visibleObjects/img/health.png");
                    break;
                 case "DAMAGE":
-                   this.loadImg("./img/safe.png");
+                   this.loadImg("src/visibleObjects/img/safe.png");
                    break;
             }
         }

@@ -58,7 +58,7 @@ public class Asteroid extends Automata {
 
     @Override
     protected void setImage() {
-        this.loadImg("./img/asteroid2.png");
+        this.loadImg("src/visibleObjects/img/asteroid2.png");
     }
 
     @Override

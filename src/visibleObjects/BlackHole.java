@@ -25,7 +25,7 @@ public class BlackHole extends Static {
 
     @Override
     protected void setImage() {
-        this.loadImg("./img/blackhole.png");
+        this.loadImg("src/visibleObjects/img/blackhole.png");
     }
 
     // ********************************************************

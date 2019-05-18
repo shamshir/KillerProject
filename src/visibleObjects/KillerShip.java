@@ -207,13 +207,13 @@ public class KillerShip extends Controlled {
     protected void setImage() {
         switch (type) {
             case OCTANE:
-                this.loadImg("./img/fastShip.png");
+                this.loadImg("src/visibleObjects/img/fastShip.png");
                 break;
             case BATMOBILE:
-                this.loadImg("./img/normalShip.png");
+                this.loadImg("src/visibleObjects/img/normalShip.png");
                 break;
             case MARAUDER:
-                this.loadImg("./img/bigShip.png");
+                this.loadImg("src/visibleObjects/img/bigShip.png");
                 break;
             default:
                 break;
