@@ -15,11 +15,12 @@ public class CollidePhysics {
 
     /**
      * Colisión entre dos objetos circulares.
+     *
      * @param obj1 Primer objeto circular
      * @param obj2 Segundo objeto circular
      * @return true si han colisionado, false en caso contrario.
      */
-    public static boolean colideCxC(Alive obj1, Alive obj2) {
+    public static boolean colideCxC(VisibleObject obj1, VisibleObject obj2) {
 
         double xDif = obj1.getX() - obj2.getX();
         double yDif = obj1.getY() - obj2.getY();
@@ -32,33 +33,42 @@ public class CollidePhysics {
         return false;
     }
 
-    /*Ignorar*/
-    //Este método está en construcción
-    public static void collision(Alive obj1, Alive obj2) {
+    //----- Colisión entre triangulos -----
+    //Por ahora es solo entre naves, mas adelante lo hare para todos los visible objects en caso de 
+    // que hayan mas objetos triangulares
+    public boolean collisionTxT(KillerShip obj1, KillerShip obj2) {
 
-//        double vxº = (this.m * vx + alive.m * alive.vx - alive.m * this.vx - alive.m * alive.vx - this.m * vx)
-//                / alive.m;
-//        double vyº = (this.m * vy + alive.m * alive.vy - alive.m * this.vy - alive.m * alive.vy - this.m * vy)
-//                / alive.m;
-        double vx1 = (this.vx * (this.m - alive.m) + 2 * (alive.m * alive.vx)) / (this.m + alive.m);
-        double vy1 = (this.vy * (this.m - alive.m) + 2 * (alive.m * alive.vy)) / (this.m + alive.m);
+        double[][] points = new double[][]{{obj1.getTx(), obj1.getTy()},
+        {obj1.getLx(), obj1.getLy()}, {obj1.getRx(), obj1.getRy()}};
 
-        double vx2 = (alive.vx * (alive.m - this.m) + 2 * (this.m * this.vx)) / (this.m + alive.m);
-        double vy2 = (alive.vy * (alive.m - this.m) + 2 * (this.m * this.vy)) / (this.m + alive.m);
+        double obj2Tx = obj2.getTx();
+        double obj2Ty = obj2.getTy();
+        double obj2Lx = obj2.getLx();
+        double obj2Ly = obj2.getLy();
+        double obj2Rx = obj2.getRx();
+        double obj2Ry = obj2.getRy();
 
-        double xDif = this.x - alive.x;
-        double yDif = this.y - alive.y;
+        double contTriangleArea = (obj2.getImgWidth() * obj2.getImgHeight() / 2) * (obj2.getImgWidth() * obj2.getImgHeight() / 2);
 
-        double angle = Math.atan(yDif / xDif);
+        //Fórmula de Heron.
+        double areaOrig = Math.abs((obj2Lx - obj2Tx) * (obj2Ry - obj2Ty) - (obj2Rx - obj2Tx) * (obj2Ly - obj2Ty));
 
-//
-        this.vx = vx1;
-        this.vy = vy1 - 1;
+        for (int i = 0; i < points.length; i++) {
 
-        alive.vx = vx2;
-        alive.vy = vy2;
+            double currX = points[i][0];
+            double currY = points[i][1];
 
-//        this.maxspeedX = vxº;
-//        this.maxspeedY = vyº - 1;
+            double area1 = Math.abs((obj2Tx - currX) * (obj2Ly - currY) - (obj2Lx - currX) * (obj2Ty - currY));
+            double area2 = Math.abs((obj2Lx - currX) * (obj2Ry - currY) - (obj2Rx - currX) * (obj2Ly - currY));
+            double area3 = Math.abs((obj2Rx - currX) * (obj2Ty - currY) - (obj2Tx - currX) * (obj2Ry - currY));
+
+            if (area1 + area2 + area3 == areaOrig) {
+                return true;
+            }
+
+        }
+        return false;
+
     }
+
 }
