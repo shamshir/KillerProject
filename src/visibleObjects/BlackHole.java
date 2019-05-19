@@ -18,7 +18,8 @@ public class BlackHole extends Static {
         this.setImage();
 
         this.imgHeight = height;
-        this.setImgSize();
+        this.imgWidth = imgHeight;
+        this.radius = this.imgHeight / 2;
         this.m = m;
 
     }

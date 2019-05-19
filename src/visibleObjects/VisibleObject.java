@@ -17,6 +17,7 @@ public abstract class VisibleObject implements Renderizable {
     protected double m; // masa
     protected double x;
     protected double y;
+    protected double radius;
 
     public VisibleObject() {
     }
@@ -113,6 +114,10 @@ public abstract class VisibleObject implements Renderizable {
 
     public void setRadians(double radians) {
         this.radians = radians;
+    }
+
+    public double getRadius() {
+        return radius;
     }
 
 }

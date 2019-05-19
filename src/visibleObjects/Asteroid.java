@@ -21,8 +21,9 @@ public class Asteroid extends Automata {
 
         this.setImage();
         this.imgHeight = imgHeight;
-        this.setImgSize();
-        this.m = m;        
+        this.imgWidth = imgHeight;
+        this.radius = this.imgHeight / 2;
+        this.m = m;
 
         this.health = health;
         this.maxspeed = maxspeed;

@@ -30,6 +30,7 @@ public class Shoot extends Automata {
 
         this.imgHeight = 15;
         this.imgWidth = 15;
+        this.radius = this.imgHeight / 2;
         this.m = 30;
         this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
 
@@ -67,6 +68,7 @@ public class Shoot extends Automata {
         // Modificar con imgSize, añadir img
         this.imgWidth = 15;
         this.imgHeight = 15;
+        this.radius = this.imgHeight / 2;
         this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
 
     }
