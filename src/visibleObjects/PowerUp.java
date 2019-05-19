@@ -29,13 +29,12 @@ public class PowerUp extends Static implements Destructible {
         super(game, x, y);
         
         this.type = power;
-        this.setImage();
-
-        this.imgHeight = height;
-        this.setImgSize();
-        this.m = m;
-
         this.wrappered = true;
+        this.setImage();
+        this.imgHeight = height;
+        this.imgWidth = imgHeight;
+        this.radius = this.imgHeight / 2;
+        this.m = m;
         this.health = 400;
     }
 
@@ -50,14 +49,14 @@ public class PowerUp extends Static implements Destructible {
     @Override
     protected void setImage() {
         if (wrappered) {
-            this.loadImg("./img/wrapper.png");
+            this.loadImg("src/visibleObjects/img/wrapper.png");
         } else {
             switch (type.name()) {
                 case "HEALTH":
-                   this.loadImg("./img/health.png");
+                   this.loadImg("src/visibleObjects/img/health.png");
                    break;
                 case "DAMAGE":
-                   this.loadImg("./img/safe.png");
+                   this.loadImg("src/visibleObjects/img/safe.png");
                    break;
             }
         }

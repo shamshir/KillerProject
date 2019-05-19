@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import visualEffects.KillerImage;
 
 public abstract class VisibleObject implements Renderizable {
 
@@ -17,6 +18,9 @@ public abstract class VisibleObject implements Renderizable {
     protected double m; // masa
     protected double x;
     protected double y;
+    protected double radius;
+    // Añadido para error en KI
+    protected KillerImage kImg = null;
 
     public VisibleObject() {
     }
@@ -113,6 +117,14 @@ public abstract class VisibleObject implements Renderizable {
 
     public void setRadians(double radians) {
         this.radians = radians;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+    
+    public KillerImage getKillerImage() {
+        return this.kImg;
     }
 
 }

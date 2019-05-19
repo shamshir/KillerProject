@@ -22,8 +22,9 @@ public class Pacman extends Automata {
     public Pacman(KillerGame game, double x, double y) {
         super(game, x, y);
 
-        this.imgHeight = game.getViewer().getHeight() / 50;
-        this.imgWidth = game.getViewer().getHeight() / 50;
+        this.imgHeight = 40;
+        this.imgWidth = 40;
+        this.radius = this.imgHeight / 2;
         
         this.m = 200;
         this.health = 500; 

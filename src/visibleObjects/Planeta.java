@@ -18,7 +18,8 @@ public class Planeta extends Static {
         this.setImage();
 
         this.imgHeight = height;
-        this.setImgSize();
+        this.imgWidth = imgHeight;
+        this.radius = this.imgHeight / 2;
         this.m = m;
     }
 
@@ -34,6 +35,6 @@ public class Planeta extends Static {
 
     @Override
     protected void setImage() {
-        this.loadImg("./img/planet1.png");
+        this.loadImg("src/visibleObjects/img/planet1.png");
     }
 }

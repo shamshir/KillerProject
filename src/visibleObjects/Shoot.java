@@ -3,12 +3,13 @@ package visibleObjects;
 import game.KillerGame;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import physics.CollidePhysics;
+import physics.PhysicsShoot;
 
 public class Shoot extends Automata {
 
     private String id;
     private int damage;
+    private PhysicsShoot physicsShoot;
 
     /**
      * 
@@ -22,14 +23,17 @@ public class Shoot extends Automata {
         // Posición según la posición del morro de la nave
         this.x = ship.getTx();
         this.y = ship.getTy(); 
-        this.damage = ship.getDamage();
+        this.damage = ship.getDamage(); // Daño de su nave
         
         this.maxspeed = 7;
         this.health = 1;
 
         this.imgHeight = 15;
         this.imgWidth = 15;
+        this.radius = this.imgHeight / 2;
         this.m = 30;
+        this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
+
         
     }
 
@@ -42,27 +46,31 @@ public class Shoot extends Automata {
      * @param vx
      * @param vy
      * @param id
-     * @param damage 
+     * @param damage
+     * @param health
+     * @param state 
      */
-    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id, int damage) {
-        super(game, x, y);        
-        this.a = 0.01;
+    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id, int damage, int health, AutonomousState state) {
+        super(game, x, y);
         
-        this.radians = radians;
-        this.vx = vx;
-        this.vy = vy;
+        this.radians = radians; // Repetido en vo.
+        this.vx = vx; // quitar? Bernat
+        this.vy = vy; // quitar? Bernat
         this.m = 30;
         
         this.id = id;
-        this.state = AutonomousState.ALIVE;
+        this.state = state;
         this.damage = damage;
         
         this.maxspeed = 7;
-        this.health = 1;
+        this.health = health;
 
         // Modificar con imgSize, añadir img
-        this.imgWidth = 10;
-        this.imgHeight = 10;
+        this.imgWidth = 15;
+        this.imgHeight = 15;
+        this.radius = this.imgHeight / 2;
+        this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
+
     }
 
     @Override
@@ -72,7 +80,7 @@ public class Shoot extends Automata {
 
     @Override
     protected void move() {
-        CollidePhysics.move(this);
+        physicsShoot.move();
     }
 
     @Override
@@ -101,6 +109,22 @@ public class Shoot extends Automata {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public PhysicsShoot getPhysicsShoot() {
+        return physicsShoot;
+    }
+
+    public void setPhysicsShoot(PhysicsShoot physicsShoot) {
+        this.physicsShoot = physicsShoot;
     }
 
 }
