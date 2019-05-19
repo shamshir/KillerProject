@@ -20,18 +20,16 @@ public class KillerPanelConectar extends javax.swing.JPanel {
      private int portIzq;
      private int portDer;
      
-     //Variables jPanel
-     KillerPanelPrincipal kpp;
-     private KillerGame kg;
+     //Variable Killer Game
+    private KillerGame kg;
      
      
     /**
      * Creates new form NewJPanelConectar
      */
-    public KillerPanelConectar(KillerPanelPrincipal kpp) {
-        this.kpp = kpp;
+    public KillerPanelConectar(KillerGame kg) {
+        this.kg = kg;
         initComponents();
-        kg = kpp.getKg();
     }
     
     public KillerPanelConectar getKillerPanelConectar(){
@@ -149,8 +147,7 @@ public class KillerPanelConectar extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
-        this.setVisible(false);
-        kpp.setVisible(true);
+        kg.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
