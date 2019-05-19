@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import java.util.Hashtable;
 import javax.sound.sampled.Clip;
+import physics.CollidePhysics;
 
 /**
  * @author Alvaro & Christian
@@ -96,7 +97,7 @@ public class KillerGame extends JFrame {
     public void checkColision(Alive alive) {
         for (int inc = 0; inc < this.objects.size(); inc++) {
             VisibleObject object = this.objects.get(inc);
-            if (KillerPhysiscs.collision(alive, object)) {
+            if (CollidePhysics.collision(alive, object)) {
                 KillerRules.collision(this, alive, this.objects.get(inc));
             }
         }
