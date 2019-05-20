@@ -26,6 +26,7 @@ public class ObjectResponse {
     private String id;
     private String user;
     private int health;
+    private int damage;
 
     private static final String EMPTY_STRING = "";
     private static final String SHOOT_TYPE = "shoot";
@@ -53,6 +54,7 @@ public class ObjectResponse {
         this.user = builder.user;
         this.type = builder.type;
         this.health = builder.health;
+        this.damage = builder.damage;
     }
 
     public String getObjectType() {
@@ -126,7 +128,11 @@ public class ObjectResponse {
     public int getHealth() {
         return health;
     }
-    
+
+    public int getDamage() {
+        return damage;
+    }
+
     public static ObjectResponse convertObjectToObjectResponse(final Alive object) {
         //TODO rellenar con los datos que se pida
         if (object instanceof KillerShip) {
@@ -137,7 +143,7 @@ public class ObjectResponse {
         }
         return ObjectResponse.Builder.builder(EMPTY_STRING).build();
     }
-    
+
     private static ObjectResponse buildObjectResponseFromKillerShip(KillerShip killerShip) {
         return ObjectResponse.Builder.builder(SHIP_TYPE)
                 .x(killerShip.getX())
@@ -157,6 +163,7 @@ public class ObjectResponse {
                 .type(killerShip.getType())
                 .user(killerShip.getUser())
                 .id(killerShip.getId())
+                .damage(killerShip.getDamage())
                 .build();
 
     }
@@ -169,6 +176,7 @@ public class ObjectResponse {
                 .dy(shoot.getDy())
                 .radians(shoot.getRadians())
                 .id(shoot.getId())
+                .damage(shoot.getDamage())
                 .build();
     }
 
@@ -192,6 +200,7 @@ public class ObjectResponse {
         private String id;
         private String user;
         private int health;
+        private int damage;
 
         public Builder(final String objectType) {
             this.objectType = objectType;
@@ -285,7 +294,12 @@ public class ObjectResponse {
             this.health = health;
             return this;
         }
-        
+
+        public Builder damage(final int damage){
+            this.damage = damage;
+            return this;
+        }
+
         public ObjectResponse build() {
             return new ObjectResponse(this);
         }
