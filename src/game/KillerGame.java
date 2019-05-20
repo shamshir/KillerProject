@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.util.Hashtable;
 import javax.sound.sampled.Clip;
 import physics.CollidePhysics;
+import visibleObjects.Automata.AutonomousState;
 
 /**
  * @author Alvaro & Christian
@@ -24,7 +25,6 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [         KillerGame Attributes       ] ********************************* //
     // ***************************************************************************************************** //
-
     // Game Attributes
     public enum Status {
         ROOM,
@@ -56,6 +56,9 @@ public class KillerGame extends JFrame {
 
     // Room
     private KillerPanelPrincipal room;
+    private KillerPanelPrincipal kpp;
+    private KillerPanelConectar kpc;
+    private KillerPanelAjustes kpa;
 
     // Radio
     private KillerRadio radio;
@@ -66,7 +69,6 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [        KillerGame Constructors      ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
      * @author Alvaro
      */
@@ -89,18 +91,17 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [          KillerGame Methods         ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
      * @author Christian & Alvaro
      * @param alive
      */
     public void checkColision(Alive alive) {
-        for (int inc = 0; inc < this.objects.size(); inc++) {
-            VisibleObject object = this.objects.get(inc);
-            if (CollidePhysics.collision(alive, object)) {
-                KillerRules.collision(this, alive, this.objects.get(inc));
-            }
-        }
+//        for (int inc = 0; inc < this.objects.size(); inc++) {
+//            VisibleObject object = this.objects.get(inc);
+//            if (CollidePhysics.collision(alive, object)) {
+//                KillerRules.collision(this, alive, this.objects.get(inc));
+//            }
+//        }
     }
 
     /**
@@ -131,7 +132,6 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [       Communication Methods         ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
      * @author Christian
      */
@@ -182,7 +182,6 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [            Window Methods           ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
      * @author Christian
      */
@@ -210,12 +209,11 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [            Sound Methods           ] ********************************** //
     // ***************************************************************************************************** //
-
     /**
      * @author Alvaro
      * @param clip
      */
-    public void startMusic(KillerRadio.ClipType clip){
+    public void startMusic(KillerRadio.ClipType clip) {
         this.newRadio();
         this.radio.setClip(clip);
     }
@@ -223,7 +221,7 @@ public class KillerGame extends JFrame {
     /**
      * @author Alvaro
      */
-    public void stopMusic(){
+    public void stopMusic() {
         this.radio.stopSound();
     }
 
@@ -239,7 +237,7 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      * @param clip
      */
-    public void startSound(KillerSound.ClipType clip){
+    public void startSound(KillerSound.ClipType clip) {
         this.sound.addSound(sound.createSound(clip));
     }
 
@@ -247,14 +245,13 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      * @param clip
      */
-    public void stopSound(Clip clip){
+    public void stopSound(Clip clip) {
         this.sound.stopSound(clip);
     }
 
     // ***************************************************************************************************** //
     // *************************** [             Methods New             ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
      * @author Alvaro
      * @param ip
@@ -285,10 +282,13 @@ public class KillerGame extends JFrame {
      * @author Chirtsian
      */
     private void newRoom() {
-        this.room = new KillerPanelPrincipal(this);
+        this.kpp = new KillerPanelPrincipal(this);
+        this.kpc = new KillerPanelConectar(this);
+        this.kpa = new KillerPanelAjustes(this);
         this.setSize(525, 525);
         this.setLocationRelativeTo(null);
-        this.add(room, 0, 0);
+        this.setContentPane(kpp);
+        this.setVisible(true);
     }
 
     /**
@@ -304,7 +304,7 @@ public class KillerGame extends JFrame {
     /**
      * @author Christian
      */
-    public void newSound(){
+    public void newSound() {
         this.sound = new KillerSound();
     }
 
@@ -348,6 +348,7 @@ public class KillerGame extends JFrame {
 
     /**
      * Este metodo sirve para crear una nave cuando venga desde otra pantalla.
+     *
      * @author Alvaro
      * @param x
      * @param y
@@ -378,7 +379,7 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
-        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage);
+        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage, 1, AutonomousState.ALIVE);
         this.objects.add(shoot);
         new Thread(shoot).start();
     }
@@ -404,7 +405,6 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [             Methods Get             ] ********************************* //
     // ***************************************************************************************************** //
-
     public VisualHandler getNextModule() {
         return this.nextModule;
     }
@@ -436,6 +436,7 @@ public class KillerGame extends JFrame {
     public int getServersQuantity() {
         return serversQuantity;
     }
+
     public Hashtable<String, KillerShip> getShips() {
         return this.ships;
     }
@@ -459,7 +460,6 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [              Methods Set            ] ********************************* //
     // ***************************************************************************************************** //
-
     public void setIpPrev(String ip) {
         this.prevModule.setDestinationIp(ip);
     }
@@ -482,18 +482,31 @@ public class KillerGame extends JFrame {
 
     public void setSyncronized(boolean synchro) {
         this.synchro = synchro;
-        this.room.setButtonPlay(synchro);
+        this.kpp.setButtonPlay(synchro);
+    }
+
+    public void setKillerPanelPrincipal() {
+        this.setContentPane(kpp);
+    }
+
+    public void setKillerPanelConectar() {
+        this.setContentPane(kpc);
+        kpc.updateUI();
+    }
+
+    public void setKillerPanelAjustes() {
+        this.setContentPane(kpa);
+        kpa.updateUI();
     }
 
     // ***************************************************************************************************** //
     // *************************** [             Main Activity           ] ********************************* //
     // ***************************************************************************************************** //
-
     public static void main(String[] args) {
 
         // New KillerGame
         KillerGame game = new KillerGame();
-
+        
     }
 
 }

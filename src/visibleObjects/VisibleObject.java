@@ -127,4 +127,12 @@ public abstract class VisibleObject implements Renderizable {
         return this.kImg;
     }
 
+    public double getM() {
+        return m;
+    }
+
+    public void setM(double m) {
+        this.m = m;
+    }
+
 }

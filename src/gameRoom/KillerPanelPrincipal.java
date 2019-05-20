@@ -25,7 +25,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     public KillerPanelPrincipal(KillerGame kg) {
         this.kg = kg;
         initComponents();
-        jButtonJugar.setEnabled(false);
+        jButtonJugar.setEnabled(true);
 
     }
     

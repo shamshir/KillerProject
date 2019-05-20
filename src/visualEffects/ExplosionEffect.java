@@ -15,7 +15,7 @@ import visibleObjects.VisibleObject;
 public class ExplosionEffect extends KillerImage{
     
     public ExplosionEffect(VisibleObject vo, BufferedImage oi) {
-        super(vo, oi);
+        super(vo, oi, 0, 0);
     }
     
 }

@@ -16,7 +16,7 @@ public class PhysicsAsteroid {
     private Asteroid ast;
 
     private double x, y, a, vx, vy, dx, dy,
-            maxspeed, radians, tX, tY, lX, lY, rX, rY, radius;
+            maxspeed, radians, tX, tY, lX, lY, rX, rY, radius, m;
     private int WIDTH, HEIGHT;
 
     public PhysicsAsteroid(Asteroid ast) {
@@ -157,7 +157,7 @@ public class PhysicsAsteroid {
         maxspeed = ast.getMaxspeed();
         radians = ast.getRadians();
         radius = ast.getRadius();
-
+        m = ast.getM();
         WIDTH = ast.getImgWidth();
         HEIGHT = ast.getImgHeight();
 
