@@ -51,7 +51,7 @@ public class ConnectionHandler implements Runnable {
     private void clientConnect(final ConnectionResponse connectionResponse, final String senderId) {
 
         final VisualHandler visualHandler = getVisualHandler(connectionResponse.isRight());
-        if (this.kg.getStatus() == KillerGame.Status.room) {
+        if (this.kg.getStatus() == KillerGame.Status.ROOM) {
             this.setVisualHandler(visualHandler, connectionResponse);
             this.sendSyncRequest();
         } else {
@@ -96,10 +96,12 @@ public class ConnectionHandler implements Runnable {
 
     private Message getReplyMessage(final ConnectionResponse connectionResponse, final String senderId) {
         final Message message;
-        if (this.kg.newKillerPad(senderId, this.socket, connectionResponse.getUserName(), connectionResponse.getColor())) {
-            this.kg.newKillerShip(senderId, Color.decode(connectionResponse.getColor()),
+        if (this.kg.newPad(senderId, this.socket, connectionResponse.getUserName(), connectionResponse.getColor())) {
+            this.kg.newShip(senderId, Color.decode(connectionResponse.getColor()),
                     connectionResponse.getUserName(), connectionResponse.getShipType());
-            
+//            this.kg.newShip(senderId,
+//                    connectionResponse.getUserName(), connectionResponse.getShipType());
+
             message = Message.Builder.builder(PAD_CONNECTED, KillerServer.getId()).build();
             System.out.println("Connectado:" + senderId + " " + connectionResponse.getUserName());
         } else {

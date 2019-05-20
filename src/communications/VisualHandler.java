@@ -253,19 +253,20 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     private void createShip(ObjectResponse object) {
-        this.getKillergame().reciveKillerShip(object.getX(), object.getY(), object.getRadians(),
+        this.getKillergame().reciveShip(object.getX(), object.getY(), object.getRadians(),
                 object.getDx(), object.getDy(),
                 object.getVx(), object.getVy(),
                 object.getTx(), object.getTy(),
                 object.getLx(), object.getLy(),
                 object.getRx(), object.getRy(),
                 object.getId(), object.getUser(),
-                object.getType(), object.getHealth());
+                object.getType(), object.getHealth(),
+                object.getDamage());
     }
 
     private void createShoot(ObjectResponse object) {
         this.getKillergame().reciveShoot(object.getX(), object.getY(), object.getRadians(),
-                object.getDx(), object.getDy(), object.getId());
+                object.getDx(), object.getDy(), object.getId(), object.getDamage());
     }
     
     private void updateRoom(boolean connected){
