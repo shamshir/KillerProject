@@ -16,10 +16,6 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     //Variable Killer Game
     private KillerGame kg;
     
-    //Variables jPanel
-    private KillerPanelConectar kpc;
-    private KillerPanelAjustes kpa;
-    
     //getKillerShips()  para la lista
     
     /**
@@ -28,12 +24,9 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
      */
     public KillerPanelPrincipal(KillerGame kg) {
         this.kg = kg;
-        jButtonJugar.setEnabled(false);
         initComponents();
-        KillerPanelConectar kpc = new KillerPanelConectar(this);
-        kpc.setVisible(false);
-        KillerPanelAjustes kpa = new KillerPanelAjustes(this);
-        kpa.setVisible(false);
+        jButtonJugar.setEnabled(false);
+
     }
     
     public void setFeedbackConnetionLeft(Boolean aux){
@@ -163,14 +156,12 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
     private void jButtonAjustesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjustesActionPerformed
         // AJUSTES
-        this.setVisible(false);
-        kpa.setVisible(true);
+        kg.setKillerPanelAjustes();
     }//GEN-LAST:event_jButtonAjustesActionPerformed
 
     private void jButtonConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarActionPerformed
         // CONECTAR
-        this.setVisible(false);
-        kpc.setVisible(true);
+        kg.setKillerPanelConectar();
     }//GEN-LAST:event_jButtonConectarActionPerformed
 
     private void jButtonJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJugarActionPerformed
