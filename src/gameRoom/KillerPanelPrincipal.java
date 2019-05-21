@@ -166,7 +166,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
     private void jButtonJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJugarActionPerformed
         // JUGAR
-        kg.sendStart();
+        kr.getKg().sendStart();
     }//GEN-LAST:event_jButtonJugarActionPerformed
 
 
