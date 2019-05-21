@@ -14,7 +14,6 @@ public class ReceptionHandler {
     private final KillerGame killergame;
     private BufferedReader in;
     private PrintWriter out;
-    private static final String EMPTY_STRING = "";
 
     public ReceptionHandler(final KillerGame killergame) {
         this.killergame = killergame;
@@ -47,6 +46,10 @@ public class ReceptionHandler {
 
     public void setDestinationPort(final int destinationPort) {
         this.destinationPort = destinationPort;
+    }    
+
+    public boolean isConnected() {
+        return this.getSocket() != null;
     }
 
     public String readLine() throws Exception {
@@ -63,22 +66,17 @@ public class ReceptionHandler {
 
     public synchronized boolean setSocket(final Socket socket) {
         this.sock = socket;
-
         if (socket == null) {
-            this.closeSocket();
-            this.destinationIp = EMPTY_STRING;
             return false;
         }
-
         try {
             this.in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             this.out = new PrintWriter(sock.getOutputStream(), true);
+            this.sock.setSoTimeout(3500);
         } catch (Exception ex) {
-            System.out.println("ERROR setsocket rh");
-            this.destinationIp = EMPTY_STRING;
+            System.out.println("ReceptionHandler -> ERROR setsocket");
             return false;
         }
-
         this.destinationIp = socket.getInetAddress().getHostAddress();
         return true;
     }
@@ -86,9 +84,8 @@ public class ReceptionHandler {
     private void closeSocket() {
         try {
             this.sock.close();
-            this.setSocket(null);
         } catch (Exception ex) {
-            System.out.println("error al cerrar socket (ReceptionHandler: closeSocket)");
+            System.out.println("ReceptionHandler -> error al cerrar socket (ReceptionHandler: closeSocket)");
         }
     }
 }
