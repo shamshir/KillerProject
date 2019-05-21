@@ -16,12 +16,14 @@ import game.KillerGame;
 public class KillerPanelAjustes extends javax.swing.JPanel {
     //Variable Killer Game
     private KillerGame kg;
+    private KillerRoom kr;
     
     /**
      * Creates new form KillerPanelAjustes
      */
-    public KillerPanelAjustes(KillerGame kg) {
-        this.kg = kg;
+    public KillerPanelAjustes(KillerRoom kr) {
+        this.kr = kr;
+        kg = kr.getKg();
         initComponents();
     }
     
@@ -72,7 +74,7 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
-        kg.setKillerPanelPrincipal();
+        kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

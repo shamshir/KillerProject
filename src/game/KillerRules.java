@@ -122,6 +122,11 @@ public class KillerRules {
 
         // Substract heatlh to ship
         ship.quitarVida(shoot.getDamage());
+        
+        // Calls die method from KillerShip
+        if (ship.getHealth() <= 0) {
+            ship.die();
+        }
 
         // Remove shot from the array
         game.removeObject(shoot);

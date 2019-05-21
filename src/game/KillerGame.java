@@ -55,10 +55,7 @@ public class KillerGame extends JFrame {
     private Viewer viewer;
 
     // Room
-    private KillerPanelPrincipal room;
-    private KillerPanelPrincipal kpp;
-    private KillerPanelConectar kpc;
-    private KillerPanelAjustes kpa;
+    private KillerRoom room;
 
     // Radio
     private KillerRadio radio;
@@ -73,9 +70,6 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public KillerGame() {
-
-        // Show window
-        this.showWindow();
 
         // Open communications
         this.generateComunnications();
@@ -96,12 +90,75 @@ public class KillerGame extends JFrame {
      * @param alive
      */
     public void checkColision(Alive alive) {
-//        for (int inc = 0; inc < this.objects.size(); inc++) {
-//            VisibleObject object = this.objects.get(inc);
-//            if (CollidePhysics.collision(alive, object)) {
-//                KillerRules.collision(this, alive, this.objects.get(inc));
-//            }
-//        }
+        for (int inc = 0; inc < this.objects.size(); inc++) {
+            VisibleObject object = this.objects.get(inc);
+
+            if (alive instanceof KillerShip) {
+
+            }
+
+            if (alive instanceof Shoot) {
+
+            }
+
+            if (alive instanceof Asteroid) {
+
+            }
+
+            if (alive instanceof Pacman) {
+
+            }
+
+        }
+    }
+
+    private void checkColisionShip(Alive alive, VisibleObject object) {
+        
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+
+        }
+
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+
+        }
+
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+
+        }
+
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+
+        }
+
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+
+        }
+
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot) {
+            
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            
+        }
+
     }
 
     /**
@@ -117,15 +174,21 @@ public class KillerGame extends JFrame {
     }
 
     public void startGame() {
+        
+        // Hide room
+        this.room.setVisible(false);
 
         // Change Status
         this.status = KillerGame.Status.GAME;
-
-        // Add walls
-        addWalls();
+        
+        // Mostrar ventana
+        this.showWindow();
 
         // Add Viewer
         this.newViewer();
+
+        // Add walls
+        addWalls();
 
     }
 
@@ -282,13 +345,8 @@ public class KillerGame extends JFrame {
      * @author Chirtsian
      */
     private void newRoom() {
-        this.kpp = new KillerPanelPrincipal(this);
-        this.kpc = new KillerPanelConectar(this);
-        this.kpa = new KillerPanelAjustes(this);
-        this.setSize(525, 525);
-        this.setLocationRelativeTo(null);
-        this.setContentPane(kpp);
-        this.setVisible(true);
+        this.room = new KillerRoom(this);
+        this.room.setVisible(true);
     }
 
     /**
@@ -425,7 +483,7 @@ public class KillerGame extends JFrame {
         return this.pads.get(ip);
     }
 
-    public KillerPanelPrincipal getRoom() {
+    public KillerRoom getRoom() {
         return room;
     }
 
@@ -482,21 +540,7 @@ public class KillerGame extends JFrame {
 
     public void setSyncronized(boolean synchro) {
         this.synchro = synchro;
-        this.kpp.setButtonPlay(synchro);
-    }
-
-    public void setKillerPanelPrincipal() {
-        this.setContentPane(kpp);
-    }
-
-    public void setKillerPanelConectar() {
-        this.setContentPane(kpc);
-        kpc.updateUI();
-    }
-
-    public void setKillerPanelAjustes() {
-        this.setContentPane(kpa);
-        kpa.updateUI();
+        this.room.getKPP().setButtonPlay(synchro);
     }
 
     // ***************************************************************************************************** //
@@ -506,7 +550,7 @@ public class KillerGame extends JFrame {
 
         // New KillerGame
         KillerGame game = new KillerGame();
-        
+
     }
 
 }

@@ -14,6 +14,7 @@ import java.awt.Color;
  */
 public class KillerPanelPrincipal extends javax.swing.JPanel {
     //Variable Killer Game
+    private KillerRoom kr;
     private KillerGame kg;
     
     //getKillerShips()  para la lista
@@ -22,8 +23,9 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
      * Creates new form KillerPanelPrincipal
      * @param kg
      */
-    public KillerPanelPrincipal(KillerGame kg) {
-        this.kg = kg;
+    public KillerPanelPrincipal(KillerRoom kr) {
+        this.kr = kr;
+        kg = kr.getKg();
         initComponents();
         jButtonJugar.setEnabled(true);
 
@@ -53,9 +55,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         return this;
     }
     
-    public KillerGame getKg(){
-        return this.kg;
-    }
+    
     
     public void setButtonPlay(Boolean aux){
         if (aux == true) {
@@ -156,12 +156,12 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
     private void jButtonAjustesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjustesActionPerformed
         // AJUSTES
-        kg.setKillerPanelAjustes();
+        kr.setKillerPanelAjustes();
     }//GEN-LAST:event_jButtonAjustesActionPerformed
 
     private void jButtonConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarActionPerformed
         // CONECTAR
-        kg.setKillerPanelConectar();
+        kr.setKillerPanelConectar();
     }//GEN-LAST:event_jButtonConectarActionPerformed
 
     private void jButtonJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJugarActionPerformed
