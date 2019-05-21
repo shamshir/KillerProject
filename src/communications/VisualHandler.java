@@ -135,6 +135,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 break;
             case CLIENT_NOT_CONNECTED:
                 this.disconnect();
+                break;
             default:
                 final String command = message.getCommand();
                 if (command != null && command.matches(PAD_COMMAND)) {
@@ -203,10 +204,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
         if (super.setSocket(sock)) {
             this.destinationId = destinationId;
-            try {
-                this.getSocket().setSoTimeout(3500);
-            } catch (Exception ex) {
-            }
             return true;
         }
         return false;
