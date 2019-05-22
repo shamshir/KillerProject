@@ -34,11 +34,6 @@ public class FireEffect extends KillerImage {
 
     public FireEffect(VisibleObject vo, BufferedImage oi, int[] sourceSparks) {
         super(vo, oi, 0, 400);
-        try {
-            this.testImageForEffect = ImageIO.read(new File("/home/pau/NetBeansProjects/KillerProjectDevelopment/src/visibleObjects/img/wrapper.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(FireEffect.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         // setear paleta de colores para el fuego
         this.setPaCo();
@@ -54,11 +49,6 @@ public class FireEffect extends KillerImage {
 
     public FireEffect(VisibleObject vo, BufferedImage oi) {
         super(vo, oi, 0, 400);
-        try {
-            this.testImageForEffect = ImageIO.read(new File("/home/pau/NetBeansProjects/KillerProjectDevelopment/src/visibleObjects/img/wrapper.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(FireEffect.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         // setear paleta de colores para el fuego
         this.setPaCo();
@@ -199,81 +189,4 @@ public class FireEffect extends KillerImage {
             }
         }
     }
-
-    //  codigo vetusto VvV
-    /**
-     * Actualiza la raster del fuego TODO: especificar de que objeto en concreto
-     * //
-     */
-//    private void updateRaster() {
-//        int a, b, g, r;
-//        int[][] raster2d = this.getIntRaster2d(this.fireImage);
-//
-//        for (int fil = 0; fil < this.heatMap.length; fil++) {
-//            for (int col = 0; col < this.heatMap[0].length; col++) {
-//                int h = this.heatMap[fil][col];
-//
-//                a = this.paCo[h].getA();
-//                b = this.paCo[h].getB();
-//                g = this.paCo[h].getG();
-//                r = this.paCo[h].getR();
-//
-//                raster2d[fil + this.getOriginalImage().getHeight()][(col * 4)] = a;
-//                raster2d[fil + this.getOriginalImage().getHeight()][(col * 4) + 1] = b;
-//                raster2d[fil + this.getOriginalImage().getHeight()][(col * 4) + 2] = g;
-//                raster2d[fil + this.getOriginalImage().getHeight()][(col * 4) + 3] = r;
-//            }
-//        }
-//
-//        this.setKillerRaster2d(raster2d);
-//    }
-//
-//    /**
-//     * Ejecuta todos los pasos para pintar el fuego
-//     */
-//    private void updateFire() {
-//        this.updateSparks();
-//        this.updateHeatMap();
-//        this.updateRaster();
-//    }
-//
-//    /**
-//     * Actualiza el mapa de calor
-//     */
-//    private void updateHeatMap() {
-//        for (int fil = 1; fil < this.heatMap.length; fil++) {
-//            for (int col = 1; col < this.heatMap[0].length - 1; col++) {
-//                this.heatMap[fil][col] = ((this.heatMap[fil][col]
-//                        + this.heatMap[fil - 1][col - 1]
-//                        + this.heatMap[fil - 1][col]
-//                        + this.heatMap[fil - 1][col + 1]) / 4) - this.COOLING;
-//
-//                if (this.heatMap[fil][col] > 254) {
-//                    this.heatMap[fil][col] = 254;
-//
-//                } else if (this.heatMap[fil][col] < 0) {
-//                    this.heatMap[fil][col] = 0;
-//                }
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Actualiza las chispas
-//     */
-//    private void updateSparks() {
-//        int sparkHeat;
-//        for (int pos = 0; pos < this.sparks.length; pos++) {
-//
-//            // mira si esta especificado el haber chispas
-//            if (this.sparks[pos] > 0) {
-//                sparkHeat = ((int) Math.random() * 255);
-//
-//                // comprueba la intensidad minima
-//                if (sparkHeat > this.INTENSITY) {
-//                    this.heatMap[this.getOriginalImage().getHeight()][pos] = sparkHeat;
-//                }
-//            }
-//        }
-//    }
 }
