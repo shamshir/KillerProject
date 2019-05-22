@@ -77,7 +77,7 @@ public class KillerRules {
     /**
      * @author Alvaro
      * @param ship
-     
+     */
     public static void collisionShipWithNebulosa(KillerShip ship) {
 
         if (ship.getType() == KillerShip.ShipType.OCTANE) {
@@ -96,7 +96,6 @@ public class KillerRules {
         }
 
     }
-    */
 
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
 

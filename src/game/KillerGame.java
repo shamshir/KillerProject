@@ -145,7 +145,7 @@ public class KillerGame extends JFrame {
         // Collision with Nebulosa
         if (object instanceof Nebulosa) {
             if (false) {
-                //KillerRules.collisionShipWithNebulosa(ship);
+                KillerRules.collisionShipWithNebulosa(ship);
             }
         }
 
