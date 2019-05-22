@@ -189,4 +189,8 @@ public class FireEffect extends KillerImage {
             }
         }
     }
+    
+    
 }
+
+

@@ -40,6 +40,10 @@ public class KillerImage extends BufferedImage implements Runnable {
     // ***********************
     // ** Getters & Setters **
     // ***********************
+    public int getRenderHeight(){
+        return (this.visibleObject.getImgWidth() * this.getHeight()) / this.getWidth();
+    }
+    
     /**
      * Accede y recupera la raster de la bufferedImage en concreto
      *
