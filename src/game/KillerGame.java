@@ -55,10 +55,7 @@ public class KillerGame extends JFrame {
     private Viewer viewer;
 
     // Room
-    private KillerPanelPrincipal room;
-    private KillerPanelPrincipal kpp;
-    private KillerPanelConectar kpc;
-    private KillerPanelAjustes kpa;
+    private KillerRoom room;
 
     // Radio
     private KillerRadio radio;
@@ -73,9 +70,6 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public KillerGame() {
-
-        // Show window
-        this.showWindow();
 
         // Open communications
         this.generateComunnications();
@@ -96,12 +90,274 @@ public class KillerGame extends JFrame {
      * @param alive
      */
     public void checkColision(Alive alive) {
-//        for (int inc = 0; inc < this.objects.size(); inc++) {
-//            VisibleObject object = this.objects.get(inc);
-//            if (CollidePhysics.collision(alive, object)) {
-//                KillerRules.collision(this, alive, this.objects.get(inc));
-//            }
-//        }
+
+        if (alive instanceof KillerShip) {
+            for (int inc = 0; inc < this.objects.size(); inc++) {
+                VisibleObject object = this.objects.get(inc);
+                this.checkColisionShip((KillerShip) (alive), object);
+            }
+        }
+
+        if (alive instanceof Shoot) {
+            for (int inc = 0; inc < this.objects.size(); inc++) {
+                VisibleObject object = this.objects.get(inc);
+                this.checkCollisionShoot((Shoot) (alive), object);
+            }
+        }
+
+        if (alive instanceof Asteroid) {
+            for (int inc = 0; inc < this.objects.size(); inc++) {
+                VisibleObject object = this.objects.get(inc);
+                this.checkCollisionAsteroid((Asteroid) (alive), object);
+            }
+        }
+
+        if (alive instanceof Pacman) {
+            for (int inc = 0; inc < this.objects.size(); inc++) {
+                VisibleObject object = this.objects.get(inc);
+                this.checkCollisionPacman((Pacman) (alive), object);
+            }
+        }
+
+    }
+
+    /**
+     * @author Alvaro
+     * @param shoot
+     * @param object
+     */
+    private void checkColisionShip(KillerShip ship, VisibleObject object) {
+
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            if (false) {
+                KillerRules.collisionShipWithAsteroid(this, ship, (Asteroid) (object));
+            }
+        }
+
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            if (false) {
+                KillerRules.collisionShipWithBlackHole(this, ship);
+            }
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            if (false) {
+                KillerRules.collisionShipWithNebulosa(ship);
+            }
+        }
+
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            if (false) {
+                KillerRules.collisionShipWithPacman(this, ship, (Pacman) (object));
+            }
+        }
+
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            if (false) {
+                KillerRules.collisionShipWithPlaneta(this, ship, (Planeta) (object));
+            }
+        }
+
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            if (false) {
+                KillerRules.collisionShipWithPowerUp(this, ship, (PowerUp) (object));
+            }
+        }
+
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            if (false) {
+                KillerRules.collisionShipWithShip(this, ship, (KillerShip) (object));
+            }
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot) {
+            if (false) {
+                KillerRules.collisionShipWithShoot(this, ship, (Shoot) (object));
+            }
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            if (false) {
+                KillerRules.collisionAliveWithWall(this, ship, (Wall) (object));
+            }
+        }
+
+    }
+
+    private void checkCollisionShoot(Shoot shoot, VisibleObject object) {
+
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            if (false) {
+                KillerRules.collisionShootWithAsteroid(this, shoot, (Asteroid) (object));
+            }
+        }
+
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            if (false) {
+                KillerRules.collisionShootWithBlackHole(this, shoot, (BlackHole) (object));
+            }
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            if (false) {
+                KillerRules.collisionShootWithNebulosa(shoot);
+            }
+        }
+
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            if (false) {
+                KillerRules.collisionShootWithPacman(this, shoot, (Pacman) (object));
+            }
+        }
+
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            if (false) {
+                KillerRules.collisionShootWithPlaneta(this, shoot, (Planeta) (object));
+            }
+        }
+
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            if (false) {
+                KillerRules.collisionShootWithPowerUp(this, shoot, (PowerUp) (object));
+            }
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot) {
+            if (false) {
+                KillerRules.collisionShootWithShoot(this, shoot, (Shoot) (object));
+            }
+        }
+
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            if (false) {
+                KillerRules.collisionShipWithShoot(this, (KillerShip) (object), shoot);
+            }
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            if (false) {
+                KillerRules.collisionAliveWithWall(this, shoot, (Wall) (object));
+            }
+        }
+
+    }
+
+    private void checkCollisionAsteroid(Asteroid asteroid, VisibleObject object) {
+
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            if (false) {
+                KillerRules.collisionAsteroidWithAsteroid(this, asteroid, (Asteroid) (object));
+            }
+        }
+
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            KillerRules.collisionAsteroidWithBlackHole(this, asteroid, (BlackHole) (object));
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            KillerRules.collisionAsteroidWithNebulosa(asteroid);
+        }
+
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            KillerRules.collisionAsteroidWithPacman(this, asteroid, (Pacman) (object));
+        }
+
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            KillerRules.collisionAsteroidWithPlaneta(asteroid);
+        }
+
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            KillerRules.collisionAsteroidWithPowerUp(this, asteroid, (PowerUp) (object));
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot) {
+            KillerRules.collisionShootWithAsteroid(this, (Shoot) (object), asteroid);
+        }
+
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            KillerRules.collisionShipWithAsteroid(this, (KillerShip) (object), asteroid);
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            KillerRules.collisionAliveWithWall(this, asteroid, (Wall) (object));
+        }
+
+    }
+
+    private void checkCollisionPacman(Pacman pacman, VisibleObject object) {
+
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            KillerRules.collisionAsteroidWithPacman(this, (Asteroid) (object), pacman);
+        }
+
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            KillerRules.collisionPacmanWithBlackHole(pacman);
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            KillerRules.collisionPacmanWithNebulosa(pacman);
+        }
+
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            KillerRules.collisionPacmanWithPacman(this, pacman, (Pacman) (object));
+        }
+
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            KillerRules.collisionPacmanWithPlaneta(pacman);
+        }
+
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            KillerRules.collisionPacmanWithPowerUp(this, pacman, (PowerUp) (object));
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot) {
+            KillerRules.collisionShootWithPacman(this, (Shoot) (object), pacman);
+        }
+
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            KillerRules.collisionShipWithPacman(this, (KillerShip) (object), pacman);
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            KillerRules.collisionAliveWithWall(this, pacman, (Wall) (object));
+        }
+
     }
 
     /**
@@ -118,14 +374,20 @@ public class KillerGame extends JFrame {
 
     public void startGame() {
 
+        // Hide room
+        this.room.setVisible(false);
+
         // Change Status
         this.status = KillerGame.Status.GAME;
 
-        // Add walls
-        addWalls();
+        // Mostrar ventana
+        this.showWindow();
 
         // Add Viewer
         this.newViewer();
+
+        // Add walls
+        addWalls();
 
     }
 
@@ -282,13 +544,8 @@ public class KillerGame extends JFrame {
      * @author Chirtsian
      */
     private void newRoom() {
-        this.kpp = new KillerPanelPrincipal(this);
-        this.kpc = new KillerPanelConectar(this);
-        this.kpa = new KillerPanelAjustes(this);
-        this.setSize(525, 525);
-        this.setLocationRelativeTo(null);
-        this.setContentPane(kpp);
-        this.setVisible(true);
+        this.room = new KillerRoom(this);
+        this.room.setVisible(true);
     }
 
     /**
@@ -425,7 +682,7 @@ public class KillerGame extends JFrame {
         return this.pads.get(ip);
     }
 
-    public KillerPanelPrincipal getRoom() {
+    public KillerRoom getRoom() {
         return room;
     }
 
@@ -482,21 +739,7 @@ public class KillerGame extends JFrame {
 
     public void setSyncronized(boolean synchro) {
         this.synchro = synchro;
-        this.kpp.setButtonPlay(synchro);
-    }
-
-    public void setKillerPanelPrincipal() {
-        this.setContentPane(kpp);
-    }
-
-    public void setKillerPanelConectar() {
-        this.setContentPane(kpc);
-        kpc.updateUI();
-    }
-
-    public void setKillerPanelAjustes() {
-        this.setContentPane(kpa);
-        kpa.updateUI();
+        this.room.getKPP().setButtonPlay(synchro);
     }
 
     // ***************************************************************************************************** //
@@ -506,7 +749,7 @@ public class KillerGame extends JFrame {
 
         // New KillerGame
         KillerGame game = new KillerGame();
-        
+
     }
 
 }
