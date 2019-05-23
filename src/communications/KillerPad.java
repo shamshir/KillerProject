@@ -11,19 +11,9 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     private boolean disconnected = false;
     private int disconnectTime = 300;
 
-    private static final String EMPTY_STRING = "";
-
     private static final String STATUS_REQUEST = "ok";
 
     private static final String ACTION_COMMAND = "action";
-    private static final String DAMAGE_COMMAND = "pad_damage";
-    private static final String DEATH_COMMAND = "pad_death";
-    private static final String KILL_COMMAND = "pad_kill";
-    private static final String MOVEMENT_COMMAND = "pad_move";
-    private static final String SHOOT_COMMAND = "pad_shoot";
-    private static final String DASH_COMMAND = "pad_dash";
-    private static final String POWERUP_COMMAND = "pad_powerup";
-    private static final String TURBO_COMMAND = "pad_turbo";
     private static final String DISCONNECTION_COMMAND = "bye";
 
     public KillerPad(final KillerGame killergame, final Socket sock, final String user, final String color) {
@@ -43,12 +33,12 @@ public class KillerPad extends ReceptionHandler implements Runnable {
 
     @Override
     public void run() {
-        while (!disconnected) {
+        while (!this.disconnected) {
             if (this.getSocket() != null) {
                 disconnectTime = 0;
-                System.out.println("PAD-Connected");
+                System.out.println("Killerpad -> PAD-Connected con id: " + this.id);
                 this.listeningMessages();
-                System.out.println("PAD-DesConnected");
+                System.out.println("Killerpad -> PAD-Disconnected con id: " + this.id);
             }
             try {
                 Thread.sleep(100);
@@ -69,7 +59,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
             try {
                 done = !this.processLine(this.readLine());
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                System.out.println("KillerPad -> listeningMessages: " + ex.getMessage());
                 done = true;
             }
 
@@ -78,7 +68,11 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     }
 
     private boolean processLine(final String line) {
-        if (line == null || line.trim().equals(DISCONNECTION_COMMAND)) {
+        if (line == null ) {
+            return false;
+        }
+        if(DISCONNECTION_COMMAND.equalsIgnoreCase(line.trim())){
+            this.disconnected=true;
             return false;
         }
         if (!STATUS_REQUEST.equalsIgnoreCase(line)) {
@@ -97,7 +91,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
     public static void sendActionToPlayer(final Message message,
             final KillerGame kg,
             final boolean sendNextModule) {
-        System.out.println("ACTION RECIBIDA: " + message.getAction().getCommand() + "   " + message.getCommand());
+        System.out.println("Killerpad -> ACTION RECIBIDA: " + message.getAction().getCommand() );
 
         KillerShip player = kg.getShipByIP(message.getSenderId());
         if (player != null) {

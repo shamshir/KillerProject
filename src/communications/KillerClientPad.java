@@ -1,7 +1,5 @@
 package communications;
 
-import game.KillerGame;
-
 public class KillerClientPad implements Runnable {
 
     private final KillerPad pad;
@@ -23,12 +21,8 @@ public class KillerClientPad implements Runnable {
         }
     }
 
-    private boolean disconnected() {
-        return this.pad.getSocket() == null;
-    }
-
     private void sendStatusRequest() {
-        if (!this.disconnected()) {
+        if (this.pad.isConnected()) {
             this.pad.sendLine(STATUS_REQUEST);
         }
     }
