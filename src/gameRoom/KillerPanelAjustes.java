@@ -5,6 +5,8 @@
  */
 package gameRoom;
 
+import game.KillerGame;
+
 
 
 /**
@@ -12,15 +14,16 @@ package gameRoom;
  * @author Yeray
  */
 public class KillerPanelAjustes extends javax.swing.JPanel {
-    
-    //Variables jPanel
-     KillerPanelPrincipal kpp;
+    //Variable Killer Game
+    private KillerGame kg;
+    private KillerRoom kr;
     
     /**
      * Creates new form KillerPanelAjustes
      */
-    public KillerPanelAjustes(KillerPanelPrincipal kpp) {
-        this.kpp = kpp;
+    public KillerPanelAjustes(KillerRoom kr) {
+        this.kr = kr;
+        kg = kr.getKg();
         initComponents();
     }
     
@@ -71,8 +74,7 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
-        this.setVisible(false);
-        kpp.setVisible(true);
+        kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

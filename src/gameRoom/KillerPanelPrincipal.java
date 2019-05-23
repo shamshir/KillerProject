@@ -14,11 +14,8 @@ import java.awt.Color;
  */
 public class KillerPanelPrincipal extends javax.swing.JPanel {
     //Variable Killer Game
+    private KillerRoom kr;
     private KillerGame kg;
-    
-    //Variables jPanel
-    private KillerPanelConectar kpc;
-    private KillerPanelAjustes kpa;
     
     //getKillerShips()  para la lista
     
@@ -26,14 +23,12 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
      * Creates new form KillerPanelPrincipal
      * @param kg
      */
-    public KillerPanelPrincipal(KillerGame kg) {
-        this.kg = kg;
-        jButtonJugar.setEnabled(false);
+    public KillerPanelPrincipal(KillerRoom kr) {
+        this.kr = kr;
+        kg = kr.getKg();
         initComponents();
-        KillerPanelConectar kpc = new KillerPanelConectar(this);
-        kpc.setVisible(false);
-        KillerPanelAjustes kpa = new KillerPanelAjustes(this);
-        kpa.setVisible(false);
+        jButtonJugar.setEnabled(true);
+
     }
     
     public void setFeedbackConnetionLeft(Boolean aux){
@@ -60,9 +55,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         return this;
     }
     
-    public KillerGame getKg(){
-        return this.kg;
-    }
+    
     
     public void setButtonPlay(Boolean aux){
         if (aux == true) {
@@ -163,19 +156,17 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
     private void jButtonAjustesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjustesActionPerformed
         // AJUSTES
-        this.setVisible(false);
-        kpa.setVisible(true);
+        kr.setKillerPanelAjustes();
     }//GEN-LAST:event_jButtonAjustesActionPerformed
 
     private void jButtonConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarActionPerformed
         // CONECTAR
-        this.setVisible(false);
-        kpc.setVisible(true);
+        kr.setKillerPanelConectar();
     }//GEN-LAST:event_jButtonConectarActionPerformed
 
     private void jButtonJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJugarActionPerformed
         // JUGAR
-        kg.sendStart();
+        kr.getKg().sendStart();
     }//GEN-LAST:event_jButtonJugarActionPerformed
 
 

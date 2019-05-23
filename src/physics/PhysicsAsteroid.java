@@ -16,7 +16,7 @@ public class PhysicsAsteroid {
     private Asteroid ast;
 
     private double x, y, a, vx, vy, dx, dy,
-            maxspeed, radians, tX, tY, lX, lY, rX, rY;
+            maxspeed, radians, tX, tY, lX, lY, rX, rY, radius, m;
     private int WIDTH, HEIGHT;
 
     public PhysicsAsteroid(Asteroid ast) {
@@ -28,51 +28,105 @@ public class PhysicsAsteroid {
 
     public void move() {
 
-        if (vx <= maxspeed) {
-            if (vx + a <= maxspeed) {
-                vx += a;
-
-            } else {
-                vx += 0.001;
-            }
-            System.out.println("menorX" + vx + "," + a);
-        } else if (vx > maxspeed) {
-            if (vx - a >= maxspeed) {
-                vx -= a;
-            } else {
-                vx -= 0.001;
-            }
-            System.out.println("mayorX" + vx + "," + a);
-        } else {
-            //   vx = 2.01 * -Math.sin(radians);
-
-            System.out.println("elseX" + vx);
-        }
-
-        if (vy <= maxspeed) {
-            if (vy + a <= maxspeed) {
-                vy += a;
-            } else {
-                vy += 0.001;
-            }
-            System.out.println("menorY" + vy + "," + a);
-        } else if (vy > maxspeed) {
-            if (vy - a > maxspeed) {
-                vy -= a;
-                System.out.println("mayorY" + vy + "," + a);
-            } else {
-                vy -= 0.001;
-            }
-        } else {
-            //  vy = 2.01 * -Math.cos(radians);
-
-            System.out.println("elseY" + vy);
-        }
-
+        a = -Math.max(vx, vy) * 0.0000001f;
+        vx += a;
+        vy += a;
         x += vx;
         y += vy;
-        
+
         setValues();
+    }
+
+    public void collisionXAsteroid(Asteroid alive) {
+
+        double aliveradius = alive.getRadius();
+        double alivex = alive.getX();
+        double alivey = alive.getY();
+        double alivevx = alive.getVx();
+        double alivevy = alive.getVy();
+        double alivem = alive.getM();
+        
+        //distancia entre los dos objetos basado en sus centros
+        double distance = Math.sqrt(Math.pow(this.x - alivex, 2) + Math.pow(this.y - alivey, 2));
+        //distancia que habrán de separarse cada uno del otro en base al radio
+        double overlap = (distance - this.radius - aliveradius) / 2;
+        //desplazamiento del primer objeto en x e y utilizando el vector unitario direccional 
+        //obtenido entre el centro de los objetos, multiplicado por la distancia a separarse
+        this.x -= overlap * (this.x - alivex) / distance;
+        this.x -= overlap * (this.y - alivey) / distance;
+
+        alivex += overlap * (this.x - alivex) / distance;
+        alivey += overlap * (this.y - alivey) / distance;
+
+        //vector normal al vector tangente a los circulos
+        double normalX = (alivex - this.x) / distance;
+        double normalY = (alivey - this.y) / distance;
+
+        //vector tangente
+        double tangentX = -normalY;
+        double tangentY = normalX;
+
+        //producto punto tangente (hacia donde va a cambiar la dirección con respuesta tangente)
+        double pTan1 = this.vx * tangentX + this.vy * tangentY;
+        double pTan2 = alivevx * tangentX + alivevy * tangentY;
+
+        //producto punto normal (hacia donde va a cambiar la dirección con respuesta normal)
+        double pNorm1 = this.vx * normalX + this.vy * normalY;
+        double pNorm2 = alivevx * normalX + alivevy * normalY;
+
+        //conservación del momento
+        double mom1 = (pNorm1 * (this.m - alivem) + 2 * alivem * pNorm2) / (this.m + alivem);
+        double mom2 = (pNorm2 * (alivem - this.m) + 2 * this.m * pNorm1) / (this.m + alivem);
+
+        double vx1 = tangentX * pTan1 + normalX * mom1 * 0.6;
+        double vy1 = tangentY * pTan1 + normalY * mom1 * 0.6;
+        double vx2 = tangentX * pTan2 + normalX * mom2 * 0.6;
+        double vy2 = tangentY * pTan2 + normalY * mom2 * 0.6;
+
+        double max = 0.6;
+
+        if (vx1 > max) {
+            this.vx = max;
+        } else if (vx1 < -max) {
+            this.vx = -max;
+        } else {
+            this.vx = vx1;
+        }
+
+        if (vy1 > max) {
+            this.vy = max;
+        } else if (vy1 < -max) {
+            this.vy = -max;
+        } else {
+            this.vy = vy1;
+        }
+
+        if (vx2 > max) {
+            alivevx = max;
+        } else if (vx1 < -max) {
+            alivevx = -max;
+        } else {
+
+            alivevx = vx2;
+        }
+
+        if (vy2 > max) {
+            alivevy = max;
+        } else if (vy1 < -max) {
+            alivevy = -max;
+        } else {
+
+            alivevy = vy2;
+        }
+
+        alive.setVx(vx2);
+        alive.setVy(vy2);
+        setValues();
+//        this.vx = vx1;
+//        this.vy = vy1;
+//        alive.vx = vx2;
+//        alive.vy = vy2;
+
     }
 
     public void setValues() {
@@ -102,7 +156,8 @@ public class PhysicsAsteroid {
         a = ast.getA();
         maxspeed = ast.getMaxspeed();
         radians = ast.getRadians();
-
+        radius = ast.getRadius();
+        m = ast.getM();
         WIDTH = ast.getImgWidth();
         HEIGHT = ast.getImgHeight();
 

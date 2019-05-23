@@ -23,9 +23,17 @@ public class KillerSound implements Runnable {
     private ArrayList<Clip> clips;
 
     public enum ClipType {
-
-        shot, rocket, boost, jump, explosion, pacManDie, pacManMove, pacManEat, mobileClic, pcClic, deadGTA, deadSouls,
-        tp, powerUp
+        SHOT,
+        ROCKET,
+        BOOST,
+        JUMP,
+        EXPLOSION,
+        MOBILE_CLICK,
+        PC_CLICK, 
+        WASTED_DIE,
+        SOUL_DIE,
+        TELEPORT, 
+        POWER_UP
     }
 
     private Hashtable<ClipType, String> clipNames = new Hashtable<ClipType, String>();
@@ -34,20 +42,17 @@ public class KillerSound implements Runnable {
 
         this.clips = new ArrayList<Clip>();
 
-        clipNames.put(ClipType.shot, "shot.wav");
-        clipNames.put(ClipType.rocket, "cohete.wav");
-        clipNames.put(ClipType.boost, "nitro.wav");
-        clipNames.put(ClipType.jump, "salto.wav");
-        clipNames.put(ClipType.explosion, "explosion.wav");
-        clipNames.put(ClipType.pacManDie, "pacManDie.wav");
-        clipNames.put(ClipType.pacManMove, "pacManMove.wav");
-        clipNames.put(ClipType.pacManEat, "pacManEat.wav");
-        clipNames.put(ClipType.mobileClic, "mobileClic.wav");
-        clipNames.put(ClipType.pcClic, "clicPc.wav");
-        clipNames.put(ClipType.deadGTA, "deadGTA.wav");
-        clipNames.put(ClipType.deadSouls, "deadSouls.wav");
-        clipNames.put(ClipType.tp, "tp.wav");
-        clipNames.put(ClipType.powerUp, "powerUp.wav");
+        clipNames.put(ClipType.SHOT, "shot.wav");
+        clipNames.put(ClipType.ROCKET, "rocket.wav");
+        clipNames.put(ClipType.BOOST, "boost.wav");
+        clipNames.put(ClipType.JUMP, "jump.wav");
+        clipNames.put(ClipType.EXPLOSION, "explosion.wav");
+        clipNames.put(ClipType.MOBILE_CLICK, "mobile_click.wav");
+        clipNames.put(ClipType.PC_CLICK, "pc_click.wav");
+        clipNames.put(ClipType.WASTED_DIE, "wasted_die.wav");
+        clipNames.put(ClipType.SOUL_DIE, "you_die.wav");
+        clipNames.put(ClipType.TELEPORT, "teleport.wav");
+        clipNames.put(ClipType.POWER_UP, "power_up.wav");
 
     }
 

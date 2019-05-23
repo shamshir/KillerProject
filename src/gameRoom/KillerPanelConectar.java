@@ -20,18 +20,18 @@ public class KillerPanelConectar extends javax.swing.JPanel {
      private int portIzq;
      private int portDer;
      
-     //Variables jPanel
-     KillerPanelPrincipal kpp;
-     private KillerGame kg;
+     //Variable Killer Game
+    private KillerRoom kr;
+    private KillerGame kg;
      
      
     /**
      * Creates new form NewJPanelConectar
      */
-    public KillerPanelConectar(KillerPanelPrincipal kpp) {
-        this.kpp = kpp;
+    public KillerPanelConectar(KillerRoom kr) {
+        this.kr = kr;
+        kg = kr.getKg();
         initComponents();
-        kg = kpp.getKg();
     }
     
     public KillerPanelConectar getKillerPanelConectar(){
@@ -59,6 +59,7 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jLabel1PortDer = new javax.swing.JLabel();
         jTextFieldPortDer = new javax.swing.JTextField();
         jTextFieldPortIzq = new javax.swing.JTextField();
+        jButtonConectarDer = new javax.swing.JButton();
         jLabelFondo = new javax.swing.JLabel();
 
         setMaximumSize(new java.awt.Dimension(525, 525));
@@ -84,14 +85,14 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         });
         add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 370, -1, -1));
 
-        jButton2.setText("CONECTAR");
+        jButton2.setText("conectar Izquierda");
         jButton2.setPreferredSize(new java.awt.Dimension(100, 30));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
-        add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 320, -1, -1));
+        add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 130, 20));
 
         jLabelIpIzq.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabelIpIzq.setForeground(new java.awt.Color(255, 255, 255));
@@ -131,6 +132,14 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jTextFieldPortIzq.setPreferredSize(new java.awt.Dimension(40, 20));
         add(jTextFieldPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, -1));
 
+        jButtonConectarDer.setText("Conectar Derecha");
+        jButtonConectarDer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonConectarDerActionPerformed(evt);
+            }
+        });
+        add(jButtonConectarDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 290, -1, -1));
+
         jLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/stars.gif"))); // NOI18N
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
@@ -139,24 +148,28 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         // CONECTAR EN PANEL CONECTAR
         ipIzq = jTextFieldIpIzq.getText();
         portIzq = Integer.parseInt(jTextFieldPortIzq.getText());
-        ipDer = jTextFieldIpDer.getText();
-        portDer = Integer.parseInt(jTextFieldPortDer.getText());
         kg.setPortPrev(portIzq);
-        kg.setPortNext(portDer);
         kg.setIpPrev(ipIzq);
-        kg.setIpNext(ipDer);
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
-        this.setVisible(false);
-        kpp.setVisible(true);
+        kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButtonConectarDerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarDerActionPerformed
+        ipDer = jTextFieldIpDer.getText();
+        portDer = Integer.parseInt(jTextFieldPortDer.getText());
+        kg.setPortNext(portDer);
+        kg.setIpNext(ipDer);
+    }//GEN-LAST:event_jButtonConectarDerActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonConectarDer;
     private javax.swing.JLabel jLabel1IpDer;
     private javax.swing.JLabel jLabel1PortDer;
     private javax.swing.JLabel jLabelCopy;
