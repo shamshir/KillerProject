@@ -65,7 +65,7 @@ public abstract class VisibleObject implements Renderizable {
     // Interfaz Renderizable
     @Override
     public void render(Graphics2D g2d) {
-        g2d.drawImage(this.img, (int) x, (int) y, imgWidth, imgHeight, null);
+        g2d.drawImage(this.kImg, (int) x, (int) y, imgWidth, imgHeight, null);
     }
 
     // *********************

@@ -80,6 +80,18 @@ public class KillerGame extends JFrame {
         // Show room
         this.newRoom();
 
+        this.addVisibleObjects();
+
+    }
+
+    public void addVisibleObjects() {
+
+        Asteroid a = new Asteroid(this, 200, 40, 40, 20, 20, 20);
+        new Thread(a).start();
+
+        new Thread(a.getKillerImage()).start();
+
+        this.objects.add(a);
     }
 
     // ***************************************************************************************************** //
@@ -113,7 +125,7 @@ public class KillerGame extends JFrame {
     }
 
     private void checkColisionShip(Alive alive, VisibleObject object) {
-        
+
         // Collision with Asteroid
         if (object instanceof Asteroid) {
 
@@ -146,17 +158,17 @@ public class KillerGame extends JFrame {
 
         // Collision with Ship
         if (object instanceof KillerShip) {
-            
+
         }
 
         // Collision with Shot
         if (object instanceof Shoot) {
-            
+
         }
 
         // Collision with Wall
         if (object instanceof Wall) {
-            
+
         }
 
     }
@@ -174,13 +186,13 @@ public class KillerGame extends JFrame {
     }
 
     public void startGame() {
-        
+
         // Hide room
         this.room.setVisible(false);
 
         // Change Status
         this.status = KillerGame.Status.GAME;
-        
+
         // Mostrar ventana
         this.showWindow();
 

@@ -105,9 +105,15 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         add(jLabelPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, -1, -1));
 
         jTextFieldIpIzq.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldIpIzq.setText("127.0.0.1");
         jTextFieldIpIzq.setBorder(null);
-        jTextFieldIpIzq.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jTextFieldIpIzq.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTextFieldIpIzq.setPreferredSize(new java.awt.Dimension(90, 20));
+        jTextFieldIpIzq.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldIpIzqActionPerformed(evt);
+            }
+        });
         add(jTextFieldIpIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
 
         jLabel1IpDer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -129,6 +135,7 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         add(jTextFieldPortDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 250, -1, -1));
 
         jTextFieldPortIzq.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldPortIzq.setText("8000");
         jTextFieldPortIzq.setPreferredSize(new java.awt.Dimension(40, 20));
         add(jTextFieldPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, -1));
 
@@ -164,6 +171,10 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         kg.setPortNext(portDer);
         kg.setIpNext(ipDer);
     }//GEN-LAST:event_jButtonConectarDerActionPerformed
+
+    private void jTextFieldIpIzqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldIpIzqActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldIpIzqActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
