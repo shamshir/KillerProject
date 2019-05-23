@@ -23,7 +23,7 @@ public class KillerServer implements Runnable {
         
         this.PORT = this.serverSocket.getLocalPort();
         this.id = InetAddress.getLocalHost().getHostAddress() + " - " + this.PORT;
-        System.out.println("Server iniciado en: " + this.id);
+        System.out.println("KillerServer -> Server iniciado en: " + this.id);
     }
 
     @Override
@@ -31,10 +31,9 @@ public class KillerServer implements Runnable {
 
         while (true) {
             try {
-                System.out.println("Waiting for a connection......");
+                System.out.println("KillerServer -> Waiting for a connection......");
                 this.contact();
-                Thread.sleep(500);
-
+                Thread.sleep(100);
             } catch (InterruptedException ex) {
 
             }

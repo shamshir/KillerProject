@@ -1,13 +1,8 @@
 package communications;
 
-import communications.KillerClient;
-import visibleObjects.Automata;
-import visibleObjects.Controlled;
 import game.KillerGame;
 import java.net.Socket;
-import visibleObjects.Shoot;
 import visibleObjects.Alive;
-import visibleObjects.KillerShip;
 
 public class VisualHandler extends ReceptionHandler implements Runnable {
 
@@ -17,8 +12,11 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String EMPTY_STRING = "";
 
     private static final String STATUS_REQUEST = "ok";
+    private static final String BYE_LINE = "bye";
 
     private static final String SEND_OBJECT_COMMAND = "object";
+    private static final String CLIENT_CONNECTED = "connected";
+    private static final String CLIENT_NOT_CONNECTED = "notConnected";
     private static final String SYNC_REQUEST = "sync";
     private static final String SYNC_CONFIRMATION = "sync-confirm";
     private static final String SYNC_CHECK = "sync-check";
@@ -26,9 +24,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String QUIT_GAME = "quit";
     private static final String PAD_COMMAND = "pad(.*)";
     private static final String DAMAGE_COMMAND = "pad_damage";
-    private static final String DEATH_COMMAND = "pad_death";
-    private static final String KILL_COMMAND = "pad_kill";
-    private static final String GET_POWERUP_COMMAND = "pad_get_powerup";
     private static final String ACTION_COMMAND = "action";
 
     private static final String SHOOT_TYPE = "shoot";
@@ -48,6 +43,25 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return this.destinationId;
     }
 
+    public void setDestinationId(final String id) {
+        this.destinationId = id;
+    }
+
+    @Override
+    public void setDestinationIp(final String ip) {
+        super.setDestinationIp(ip);
+        this.closeSocket();
+    }
+
+    @Override
+    public void setDestinationPort(final int port) {
+        super.setDestinationPort(port);
+    }
+
+    public KillerClient getClient() {
+        return this.client;
+    }
+
     @Override
     public void run() {
         while (true) {
@@ -63,25 +77,26 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     private void listeningMessages() {
-        System.out.println("Connected is right:" + right);
-        this.updateRoom(true);
         boolean done = false;
 
         while (!done) {
             try {
                 done = !this.processLine(this.readLine());
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                this.setSocket(null, this.destinationId);
                 done = true;
             }
         }
         this.setSocket(null);
         this.updateRoom(false);
-        System.out.println("Disconnected is right:" + right);
     }
 
     private boolean processLine(final String line) {
         if (line == null) {
+            return false;
+        }
+        if (BYE_LINE.equalsIgnoreCase(line)) {
+            this.disconnect();
             return false;
         }
         if (!STATUS_REQUEST.equalsIgnoreCase(line)) {
@@ -114,6 +129,13 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case SYNC_CHECK:
                 this.processSyncCheck(message);
                 break;
+            case CLIENT_CONNECTED:
+                this.destinationId = message.getSenderId();
+                this.updateRoom(true);
+                break;
+            case CLIENT_NOT_CONNECTED:
+                this.disconnect();
+                break;
             default:
                 final String command = message.getCommand();
                 if (command != null && command.matches(PAD_COMMAND)) {
@@ -121,7 +143,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                         this.processInfoMessageToPad(message);
                     }
                 } else {
-                    System.out.println("COMANDO DESCONOCIDO");
+                    System.out.println("VISUALHANDLER -> COMANDO DESCONOCIDO");
                 }
                 break;
         }
@@ -143,7 +165,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 this.createShoot(object);
                 break;
             default:
-                System.out.println("ERROR: OBJETO DESCONOCIDO" + object.getObjectType());
+                System.out.println("VISUALHANDLER -> ERROR: OBJETO DESCONOCIDO" + object.getObjectType());
                 break;
 
             //TODO los demas objetos
@@ -167,17 +189,29 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return super.getSocket();
     }
 
+    private void closeSocket() {
+        try {
+            if (this.isConnected()) {
+                this.sendLine(BYE_LINE);
+                this.getSocket().close();
+            }
+        } catch (Exception ex) {
+            System.out.println("VisualHandler ya cerrado");
+        }
+    }
+
     public synchronized boolean setSocket(final Socket sock, final String destinationId) {
 
-        if (this.setSocket(sock)) {
+        if (super.setSocket(sock)) {
             this.destinationId = destinationId;
-            try {
-                this.getSocket().setSoTimeout(3500);
-            } catch (Exception ex) {
-            }
             return true;
         }
         return false;
+    }
+
+    private void disconnect() {
+        this.setSocket(null, EMPTY_STRING);
+        super.setDestinationIp(EMPTY_STRING);
     }
 
     public void sendStart() {
@@ -205,22 +239,22 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         } else {
             this.getKillergame().getNextModule().sendMessage(message);
         }
-    }    
-    
-    public void sendInfoMessageToPad(final String command, final String padIp){
-        this.processInfoMessageToPad(Message.buildInfoMessageToPad(command, padIp));        
     }
-    
-    public void sendInfoDamageMessageToPad(final String padIp, final int damage){
-        this.processInfoMessageToPad(Message.buildDamageMessageToPad(DAMAGE_COMMAND, padIp, damage));     
+
+    public void sendInfoMessageToPad(final String command, final String padIp) {
+        this.processInfoMessageToPad(Message.buildInfoMessageToPad(command, padIp));
     }
-    
+
+    public void sendInfoDamageMessageToPad(final String padIp, final int damage) {
+        this.processInfoMessageToPad(Message.buildDamageMessageToPad(DAMAGE_COMMAND, padIp, damage));
+    }
+
     private void processSyncRequest(final String senderId, final int quantity) {
         final Message messageToSend;
         if (this.isMessageMine(senderId)) {
-            this.client.resetSyncTimeOut();
-            this.getKillergame().setSyncronized(true);
+            this.getKillergame().getNextModule().getClient().resetSyncTimeOut();
             this.getKillergame().setServersQuantity(quantity);
+            this.getKillergame().setSyncronized(true);
             messageToSend = Message.Builder.builder(SYNC_CONFIRMATION, senderId)
                     .withServersQuantity(quantity)
                     .build();
@@ -235,9 +269,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private void processSyncConfirmation(final Message message) {
         if (!this.isMessageMine(message.getSenderId())) {
             this.getKillergame().getNextModule().sendMessage(message);
-            this.client.resetSyncTimeOut();
-            this.getKillergame().setSyncronized(true);
+            this.getKillergame().getNextModule().getClient().resetSyncTimeOut();
             this.getKillergame().setServersQuantity(message.getServersQuantity());
+            this.getKillergame().setSyncronized(true);
         }
     }
 
@@ -245,7 +279,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         if (!this.isMessageMine(message.getSenderId())) {
             this.getKillergame().getNextModule().sendMessage(message);
         }
-        this.client.resetSyncTimeOut();
+        this.getKillergame().getNextModule().getClient().resetSyncTimeOut();
     }
 
     private boolean isMessageMine(final String id) {
@@ -268,11 +302,26 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         this.getKillergame().reciveShoot(object.getX(), object.getY(), object.getRadians(),
                 object.getDx(), object.getDy(), object.getId(), object.getDamage());
     }
-    
-    private void updateRoom(boolean connected){
-        if(this.right){
-            //TODO this.getKillergame().getRoom().setFeedbackConnetionRight(connected);
+
+    public void updateRoom(boolean connected) {
+
+        if (connected) {
+            if(right){
+             System.out.println("VisualHandler -> Connected a la derecha");
+            }else{
+             System.out.println("VisualHandler -> Connected a la izquierda");                
+            }
         }else{
+            if(right){
+             System.out.println("VisualHandler -> Disconnected a la derecha");
+            }else{
+             System.out.println("VisualHandler -> Disconnected a la izquierda");                
+            }
+        }
+
+        if (this.right) {
+            //TODO this.getKillergame().getRoom().setFeedbackConnetionRight(connected);
+        } else {
             //TODO this.getKillergame().getRoom().setFeedbackConnetionLeft(connected);            
         }
     }
