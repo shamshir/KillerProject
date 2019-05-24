@@ -18,4 +18,9 @@ public class ExplosionEffect extends KillerImage{
         super(vo, oi, 0, 0);
     }
     
+    @Override
+    public void run(){
+        
+    }
+    
 }

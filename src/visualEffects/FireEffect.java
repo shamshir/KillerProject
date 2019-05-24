@@ -23,11 +23,6 @@ public class FireEffect extends KillerImage {
     private final int MIN_INTENSITY = 20;
     private final double COOLING = 5.5;
 
-    private BufferedImage fireImage;
-    private BufferedImage testImageForEffect;
-
-    private BufferedImage effectImg;
-
     private int[] sparks;
     private int[][] heatMap;
     private MyColor[] paCo;
@@ -38,7 +33,6 @@ public class FireEffect extends KillerImage {
         // setear paleta de colores para el fuego
         this.setPaCo();
 
-        this.fireImage = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
         this.sparks = sourceSparks;
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
 //        this.effectImg = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -66,14 +60,14 @@ public class FireEffect extends KillerImage {
     public void setPaCo() {
         this.paCo = new MyColor[256];
         for (int i = 0; i < 256; i++) {
-            this.paCo[i] = new MyColor(i, i+ 10/12, i * 2/3, i/24);
+            this.paCo[i] = new MyColor(i, i + 10 / 12, i * 2 / 3, i / 24);
         }
     }
 
     private void createDefaultSparks() {
 
         this.sparks = new int[this.getWidth()];
-        
+
         for (int pos = 0; pos < this.sparks.length; pos++) {
             this.sparks[pos] = 255;
         }
@@ -130,7 +124,7 @@ public class FireEffect extends KillerImage {
     private void updateHeatMap() {
         for (int fil = 1; fil < this.heatMap.length; fil++) {
             for (int col = 1; col < this.heatMap[0].length - 1; col++) {
-                this.heatMap[fil][col] = (int)(((this.heatMap[fil][col]
+                this.heatMap[fil][col] = (int) (((this.heatMap[fil][col]
                         + this.heatMap[fil - 1][col - 1]
                         + this.heatMap[fil - 1][col]
                         + this.heatMap[fil - 1][col + 1]) / 3.9) - this.COOLING);
@@ -189,8 +183,5 @@ public class FireEffect extends KillerImage {
             }
         }
     }
-    
-    
+
 }
-
-
