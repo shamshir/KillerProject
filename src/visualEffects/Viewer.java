@@ -154,6 +154,21 @@ public class Viewer extends Canvas implements Runnable {
         //pintamos la imagen en el canvas
         this.getGraphics().drawImage(this.backgroundImg, 0, 0, null);
     }
+    
+    public void updateFrame2() {
+
+        //cogemos los graficos de la imagen
+//      
+//        g2dBackground.drawImage(this.fondo, 0, 0, null);
+        this.g2dBackground.setColor(Color.PINK);
+        this.g2dBackground.fillRect(0, 0, 1920, 1080);
+
+        //pintamos todos los componentes en los graphics de la imagen
+        this.drawComponents(this.g2dBackground);
+
+        //pintamos la imagen en el canvas
+        this.getGraphics().drawImage(this.backgroundImg, 0, 0, null);
+    }
 
     public Image getImage() {
         return this.backgroundImg;

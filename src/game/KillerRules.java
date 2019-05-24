@@ -80,20 +80,20 @@ public class KillerRules {
      */
     public static void collisionShipWithNebulosa(KillerShip ship) {
 
-        if (ship.getType() == KillerShip.ShipType.OCTANE) {
-            ship.setMaxSpeed(KillerRules.OCTANE_MAX_SPEED_NEBULOSA);
-            ship.setTiempoEnNebulosa(10);
-        }
-
-        if (ship.getType() == KillerShip.ShipType.BATMOBILE) {
-            ship.setMaxSpeed(KillerRules.BATMOBILE_MAX_SPEED_NEBULOSA);
-            ship.setTiempoEnNebulosa(10);
-        }
-
-        if (ship.getType() == KillerShip.ShipType.MARAUDER) {
-            ship.setMaxSpeed(KillerRules.MARAUDER_MAX_SPEED_NEBULOSA);
-            ship.setTiempoEnNebulosa(10);
-        }
+//        if (ship.getType() == KillerShip.ShipType.OCTANE) {
+//            ship.setMaxSpeed(KillerRules.OCTANE_MAX_SPEED_NEBULOSA);
+//            ship.setTiempoEnNebulosa(10);
+//        }
+//
+//        if (ship.getType() == KillerShip.ShipType.BATMOBILE) {
+//            ship.setMaxSpeed(KillerRules.BATMOBILE_MAX_SPEED_NEBULOSA);
+//            ship.setTiempoEnNebulosa(10);
+//        }
+//
+//        if (ship.getType() == KillerShip.ShipType.MARAUDER) {
+//            ship.setMaxSpeed(KillerRules.MARAUDER_MAX_SPEED_NEBULOSA);
+//            ship.setTiempoEnNebulosa(10);
+//        }
 
     }
 
