@@ -19,7 +19,7 @@ public class Shoot extends Automata {
     public Shoot(KillerGame game, KillerShip ship) {
         super();
         this.id = ship.getId();
-        this.state = AutonomousState.ALIVE;
+        this.state = State.ALIVE;
         // Posición según la posición del morro de la nave
         this.x = ship.getTx();
         this.y = ship.getTy(); 
@@ -50,7 +50,7 @@ public class Shoot extends Automata {
      * @param health
      * @param state 
      */
-    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id, int damage, int health, AutonomousState state) {
+    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id, int damage, int health, State state) {
         super(game, x, y);
         
         this.radians = radians; // Repetido en vo.

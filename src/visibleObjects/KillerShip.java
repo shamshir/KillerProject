@@ -9,16 +9,11 @@ import java.awt.Graphics2D;
 import physics.PhysicsShip;
 
 public class KillerShip extends Controlled {
-
-    public enum ShipState {
-        SAFE, ALIVE, DEAD
-    }
-
+    
     public enum ShipType {
         OCTANE, BATMOBILE, MARAUDER
     }
-
-    private ShipState state;
+    
     private ShipType type;
     private String id;
     private String user;
@@ -49,7 +44,7 @@ public class KillerShip extends Controlled {
         this.id = id;
         this.user = user;
         this.type = type;
-        this.state = ShipState.SAFE;
+        this.state = State.SAFE;
 
         this.configureShip();
         this.setImage();
@@ -110,7 +105,7 @@ public class KillerShip extends Controlled {
         this.ry = ry;
         this.configureSpeed();
         
-        this.state = ShipState.SAFE;
+        this.state = State.SAFE;
         this.health = health;
         this.damage = damage;
         this.setImage();
@@ -126,9 +121,9 @@ public class KillerShip extends Controlled {
 
     @Override
     public void run() {
-        while (state != ShipState.DEAD) {
+        while (state != State.DEAD) {
 
-            if (state == ShipState.SAFE) {
+            if (state == State.SAFE) {
                 this.checkSafe();
             }
 
@@ -179,10 +174,6 @@ public class KillerShip extends Controlled {
 
                 break;
         }
-    }
-
-    public void changeState(ShipState state) {
-        this.state = state;
     }
 
     @Override
@@ -247,7 +238,7 @@ public class KillerShip extends Controlled {
 
     private void checkSafe() {
         if (System.currentTimeMillis() - timer > 5000) {
-            this.state = ShipState.ALIVE;
+            this.state = State.ALIVE;
             this.setImage();
             // Adapto las coordenadas para la hitbox a la img
             this.setImgSize();
@@ -340,7 +331,7 @@ public class KillerShip extends Controlled {
         g2d.drawString(this.user, (int) x, (int) y - 10);
         g2d.drawImage(this.img, (int) x, (int) y, imgWidth, imgHeight, null);
         // Pintar indicador de escudo si la nave está SAFE
-        if (this.state == ShipState.SAFE) {
+        if (this.state == State.SAFE) {
             g2d.setColor(Color.magenta);
             g2d.setStroke(new BasicStroke(2));
             g2d.drawOval((int) x - 6, (int) y - 6, imgWidth + 12, imgHeight + 12);
@@ -350,13 +341,6 @@ public class KillerShip extends Controlled {
     // *********************
     // * Getters & Setters *
     // *********************
-    public ShipState getState() {
-        return state;
-    }
-
-    public void setState(ShipState state) {
-        this.state = state;
-    }
 
     public ShipType getType() {
         return type;

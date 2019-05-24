@@ -4,6 +4,10 @@ import game.KillerGame;
 
 public abstract class Alive extends VisibleObject implements Runnable, Destructible {
 
+    public enum State {
+        SAFE, ALIVE, DYING, DEAD
+    }
+
     // Físicas: son necesarios los mismos atributos en todos los Alive?
     // En VisibleObject --> protected double angle; ... this.angle = Math.toRadians(0);
     protected double a;
@@ -12,8 +16,8 @@ public abstract class Alive extends VisibleObject implements Runnable, Destructi
     protected double vx;
     protected double vy;
     protected double maxspeed;
-
     protected int health;
+    protected State state;
 
     public Alive() {
     }
@@ -35,9 +39,10 @@ public abstract class Alive extends VisibleObject implements Runnable, Destructi
 //    }
     // TO DO: descomentar si es el mismo método de físicas para todos los objetos
     protected abstract void move();
-//    protected void move() {
-//        KillerPhysics.move(this);
-//    }
+
+    public void changeState(State state) {
+        this.state = state;
+    }
 
     /**
      * Método para lo que hacen los objetos al chocar con los bordes
@@ -104,6 +109,14 @@ public abstract class Alive extends VisibleObject implements Runnable, Destructi
 
     public void setHealth(int health) {
         this.health = health;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 
 }
