@@ -36,18 +36,6 @@ public abstract class Automata extends Alive {
     // *                     Interfaces                       *
     // ********************************************************
     
-    /**
-     * Método para restar vida, no cambia ningún estado ni comprueba nada...
-     * @param damage vida que quita
-     */    
-    @Override
-    public void quitarVida(int damage) {
-//        if (state != AutonomousState.DYING) {
-//            this.health -= damage;
-//        }
-        this.health -= damage;
-    }
-    
     @Override
     public void onDying() {
         

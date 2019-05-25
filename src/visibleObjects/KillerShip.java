@@ -176,17 +176,13 @@ public class KillerShip extends Controlled {
         }
     }
 
-    @Override
-    public void collision() {
-        // TO DO
-    }
-
     /**
      * Método aumentar el daño de la nave al coger el powerUp DAMAGE
      *
+     * @param damage
      */
-    public void powerUpDamage() {
-        // TO DO
+    public void powerUpDamage(int damage) {
+        this.damage += damage;
     }
 
     /**
@@ -233,7 +229,7 @@ public class KillerShip extends Controlled {
      */
     private void moveShip(double dx, double dy) {
         this.dx = dx;
-        this.dy = dy;
+        this.dy = -dy;
     }
 
     private void checkSafe() {
@@ -308,12 +304,7 @@ public class KillerShip extends Controlled {
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
-    // Interfaz Destructible    
-    @Override
-    public void quitarVida(int damage) {
-        this.health -= damage;
-    }
-
+    // Interfaz Destructible
     @Override
     public void onDying() {
 

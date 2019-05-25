@@ -52,24 +52,16 @@ public class Asteroid extends Automata {
         physicsAsteroid.move();
     }
 
-    private void divide() {
-        // Si el Asteroid se ha de dividir al morir
-        // TO DO
-    }
-
     @Override
     protected void setImage() {
         this.loadImg("src/visibleObjects/img/asteroid.png");
     }
 
-    @Override
-    public void collision() {
-        // TO DO
-    }
-
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
+    
+    
     // *********************
     // * Getters & Setters *
     // *********************

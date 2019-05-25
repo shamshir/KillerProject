@@ -44,14 +44,19 @@ public abstract class Alive extends VisibleObject implements Runnable, Destructi
         this.state = state;
     }
 
-    /**
-     * Método para lo que hacen los objetos al chocar con los bordes
-     */
-    public abstract void collision();
-
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
+    
+    /**
+     * Método para restar vida, no cambia ningún estado ni comprueba nada...
+     * @param damage vida que quita
+     */       
+    @Override
+    public void quitarVida(int damage) {
+        this.health -= damage;
+    }
+    
     // *********************
     // * Getters & Setters *
     // *********************

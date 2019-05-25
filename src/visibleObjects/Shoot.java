@@ -74,11 +74,6 @@ public class Shoot extends Automata {
     }
 
     @Override
-    public void collision() {
-        // TO DO
-    }
-
-    @Override
     protected void move() {
         physicsShoot.move();
     }

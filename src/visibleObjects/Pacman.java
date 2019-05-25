@@ -1,6 +1,7 @@
 package visibleObjects;
 
 import game.KillerGame;
+import game.KillerRules;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -21,42 +22,32 @@ public class Pacman extends Automata {
      */
     public Pacman(KillerGame game, double x, double y) {
         super(game, x, y);
-
-        this.imgHeight = 40;
-        this.imgWidth = 40;
-        this.radius = this.imgHeight / 2;
         
         this.m = 200;
-        this.health = 500; 
+        this.health = KillerRules.PACMAN_INITIAL_HEALTH;
+        this.imgHeight = KillerRules.PACMAN_INITIAL_HEALTH;
+        this.imgWidth = KillerRules.PACMAN_INITIAL_HEALTH;
+        this.radius = this.imgHeight / 2;
         
-        this.maxspeed = 1;      
-        this.dx = maxspeed;
+        this.maxspeed = 8;
 
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
     }
-
+    
     /**
-     * Método para aumentar de volumen, provisional, sólo aumenta el ancho y alto de la img sumando el parámetro, o sea que no pasarse, y en los bordes...!!?@@#3
-     * @param food 
+     * Suma a width, height y health la cantidad pasada por parámetro
+     * @param size cantidad a incrementar
      */
-    public void grow(int food) {
-        // TO DO
-        imgWidth += food;
-        imgHeight += food;
+    public void setSize(int size) {
+        this.imgWidth += size;
+        this.imgHeight += size;
+        this.health += size;
     }
     
-    public void move() {
-//        KillerPhysics.move(this);        
-        x += dx;
-        y += dy;
-    }
-
     @Override
-    public void collision() {
-        // TO DO
-        dx *= -1;
-        dy *= -1;
+    protected void move() {
+//        KillerPhysics.move(this);
     }
 
     @Override
