@@ -51,6 +51,7 @@ public class Viewer extends Canvas implements Runnable {
     public void run() {
        
         this.createBufferStrategy(2);
+        this.loadBackgroundImage();
 
         while (true) {
             this.updateFrame();
@@ -119,7 +120,7 @@ public class Viewer extends Canvas implements Runnable {
     
     public void loadBackgroundImage(){
         try {
-            this.backgroundImg = ImageIO.read(new File("img/fondoLM.jpg"));
+            this.backgroundImg = ImageIO.read(new File("src/visualEffects/img/fondoLM.png"));
         } catch (IOException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
         }
