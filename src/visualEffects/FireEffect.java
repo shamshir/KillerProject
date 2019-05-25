@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package visualEffects;
-
+    
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;

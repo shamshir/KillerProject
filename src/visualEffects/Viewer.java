@@ -74,7 +74,7 @@ public class Viewer extends Canvas implements Runnable {
 
 //    public void drawConnectionInfo(Graphics2D g) {
 //
-//        double height = (int) getHeight() / 20;
+//        double height = (int) getHeight() / 20;   
 //
 //        g.setColor(Color.white);
 //
