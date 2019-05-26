@@ -20,7 +20,7 @@ public class CollidePhysics {
      * @param obj2 Segundo objeto circular
      * @return true si han colisionado, false en caso contrario.
      */
-    public static boolean colideCxC(VisibleObject obj1, VisibleObject obj2) {
+    public static boolean collisionCxC(VisibleObject obj1, VisibleObject obj2) {
 
         double xDif = obj1.getX() - obj2.getX();
         double yDif = obj1.getY() - obj2.getY();
@@ -36,7 +36,7 @@ public class CollidePhysics {
     //----- Colisión entre triangulos -----
     //Por ahora es solo entre naves, mas adelante lo hare para todos los visible objects en caso de 
     // que hayan mas objetos triangulares
-    public boolean collisionTxT(KillerShip obj1, KillerShip obj2) {
+    public static boolean collisionTxT(KillerShip obj1, KillerShip obj2) {
 
         double[][] points = new double[][]{{obj1.getTx(), obj1.getTy()},
         {obj1.getLx(), obj1.getLy()}, {obj1.getRx(), obj1.getRy()}};
@@ -69,6 +69,27 @@ public class CollidePhysics {
         }
         return false;
 
+    }
+
+    public static boolean collisionObjxWall(VisibleObject obj, Wall wall) {
+
+        if (wall.getType() == Wall.Limit.NORTH) {
+
+            return (obj.getY() + obj.getImgHeight() / 2 < wall.getY());
+
+        } else if (wall.getType() == Wall.Limit.SOUTH) {
+
+            return (obj.getY() + obj.getImgHeight() / 2 > wall.getY());
+
+        } else if (wall.getType() == Wall.Limit.EAST) {
+
+            return (obj.getX() + obj.getImgWidth() / 2 > wall.getX());
+
+        } else if (wall.getType() == Wall.Limit.WEST) {
+
+            return (obj.getX() + obj.getImgHeight() / 2 < wall.getX());
+        }
+        return false;
     }
 
 }
