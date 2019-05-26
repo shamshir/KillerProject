@@ -41,7 +41,7 @@ public class KillerRules {
         // Detect wall type
         if (wall.getType() == Wall.Limit.NORTH) {
             // Teleport to bottom
-            alive.setY((game.getHeight()) + (alive.getImgWidth()));
+            alive.setY((game.getHeight()) - (alive.getImgWidth()));
         }
 
         if (wall.getType() == Wall.Limit.SOUTH) {
@@ -90,17 +90,17 @@ public class KillerRules {
     public static void collisionShipWithNebulosa(KillerShip ship) {
 
         if (ship.getType() == KillerShip.ShipType.OCTANE) {
-            ship.setMaxSpeed(KillerRules.OCTANE_MAX_SPEED_NEBULOSA);
+            ship.setMaxspeed(KillerRules.OCTANE_MAX_SPEED_NEBULOSA);
             ship.setTiempoEnNebulosa(10);
         }
 
         if (ship.getType() == KillerShip.ShipType.BATMOBILE) {
-            ship.setMaxSpeed(KillerRules.BATMOBILE_MAX_SPEED_NEBULOSA);
+            ship.setMaxspeed(KillerRules.BATMOBILE_MAX_SPEED_NEBULOSA);
             ship.setTiempoEnNebulosa(10);
         }
 
         if (ship.getType() == KillerShip.ShipType.MARAUDER) {
-            ship.setMaxSpeed(KillerRules.MARAUDER_MAX_SPEED_NEBULOSA);
+            ship.setMaxspeed(KillerRules.MARAUDER_MAX_SPEED_NEBULOSA);
             ship.setTiempoEnNebulosa(10);
         }
 
