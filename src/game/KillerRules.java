@@ -23,6 +23,7 @@ public class KillerRules {
     public static final int MARAUDER_DAMAGE = 10;
     public static final int MARAUDER_MAX_SPEED = 3;
     public static final int MARAUDER_MAX_SPEED_NEBULOSA = 3;
+    public static final int PACMAN_INITIAL_HEALTH = 10;
     public static final int PACMAN_INCREMENT = 10;
     public static final int PACMAN_DECREMENT = 1;
 
@@ -343,7 +344,7 @@ public class KillerRules {
 
         // Set die status to KillerShip
         if (ship.getHealth() <= 0) {
-            ship.changeState(KillerShip.ShipState.DEAD);
+            ship.changeState(Alive.State.DEAD);
             // Sacar nave de la array
             // Enviar al mando que la nave ha muerto
             dead = true;
