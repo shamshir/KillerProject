@@ -15,7 +15,6 @@ import javax.swing.*;
 import java.util.Hashtable;
 import javax.sound.sampled.Clip;
 import physics.CollidePhysics;
-import visibleObjects.Automata.AutonomousState;
 
 /**
  * @author Alvaro & Christian
@@ -171,7 +170,7 @@ public class KillerGame extends JFrame {
         }
 
         // Collision with Ship
-        if (object instanceof KillerShip) {
+        if (object instanceof KillerShip && !ship.equals(object)) {
             if (false) {
                 KillerRules.collisionShipWithShip(this, ship, (KillerShip) (object));
             }
@@ -186,7 +185,7 @@ public class KillerGame extends JFrame {
 
         // Collision with Wall
         if (object instanceof Wall) {
-            if (false) {
+            if (CollidePhysics.collisionObjxWall(ship, (Wall) object)) {
                 KillerRules.collisionAliveWithWall(this, ship, (Wall) (object));
             }
         }
@@ -238,7 +237,7 @@ public class KillerGame extends JFrame {
         }
 
         // Collision with Shot
-        if (object instanceof Shoot) {
+        if (object instanceof Shoot && !shoot.equals(object)) {
             if (false) {
                 KillerRules.collisionShootWithShoot(this, shoot, (Shoot) (object));
             }
@@ -253,7 +252,7 @@ public class KillerGame extends JFrame {
 
         // Collision with Wall
         if (object instanceof Wall) {
-            if (false) {
+            if (CollidePhysics.collisionObjxWall(shoot, (Wall) object)) {
                 KillerRules.collisionAliveWithWall(this, shoot, (Wall) (object));
             }
         }
@@ -263,7 +262,7 @@ public class KillerGame extends JFrame {
     private void checkCollisionAsteroid(Asteroid asteroid, VisibleObject object) {
 
         // Collision with Asteroid
-        if (object instanceof Asteroid) {
+        if (object instanceof Asteroid && !asteroid.equals(object)) {
             if (false) {
                 KillerRules.collisionAsteroidWithAsteroid(this, asteroid, (Asteroid) (object));
             }
@@ -271,42 +270,58 @@ public class KillerGame extends JFrame {
 
         // Collision with BlackHole
         if (object instanceof BlackHole) {
-            KillerRules.collisionAsteroidWithBlackHole(this, asteroid, (BlackHole) (object));
+            if (false) {
+                KillerRules.collisionAsteroidWithBlackHole(this, asteroid, (BlackHole) (object));
+            }
         }
 
         // Collision with Nebulosa
         if (object instanceof Nebulosa) {
-            KillerRules.collisionAsteroidWithNebulosa(asteroid);
+            if (false) {
+                KillerRules.collisionAsteroidWithNebulosa(asteroid);
+            }
         }
 
         // Collision with Pacman
         if (object instanceof Pacman) {
+            if (false) {
             KillerRules.collisionAsteroidWithPacman(this, asteroid, (Pacman) (object));
+            }
         }
 
         // Collision with Planeta
         if (object instanceof Planeta) {
-            KillerRules.collisionAsteroidWithPlaneta(asteroid);
+            if (false) {
+                KillerRules.collisionAsteroidWithPlaneta(asteroid);
+            }
         }
 
         // Collision with PowerUp
         if (object instanceof PowerUp) {
-            KillerRules.collisionAsteroidWithPowerUp(this, asteroid, (PowerUp) (object));
+            if (false) {
+                KillerRules.collisionAsteroidWithPowerUp(this, asteroid, (PowerUp) (object));
+            }
         }
 
         // Collision with Shot
         if (object instanceof Shoot) {
-            KillerRules.collisionShootWithAsteroid(this, (Shoot) (object), asteroid);
+            if (false) {
+                KillerRules.collisionShootWithAsteroid(this, (Shoot) (object), asteroid);
+            }
         }
 
         // Collision with Ship
         if (object instanceof KillerShip) {
-            KillerRules.collisionShipWithAsteroid(this, (KillerShip) (object), asteroid);
+            if (false) {
+                KillerRules.collisionShipWithAsteroid(this, (KillerShip) (object), asteroid);
+            }
         }
 
         // Collision with Wall
         if (object instanceof Wall) {
-            KillerRules.collisionAliveWithWall(this, asteroid, (Wall) (object));
+            if (CollidePhysics.collisionObjxWall(asteroid,(Wall) object)) {
+                KillerRules.collisionAliveWithWall(this, asteroid, (Wall) (object));
+            }
         }
 
     }
@@ -315,47 +330,65 @@ public class KillerGame extends JFrame {
 
         // Collision with Asteroid
         if (object instanceof Asteroid) {
-            KillerRules.collisionAsteroidWithPacman(this, (Asteroid) (object), pacman);
+            if (false) {
+                KillerRules.collisionAsteroidWithPacman(this, (Asteroid) (object), pacman);
+            }
         }
 
         // Collision with BlackHole
         if (object instanceof BlackHole) {
-            KillerRules.collisionPacmanWithBlackHole(pacman);
+            if (false) {
+                KillerRules.collisionPacmanWithBlackHole(pacman);
+            }
         }
 
         // Collision with Nebulosa
         if (object instanceof Nebulosa) {
-            KillerRules.collisionPacmanWithNebulosa(pacman);
+            if (false) {
+                KillerRules.collisionPacmanWithNebulosa(pacman);
+            }
         }
 
         // Collision with Pacman
-        if (object instanceof Pacman) {
-            KillerRules.collisionPacmanWithPacman(this, pacman, (Pacman) (object));
+        if (object instanceof Pacman && !pacman.equals(object)) {
+            if (false) {
+                KillerRules.collisionPacmanWithPacman(this, pacman, (Pacman) (object));
+            }
         }
 
         // Collision with Planeta
         if (object instanceof Planeta) {
-            KillerRules.collisionPacmanWithPlaneta(pacman);
+            if (false) {
+                KillerRules.collisionPacmanWithPlaneta(pacman);
+            }
         }
 
         // Collision with PowerUp
         if (object instanceof PowerUp) {
-            KillerRules.collisionPacmanWithPowerUp(this, pacman, (PowerUp) (object));
+            if (false) {
+                KillerRules.collisionPacmanWithPowerUp(this, pacman, (PowerUp) (object));
+            }
         }
 
         // Collision with Shot
         if (object instanceof Shoot) {
-            KillerRules.collisionShootWithPacman(this, (Shoot) (object), pacman);
+            if (false) {
+                KillerRules.collisionShootWithPacman(this, (Shoot) (object), pacman);
+            }
         }
 
         // Collision with Ship
         if (object instanceof KillerShip) {
-            KillerRules.collisionShipWithPacman(this, (KillerShip) (object), pacman);
+            if (false) {
+                KillerRules.collisionShipWithPacman(this, (KillerShip) (object), pacman);
+            }
         }
 
         // Collision with Wall
         if (object instanceof Wall) {
-            KillerRules.collisionAliveWithWall(this, pacman, (Wall) (object));
+            if (CollidePhysics.collisionObjxWall(pacman, (Wall) object)) {
+                KillerRules.collisionAliveWithWall(this, pacman, (Wall) (object));
+            }
         }
 
     }
@@ -636,7 +669,7 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
-        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage, 1, AutonomousState.ALIVE);
+        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage, 1, Alive.State.ALIVE);
         this.objects.add(shoot);
         new Thread(shoot).start();
     }

@@ -23,6 +23,7 @@ public class KillerRules {
     public static final int MARAUDER_DAMAGE = 10;
     public static final int MARAUDER_MAX_SPEED = 3;
     public static final int MARAUDER_MAX_SPEED_NEBULOSA = 3;
+    public static final int PACMAN_INITIAL_HEALTH = 10;
     public static final int PACMAN_INCREMENT = 10;
     public static final int PACMAN_DECREMENT = 1;
 
@@ -41,7 +42,7 @@ public class KillerRules {
         // Detect wall type
         if (wall.getType() == Wall.Limit.NORTH) {
             // Teleport to bottom
-            alive.setY((game.getHeight()) + (alive.getImgWidth()));
+            alive.setY((game.getHeight()) - (alive.getImgWidth()));
         }
 
         if (wall.getType() == Wall.Limit.SOUTH) {
@@ -90,17 +91,17 @@ public class KillerRules {
     public static void collisionShipWithNebulosa(KillerShip ship) {
 
         if (ship.getType() == KillerShip.ShipType.OCTANE) {
-            ship.setMaxSpeed(KillerRules.OCTANE_MAX_SPEED_NEBULOSA);
+            ship.setMaxspeed(KillerRules.OCTANE_MAX_SPEED_NEBULOSA);
             ship.setTiempoEnNebulosa(10);
         }
 
         if (ship.getType() == KillerShip.ShipType.BATMOBILE) {
-            ship.setMaxSpeed(KillerRules.BATMOBILE_MAX_SPEED_NEBULOSA);
+            ship.setMaxspeed(KillerRules.BATMOBILE_MAX_SPEED_NEBULOSA);
             ship.setTiempoEnNebulosa(10);
         }
 
         if (ship.getType() == KillerShip.ShipType.MARAUDER) {
-            ship.setMaxSpeed(KillerRules.MARAUDER_MAX_SPEED_NEBULOSA);
+            ship.setMaxspeed(KillerRules.MARAUDER_MAX_SPEED_NEBULOSA);
             ship.setTiempoEnNebulosa(10);
         }
 
@@ -172,14 +173,14 @@ public class KillerRules {
         // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
 
         // Remove shot from the array
-        game.removeObject(shoot);
+        game.removeObject(shot);
 
     }
 
     public static void collisionShootWithBlackHole(KillerGame game, Shoot shot, BlackHole blackhole) {
 
         // Remove shot from the array
-        game.removeObject(shoot);
+        game.removeObject(shot);
 
     }
 
@@ -196,14 +197,14 @@ public class KillerRules {
         // Hacer que el pacman cambie de direccion
 
         // Remove shot from the array
-        game.removeObject(shoot);
+        game.removeObject(shot);
 
     }
 
     public static void collisionShootWithPlaneta(KillerGame game, Shoot shot, Planeta planeta) {
 
         // Remove shot from the array
-        game.removeObject(shoot);
+        game.removeObject(shot);
 
     }
 
@@ -214,7 +215,7 @@ public class KillerRules {
             // True
             // Restar vida al envoltorio del powerup
             // Remove shot from the array
-            game.removeObject(shoot);
+            game.removeObject(shot);
 
             // False
 
@@ -343,7 +344,7 @@ public class KillerRules {
 
         // Set die status to KillerShip
         if (ship.getHealth() <= 0) {
-            ship.changeState(KillerShip.ShipState.DEAD);
+            ship.changeState(Alive.State.DEAD);
             // Sacar nave de la array
             // Enviar al mando que la nave ha muerto
             dead = true;
