@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package visualEffects;
 
 import java.awt.image.BufferedImage;
@@ -11,6 +6,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import visibleObjects.Alive;
 import visibleObjects.VisibleObject;
 
 /**
@@ -37,7 +33,7 @@ public class FireEffect extends KillerImage {
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
 
         // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
-        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
+//        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
     }
 
     public FireEffect(VisibleObject vo, BufferedImage oi) {
@@ -68,7 +64,7 @@ public class FireEffect extends KillerImage {
      *
      * @return True si lo sigue teniendo, false si no
      */
-    private boolean checkObjectEffect() {
+    protected boolean checkObjectEffect() {
         if (this.visibleObject.getKillerImage().equals(this)) {
             return true;
         }
@@ -124,7 +120,7 @@ public class FireEffect extends KillerImage {
     }
 
     private void updateFire() {
-        this.updateSparks();
+        this.updateSparks(0);
         this.updateHeatMap();
         this.paintFireOnImage();
 
@@ -159,6 +155,41 @@ public class FireEffect extends KillerImage {
         }
     }
 
+    private void updateSparks(int vel) {
+
+        double dX = Math.abs(((Alive) this.visibleObject).getDx());
+        double dY = Math.abs(((Alive) this.visibleObject).getDy());
+        double d;
+
+        if (dX > dY) {
+            d = dX;
+        } else {
+            d = dY;
+        }
+
+        int intensity, currIntensity;
+
+        currIntensity = (int) (d * 90);
+
+        if (currIntensity < 0) {
+            System.out.println((d * 120) + " ----------------- \n");
+        }
+        
+      
+
+        for (int pos = 0; pos < this.sparks.length; pos++) {
+            if (this.sparks[pos] > 1) {
+
+                if (currIntensity > this.MIN_INTENSITY) {
+//                    System.out.println("FE: intensidad > min");
+                    this.heatMap[0][pos] = 255;
+                } else {
+                    this.heatMap[0][pos] = 0;
+                }
+            }
+        }
+    }
+
     // run method
     @Override
     public void run() {
@@ -166,10 +197,8 @@ public class FireEffect extends KillerImage {
         while (this.checkObjectEffect()) {
             this.updateFire();
 
-//            this.construirImg();
-//            this.getGraphics().drawImage(this.effectImg, 0, 0, null);
             try {
-                Thread.sleep(4);
+                Thread.sleep(5);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FireEffect.class.getName()).log(Level.SEVERE, null, ex);
             }
