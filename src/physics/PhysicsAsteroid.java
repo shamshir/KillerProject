@@ -28,6 +28,8 @@ public class PhysicsAsteroid {
 
     public void move() {
 
+        updateFields();
+
         a = -Math.max(vx, vy) * 0.0000001f;
         vx += a;
         vy += a;
@@ -45,7 +47,7 @@ public class PhysicsAsteroid {
         double alivevx = alive.getVx();
         double alivevy = alive.getVy();
         double alivem = alive.getM();
-        
+
         //distancia entre los dos objetos basado en sus centros
         double distance = Math.sqrt(Math.pow(this.x - alivex, 2) + Math.pow(this.y - alivey, 2));
         //distancia que habrán de separarse cada uno del otro en base al radio
@@ -55,8 +57,14 @@ public class PhysicsAsteroid {
         this.x -= overlap * (this.x - alivex) / distance;
         this.x -= overlap * (this.y - alivey) / distance;
 
+        this.ast.setX(x);
+        this.ast.setY(y);
+
         alivex += overlap * (this.x - alivex) / distance;
         alivey += overlap * (this.y - alivey) / distance;
+
+        alive.setX(alivex);
+        alive.setY(alivey);
 
         //vector normal al vector tangente a los circulos
         double normalX = (alivex - this.x) / distance;
@@ -119,8 +127,8 @@ public class PhysicsAsteroid {
             alivevy = vy2;
         }
 
-        alive.setVx(vx2);
-        alive.setVy(vy2);
+        alive.setVx(alivevx);
+        alive.setVy(alivevy);
         setValues();
 //        this.vx = vx1;
 //        this.vy = vy1;

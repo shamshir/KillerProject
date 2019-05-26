@@ -5,7 +5,7 @@
  */
 package physics;
 
-import visibleObjects.KillerShip;
+import visibleObjects.*;
 
 /**
  *
@@ -29,7 +29,7 @@ public class PhysicsShip {
 
     public void move() {
 
-        //updateFields();
+        updateFields();
         angleUpdate();
 
         double maxspeedX = maxspeed * dx;
@@ -42,18 +42,15 @@ public class PhysicsShip {
             } else {
                 vx += 0.001;
             }
-            System.out.println("menorX" + vx + "," + a);
         } else if (vx > maxspeedX) {
             if (vx - a >= maxspeedX) {
                 vx -= a;
             } else {
                 vx -= 0.001;
             }
-            System.out.println("mayorX" + vx + "," + a);
         } else {
             //   vx = 2.01 * -Math.sin(radians);
 
-            System.out.println("elseX" + vx);
         }
 
         if (vy <= maxspeedY) {
@@ -62,18 +59,15 @@ public class PhysicsShip {
             } else {
                 vy += 0.001;
             }
-            System.out.println("menorY" + vy + "," + a);
         } else if (vy > maxspeedY) {
             if (vy - a > maxspeedY) {
                 vy -= a;
-                System.out.println("mayorY" + vy + "," + a);
             } else {
                 vy -= 0.001;
             }
         } else {
             //  vy = 2.01 * -Math.cos(radians);
 
-            System.out.println("elseY" + vy);
         }
 
         x += vx;
@@ -108,6 +102,9 @@ public class PhysicsShip {
 
         alivex += overlap * (this.x - alivex) / distance;
         alivey += overlap * (this.y - alivey) / distance;
+
+        alive.setX(alivex);
+        alive.setY(alivey);
 
         //vector normal al vector tangente a los circulos
         double normalX = (alivex - this.x) / distance;
@@ -170,8 +167,8 @@ public class PhysicsShip {
             alivevy = vy2;
         }
 
-        alive.setVx(vx2);
-        alive.setVy(vy2);
+        alive.setVx(alivevx);
+        alive.setVy(alivevy);
         setValues();
 //        this.vx = vx1;
 //        this.vy = vy1;
@@ -186,10 +183,8 @@ public class PhysicsShip {
 
         if (dx <= 0 && dy * -1 > 0) {
             finalRadians = Math.atan(dx / dy);
-            System.out.println(finalRadians);
         } else if (dx <= 0 && dy * -1 <= 0) {
             finalRadians = Math.atan(Math.abs(dy / dx)) + (Math.PI / 2);
-            System.out.println(finalRadians);
         } else if (dx > 0 && dy * -1 <= 0) {
             finalRadians = Math.atan(Math.abs(dx / dy)) + Math.PI;;
         } else if (dx > 0 && dy * -1 > 0) {

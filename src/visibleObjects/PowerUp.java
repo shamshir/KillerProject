@@ -12,6 +12,7 @@ public class PowerUp extends Static implements Destructible {
         HEALTH, DAMAGE
     }
 
+    private boolean available;
     private boolean wrappered;
     private int health;
     private Power type;
@@ -30,6 +31,7 @@ public class PowerUp extends Static implements Destructible {
         
         this.type = power;
         this.wrappered = true;
+        this.available = false;
         this.setImage();
         this.imgHeight = height;
         this.imgWidth = imgHeight;
@@ -44,6 +46,7 @@ public class PowerUp extends Static implements Destructible {
     public void unwrapper() {
         this.setImage();
         this.setImgSize();
+        this.radius = this.imgHeight / 2;
     }
 
     @Override
@@ -68,17 +71,9 @@ public class PowerUp extends Static implements Destructible {
     
 
     // Interfaz Destructible
-    /**
-     * El KG tendrá que hacer lo que está comentado en onDying: cambiar estado y cambiar img
-     * @param damage 
-     */
     @Override
     public void quitarVida(int damage) {
         this.health -= damage;
-        
-//        if (health <= 0) {
-//            this.onDying();
-//        }
     }
 
     @Override
@@ -109,6 +104,22 @@ public class PowerUp extends Static implements Destructible {
 
     public int getHealth() {
         return health;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public Power getType() {
+        return type;
+    }
+
+    public void setType(Power type) {
+        this.type = type;
     }
        
 }
