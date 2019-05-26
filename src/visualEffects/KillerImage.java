@@ -1,9 +1,8 @@
 package visualEffects;
 
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.File;    
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,22 +13,26 @@ import visibleObjects.VisibleObject;
  *
  * @author pau
  */
-public class KillerImage extends BufferedImage implements Runnable {
+public abstract class KillerImage extends BufferedImage implements Runnable {
 
     protected VisibleObject visibleObject;
     protected BufferedImage originalImage;
     protected byte[] raster;
     protected int[][] colorMap;
-    public AffineTransform at;
+    protected int renderWidth;
+    protected int renderHeight;
 
     public KillerImage(VisibleObject vo, BufferedImage oi, int plusWidth, int plusHeight) {
         super(oi.getWidth() + plusWidth, oi.getHeight() + plusHeight, BufferedImage.TYPE_4BYTE_ABGR);
         this.visibleObject = vo;
         this.originalImage = oi;
         this.raster = this.getKillerRaster(this);
-
         // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
-        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
+        //        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
+
+        this.setRenderHeight();
+        this.setRenderWidth();
+
     }
 
     @Override
@@ -40,10 +43,22 @@ public class KillerImage extends BufferedImage implements Runnable {
     // ***********************
     // ** Getters & Setters **
     // ***********************
-    public int getRenderHeight(){
-        return (this.visibleObject.getImgWidth() * this.getHeight()) / this.getWidth();
+    public int getRenderWidth() {
+        return this.renderWidth;
     }
-    
+
+    public int getRenderHeight() {
+        return renderHeight;
+    }
+
+    protected void setRenderWidth() {
+        this.renderWidth = this.visibleObject.getImgWidth();
+    }
+
+    protected void setRenderHeight() {
+        this.renderWidth = this.visibleObject.getImgHeight();
+    }
+
     /**
      * Accede y recupera la raster de la bufferedImage en concreto
      *
@@ -149,8 +164,5 @@ public class KillerImage extends BufferedImage implements Runnable {
     public void setColorMap(int[][] colorMap) {
         this.colorMap = colorMap;
     }
-    
-   
-    
 
 }

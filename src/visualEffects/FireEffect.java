@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package visualEffects;
-    
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class FireEffect extends KillerImage {
 
     private final int NUM_CHANNELS = 4;
     private final int MIN_INTENSITY = 20;
-    private final double COOLING = 5.5;
+    private final double COOLING = 5.6;
 
     private int[] sparks;
     private int[][] heatMap;
@@ -63,23 +63,6 @@ public class FireEffect extends KillerImage {
         }
     }
 
-    private void createDefaultSparks() {
-
-        this.sparks = new int[this.getWidth()];
-
-        for (int pos = 0; pos < this.sparks.length; pos++) {
-            this.sparks[pos] = 255;
-        }
-    }
-
-    /**
-     * Crea la imagen resltante que se verá al final
-     */
-    private void construirImg() {
-        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
-//        this.effectImg.getGraphics().drawImage(this.testImageForEffect, 0, 0, null);
-    }
-
     /**
      * Mira si el objeto padre sigue teniendo dicho efecto
      *
@@ -91,21 +74,6 @@ public class FireEffect extends KillerImage {
         }
 
         return false;
-    }
-
-    private void updateSparks() {
-        int intensity;
-        for (int pos = 0; pos < this.sparks.length; pos++) {
-            if (this.sparks[pos] > 1) {
-                intensity = (int) (Math.random() * 255);
-
-                if (intensity > this.MIN_INTENSITY) {
-                    this.heatMap[0][pos] = 255;
-                } else {
-                    this.heatMap[0][pos] = 0;
-                }
-            }
-        }
     }
 
     private int corregirIntensidad(int intensidad) {
@@ -120,17 +88,12 @@ public class FireEffect extends KillerImage {
         return intensidad;
     }
 
-    private void updateHeatMap() {
-        for (int fil = 1; fil < this.heatMap.length; fil++) {
-            for (int col = 1; col < this.heatMap[0].length - 1; col++) {
-                this.heatMap[fil][col] = (int) (((this.heatMap[fil][col]
-                        + this.heatMap[fil - 1][col - 1]
-                        + this.heatMap[fil - 1][col]
-                        + this.heatMap[fil - 1][col + 1]) / 3.9) - this.COOLING);
+    private void createDefaultSparks() {
 
-                this.heatMap[fil][col] = this.corregirIntensidad(this.heatMap[fil][col]);
+        this.sparks = new int[this.getWidth()];
 
-            }
+        for (int pos = this.sparks.length / 3; pos < this.sparks.length - (this.sparks.length / 3); pos++) {
+            this.sparks[pos] = 255;
         }
     }
 
@@ -167,6 +130,36 @@ public class FireEffect extends KillerImage {
 
     }
 
+    private void updateHeatMap() {
+        for (int fil = 1; fil < this.heatMap.length; fil++) {
+            for (int col = 1; col < this.heatMap[0].length - 1; col++) {
+                this.heatMap[fil][col] = (int) (((this.heatMap[fil][col]
+                        + this.heatMap[fil - 1][col - 1]
+                        + this.heatMap[fil - 1][col]
+                        + this.heatMap[fil - 1][col + 1]) / 3.9) - this.COOLING);
+
+                this.heatMap[fil][col] = this.corregirIntensidad(this.heatMap[fil][col]);
+
+            }
+        }
+    }
+
+    private void updateSparks() {
+        int intensity;
+        for (int pos = 0; pos < this.sparks.length; pos++) {
+            if (this.sparks[pos] > 1) {
+                intensity = (int) (Math.random() * 255);
+
+                if (intensity > this.MIN_INTENSITY) {
+                    this.heatMap[0][pos] = 255;
+                } else {
+                    this.heatMap[0][pos] = 0;
+                }
+            }
+        }
+    }
+
+    // run method
     @Override
     public void run() {
 
@@ -176,11 +169,22 @@ public class FireEffect extends KillerImage {
 //            this.construirImg();
 //            this.getGraphics().drawImage(this.effectImg, 0, 0, null);
             try {
-                Thread.sleep(5);
+                Thread.sleep(4);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FireEffect.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    // getters y setters
+    @Override
+    protected void setRenderWidth() {
+        this.renderWidth = this.visibleObject.getImgWidth();
+    }
+
+    @Override
+    protected void setRenderHeight() {
+        this.renderHeight = (this.visibleObject.getImgWidth() * this.getHeight()) / this.getWidth();
     }
 
 }
