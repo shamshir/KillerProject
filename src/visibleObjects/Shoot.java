@@ -18,11 +18,9 @@ public class Shoot extends Automata {
      */
     public Shoot(KillerGame game, KillerShip ship) {
         super();
+        this.game = game;
         this.id = ship.getId();
-        this.state = State.ALIVE;
-        // Posición según la posición del morro de la nave
-        this.x = ship.getTx();
-        this.y = ship.getTy(); 
+        this.state = State.ALIVE; 
         this.damage = ship.getDamage(); // Daño de su nave
         
         this.maxspeed = 7;
@@ -30,7 +28,13 @@ public class Shoot extends Automata {
 
         this.imgHeight = 15;
         this.imgWidth = 15;
-        this.radius = this.imgHeight / 2;
+        this.radius = this.imgHeight / 2;  // --> imgHeight
+        
+        // Posición según la posición del morro de la nave
+        this.x = ship.getTx() - this.radius; // --> radius
+        this.y = ship.getTy() - this.radius; // --> radius
+        
+        this.radians = ship.radians + Math.PI/2;
         this.m = 30;
         this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
 

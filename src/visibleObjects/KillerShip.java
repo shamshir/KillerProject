@@ -6,7 +6,9 @@ import game.KillerRules;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import physics.PhysicsShip;
+import visualEffects.FireEffect;
 
 public class KillerShip extends Controlled {
     
@@ -49,13 +51,16 @@ public class KillerShip extends Controlled {
         this.configureShip();
         this.setImage();
 
-        this.imgHeight = 80;
+        this.imgHeight = 60;
         this.setImgSize();
+        this.a = 0.07;
         this.m = 100;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
         this.tiempoEnNebulosa = 0;
 
         this.timer = System.currentTimeMillis();
+        
+        this.kImg = new FireEffect(this, this.img);
     }
 
     /**
@@ -91,7 +96,7 @@ public class KillerShip extends Controlled {
         this.user = user;
         this.type = type;
         // Físicas ---> que parámetros pasan?
-        this.a = 0.01;
+        this.a = 0.07;
         this.radians = radians;
         this.dx = dx;
         this.dy = dy;
@@ -110,17 +115,20 @@ public class KillerShip extends Controlled {
         this.damage = damage;
         this.setImage();
 
-        this.imgHeight = 80;
+        this.imgHeight = 60;
         this.setImgSize(); // (Ha de estar cargada la img con setImage)
         this.m = 100;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
         this.tiempoEnNebulosa = 0;
 
         this.timer = System.currentTimeMillis();
+        
+        this.kImg = new FireEffect(this, this.img);
     }
 
     @Override
     public void run() {
+        new Thread(this.kImg).start();
         while (state != State.DEAD) {
 
             if (state == State.SAFE) {
@@ -318,11 +326,17 @@ public class KillerShip extends Controlled {
     // Interfaz Renderizable
     @Override
     public void render(Graphics2D g2d) {
-        g2d.setColor(Color.white);
-        g2d.drawString(this.user, (int) x, (int) y - 10);
-        g2d.drawImage(this.img, (int) x, (int) y, imgWidth, imgHeight, null);
+        
+        double scale = (double)this.imgWidth / (double)((FireEffect)this.kImg).getWidth();
+        AffineTransform transform = new AffineTransform();
+        transform.translate(x, y);
+        transform.rotate(-radians, this.imgWidth / 2, this.imgHeight / 2);
+        transform.scale(scale, scale);
+        
+        g2d.drawImage(this.kImg, transform, null);
+        
         // Pintar indicador de escudo si la nave está SAFE
-        if (this.state == State.SAFE) {
+        if (this.state == Alive.State.SAFE) {
             g2d.setColor(Color.magenta);
             g2d.setStroke(new BasicStroke(2));
             g2d.drawOval((int) x - 6, (int) y - 6, imgWidth + 12, imgHeight + 12);
