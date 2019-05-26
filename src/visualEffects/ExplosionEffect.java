@@ -31,18 +31,18 @@ public class ExplosionEffect extends KillerImage {
     private void loadImages() {
 
         try {
-            this.frames[0] = ImageIO.read(new File("xplosion/x1.png"));
-            this.frames[1] = ImageIO.read(new File("xplosion/x2.png"));
-            this.frames[2] = ImageIO.read(new File("xplosion/x3.png"));
-            this.frames[3] = ImageIO.read(new File("xplosion/x4.png"));
-            this.frames[4] = ImageIO.read(new File("xplosion/x5.png"));
-            this.frames[5] = ImageIO.read(new File("xplosion/x6.png"));
-            this.frames[6] = ImageIO.read(new File("xplosion/x7.png"));
-            this.frames[7] = ImageIO.read(new File("xplosion/x8.png"));
-            this.frames[8] = ImageIO.read(new File("xplosion/x9.png"));
-            this.frames[9] = ImageIO.read(new File("xplosion/x10.png"));
-            this.frames[10] = ImageIO.read(new File("xplosion/x11.png"));
-            this.frames[11] = ImageIO.read(new File("xplosion/x12.png"));
+            this.frames[0] = ImageIO.read(new File("src/visualEffects/xplosion/x1.png"));
+            this.frames[1] = ImageIO.read(new File("src/visualEffects/xplosion/x2.png"));
+            this.frames[2] = ImageIO.read(new File("src/visualEffects/xplosion/x3.png"));
+            this.frames[3] = ImageIO.read(new File("src/visualEffects/xplosion/x4.png"));
+            this.frames[4] = ImageIO.read(new File("src/visualEffects/xplosion/x5.png"));
+            this.frames[5] = ImageIO.read(new File("src/visualEffects/xplosion/x6.png"));
+            this.frames[6] = ImageIO.read(new File("src/visualEffects/xplosion/x7.png"));
+            this.frames[7] = ImageIO.read(new File("src/visualEffects/xplosion/x8.png"));
+            this.frames[8] = ImageIO.read(new File("src/visualEffects/xplosion/x9.png"));
+            this.frames[9] = ImageIO.read(new File("src/visualEffects/xplosion/x10.png"));
+            this.frames[10] = ImageIO.read(new File("src/visualEffects/xplosion/x11.png"));
+            this.frames[11] = ImageIO.read(new File("src/visualEffects/xplosion/x12.png"));
 
         } catch (IOException e) {
             System.err.println("Xplosion file not found");
