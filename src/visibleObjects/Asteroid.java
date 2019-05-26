@@ -1,6 +1,7 @@
 package visibleObjects;
 
 import game.KillerGame;
+import java.awt.Graphics2D;
 import physics.PhysicsAsteroid;
 
 public class Asteroid extends Automata {
@@ -27,6 +28,8 @@ public class Asteroid extends Automata {
 
         this.health = health;
         this.maxspeed = maxspeed;
+        this.vx = maxspeed;
+        this.vy = maxspeed;
         this.physicsAsteroid = new PhysicsAsteroid(this); // han de estar inicializadas todas las variables de fisicas
 
     }
@@ -52,24 +55,20 @@ public class Asteroid extends Automata {
         physicsAsteroid.move();
     }
 
-    private void divide() {
-        // Si el Asteroid se ha de dividir al morir
-        // TO DO
-    }
-
     @Override
     protected void setImage() {
         this.loadImg("src/visibleObjects/img/asteroid.png");
     }
 
-    @Override
-    public void collision() {
-        // TO DO
-    }
-
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
+    
+    @Override
+    public void render(Graphics2D g2d) {
+        g2d.drawImage(this.img, (int) (x - radius), (int) (y - radius), imgHeight, imgHeight, null);
+    }
+    
     // *********************
     // * Getters & Setters *
     // *********************

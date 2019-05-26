@@ -18,11 +18,9 @@ public class Shoot extends Automata {
      */
     public Shoot(KillerGame game, KillerShip ship) {
         super();
+        this.game = game;
         this.id = ship.getId();
-        this.state = AutonomousState.ALIVE;
-        // Posición según la posición del morro de la nave
-        this.x = ship.getTx();
-        this.y = ship.getTy(); 
+        this.state = State.ALIVE; 
         this.damage = ship.getDamage(); // Daño de su nave
         
         this.maxspeed = 7;
@@ -30,7 +28,13 @@ public class Shoot extends Automata {
 
         this.imgHeight = 15;
         this.imgWidth = 15;
-        this.radius = this.imgHeight / 2;
+        this.radius = this.imgHeight / 2;  // --> imgHeight
+        
+        // Posición según la posición del morro de la nave
+        this.x = ship.getTx() - this.radius; // --> radius
+        this.y = ship.getTy() - this.radius; // --> radius
+        
+        this.radians = ship.radians + Math.PI/2;
         this.m = 30;
         this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
 
@@ -50,7 +54,7 @@ public class Shoot extends Automata {
      * @param health
      * @param state 
      */
-    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id, int damage, int health, AutonomousState state) {
+    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id, int damage, int health, State state) {
         super(game, x, y);
         
         this.radians = radians; // Repetido en vo.
@@ -71,11 +75,6 @@ public class Shoot extends Automata {
         this.radius = this.imgHeight / 2;
         this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
 
-    }
-
-    @Override
-    public void collision() {
-        // TO DO
     }
 
     @Override

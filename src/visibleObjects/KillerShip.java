@@ -6,25 +6,23 @@ import game.KillerRules;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import physics.PhysicsShip;
+import visualEffects.FireEffect;
 
 public class KillerShip extends Controlled {
-
-    public enum ShipState {
-        SAFE, ALIVE, DEAD
-    }
-
+    
     public enum ShipType {
         OCTANE, BATMOBILE, MARAUDER
     }
-
-    private ShipState state;
+    
     private ShipType type;
     private String id;
     private String user;
     private long timer;
     private int damage;
     private PhysicsShip physicsShip;
+    private int tiempoEnNebulosa;
 
     // Físicas
     private double tx; // posición del morro de la nave
@@ -48,18 +46,21 @@ public class KillerShip extends Controlled {
         this.id = id;
         this.user = user;
         this.type = type;
-        this.state = ShipState.SAFE;
+        this.state = State.SAFE;
 
-        this.configureShip(); // health y damage según el tipo de nave
+        this.configureShip();
         this.setImage();
 
-        this.imgHeight = 80;
+        this.imgHeight = 60;
         this.setImgSize();
+        this.a = 0.07;
         this.m = 100;
-        this.maxspeed = 4;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
+        this.tiempoEnNebulosa = 0;
 
         this.timer = System.currentTimeMillis();
+        
+        this.kImg = new FireEffect(this, this.img);
     }
 
     /**
@@ -90,8 +91,12 @@ public class KillerShip extends Controlled {
             double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly,
             double rx, double ry, String id, String user, ShipType type, int health, int damage) {
         super(game, x, y);
+
+        this.id = id;
+        this.user = user;
+        this.type = type;
         // Físicas ---> que parámetros pasan?
-        this.a = 0.01;
+        this.a = 0.07;
         this.radians = radians;
         this.dx = dx;
         this.dy = dy;
@@ -103,32 +108,39 @@ public class KillerShip extends Controlled {
         this.ly = ly;
         this.rx = rx;
         this.ry = ry;
-        this.maxspeed = 4;
-
-        this.id = id;
-        this.user = user;
-        this.type = type;
-        this.state = ShipState.SAFE;
+        this.configureSpeed();
+        
+        this.state = State.SAFE;
         this.health = health;
         this.damage = damage;
         this.setImage();
 
-        this.imgHeight = 80;
-        this.setImgSize();
+        this.imgHeight = 60;
+        this.setImgSize(); // (Ha de estar cargada la img con setImage)
         this.m = 100;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
+        this.tiempoEnNebulosa = 0;
 
         this.timer = System.currentTimeMillis();
+        
+        this.kImg = new FireEffect(this, this.img);
     }
 
     @Override
     public void run() {
-        while (state != ShipState.DEAD) {
+        new Thread(this.kImg).start();
+        while (state != State.DEAD) {
 
-            if (state == ShipState.SAFE) {
+            if (state == State.SAFE) {
                 this.checkSafe();
             }
 
+            if (this.tiempoEnNebulosa == 0) {
+                this.configureSpeed();
+            } else {
+                this.tiempoEnNebulosa--;
+            }
+            
             this.move();
             game.checkColision(this);
 
@@ -172,21 +184,13 @@ public class KillerShip extends Controlled {
         }
     }
 
-    public void changeState(ShipState state) {
-        this.state = state;
-    }
-
-    @Override
-    public void collision() {
-        // TO DO
-    }
-
     /**
      * Método aumentar el daño de la nave al coger el powerUp DAMAGE
      *
+     * @param damage
      */
-    public void powerUpDamage() {
-        // TO DO
+    public void powerUpDamage(int damage) {
+        this.damage += damage;
     }
 
     /**
@@ -233,12 +237,12 @@ public class KillerShip extends Controlled {
      */
     private void moveShip(double dx, double dy) {
         this.dx = dx;
-        this.dy = dy;
+        this.dy = -dy;
     }
 
     private void checkSafe() {
         if (System.currentTimeMillis() - timer > 5000) {
-            this.state = ShipState.ALIVE;
+            this.state = State.ALIVE;
             this.setImage();
             // Adapto las coordenadas para la hitbox a la img
             this.setImgSize();
@@ -246,36 +250,69 @@ public class KillerShip extends Controlled {
     }
 
     /**
-     * Método para inicializar health y maxSpeed según el tipo de nave
+     * Método para inicializar damage, health y maxSpeed según el tipo de nave
      */
     private void configureShip() {
+        this.configureDamage();
+        this.configureHealth();
+        this.configureSpeed();
+    }
+    
+    private void configureDamage() {
         switch (type) {
             case OCTANE:
-                this.health = KillerRules.OCTANE_HEALTH;
                 this.damage = KillerRules.OCTANE_DAMAGE;
                 break;
             case BATMOBILE:
-                this.health = KillerRules.BATMOBILE_HEALTH;
                 this.damage = KillerRules.BATMOBILE_DAMAGE;
                 break;
             case MARAUDER:
-                this.health = KillerRules.MARAUDER_HEALTH;
                 this.damage = KillerRules.MARAUDER_DAMAGE;
                 break;
             default:
                 break;
         }
+        
+    }
+    
+    private void configureHealth() {
+        switch (type) {
+            case OCTANE:
+                this.health = KillerRules.OCTANE_HEALTH;
+                break;
+            case BATMOBILE:
+                this.health = KillerRules.BATMOBILE_HEALTH;
+                break;
+            case MARAUDER:
+                this.health = KillerRules.MARAUDER_HEALTH;
+                break;
+            default:
+                break;
+        }
+        
+    }
+    
+    private void configureSpeed() {
+        switch (type) {
+            case OCTANE:
+                this.maxspeed = KillerRules.OCTANE_MAX_SPEED;
+                break;
+            case BATMOBILE:
+                this.maxspeed = KillerRules.BATMOBILE_MAX_SPEED;
+                break;
+            case MARAUDER:
+                this.maxspeed = KillerRules.MARAUDER_MAX_SPEED;
+                break;
+            default:
+                break;
+        }
+        
     }
 
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
-    // Interfaz Destructible    
-    @Override
-    public void quitarVida(int damage) {
-        this.health -= damage;
-    }
-
+    // Interfaz Destructible
     @Override
     public void onDying() {
 
@@ -289,11 +326,17 @@ public class KillerShip extends Controlled {
     // Interfaz Renderizable
     @Override
     public void render(Graphics2D g2d) {
-        g2d.setColor(Color.white);
-        g2d.drawString(this.user, (int) x, (int) y - 10);
-        g2d.drawImage(this.img, (int) x, (int) y, imgWidth, imgHeight, null);
+        
+        double scale = (double)this.imgWidth / (double)((FireEffect)this.kImg).getWidth();
+        AffineTransform transform = new AffineTransform();
+        transform.translate(x, y);
+        transform.rotate(-radians, this.imgWidth / 2, this.imgHeight / 2);
+        transform.scale(scale, scale);
+        
+        g2d.drawImage(this.kImg, transform, null);
+        
         // Pintar indicador de escudo si la nave está SAFE
-        if (this.state == ShipState.SAFE) {
+        if (this.state == Alive.State.SAFE) {
             g2d.setColor(Color.magenta);
             g2d.setStroke(new BasicStroke(2));
             g2d.drawOval((int) x - 6, (int) y - 6, imgWidth + 12, imgHeight + 12);
@@ -303,13 +346,6 @@ public class KillerShip extends Controlled {
     // *********************
     // * Getters & Setters *
     // *********************
-    public ShipState getState() {
-        return state;
-    }
-
-    public void setState(ShipState state) {
-        this.state = state;
-    }
 
     public ShipType getType() {
         return type;
@@ -405,6 +441,14 @@ public class KillerShip extends Controlled {
 
     public void setPhysicsShip(PhysicsShip physicsShip) {
         this.physicsShip = physicsShip;
+    }
+
+    public int getTiempoEnNebulosa() {
+        return tiempoEnNebulosa;
+    }
+
+    public void setTiempoEnNebulosa(int tiempoEnNebulosa) {
+        this.tiempoEnNebulosa = tiempoEnNebulosa;
     }
 
 }

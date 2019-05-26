@@ -135,4 +135,20 @@ public abstract class VisibleObject implements Renderizable {
         this.m = m;
     }
 
+    public BufferedImage getImg() {
+        return img;
+    }
+
+    public void setImg(BufferedImage img) {
+        this.img = img;
+    }
+
+    public KillerImage getkImg() {
+        return kImg;
+    }
+
+    public void setkImg(KillerImage kImg) {
+        this.kImg = kImg;
+    }
+
 }

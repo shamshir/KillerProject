@@ -4,18 +4,12 @@ import game.KillerGame;
 
 public abstract class Automata extends Alive {
     
-    public enum AutonomousState{
-        ALIVE, DEAD
-    }
-    
-    protected AutonomousState state;
-    
     public Automata() {
     }
     
     public Automata(KillerGame game, double x, double y) {
         super(game, x, y);
-        this.state = AutonomousState.ALIVE;
+        this.state = State.ALIVE;
     }
     
     // TO DO: constructor común para instanciar objetos Autonomous recibidos de otro pc
@@ -23,7 +17,7 @@ public abstract class Automata extends Alive {
     @Override
     public void run() {
 
-        while (state != AutonomousState.DEAD) {
+        while (state != State.DEAD) {
 
             this.move();
             game.checkColision(this);
@@ -38,25 +32,9 @@ public abstract class Automata extends Alive {
         this.game.removeObject(this);
     }
 
-    public void changeState(AutonomousState state) {
-        this.state = state;
-    }
-
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
-    
-    /**
-     * Método para restar vida, no cambia ningún estado ni comprueba nada...
-     * @param damage vida que quita
-     */    
-    @Override
-    public void quitarVida(int damage) {
-//        if (state != AutonomousState.DYING) {
-//            this.health -= damage;
-//        }
-        this.health -= damage;
-    }
     
     @Override
     public void onDying() {
@@ -72,13 +50,5 @@ public abstract class Automata extends Alive {
     // *********************
     // * Getters & Setters *
     // *********************
-
-    public AutonomousState getState() {
-        return state;
-    }
-
-    public void setState(AutonomousState state) {
-        this.state = state;
-    }    
         
 }
