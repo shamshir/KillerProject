@@ -171,7 +171,7 @@ public class KillerGame extends JFrame {
         }
 
         // Collision with Ship
-        if (object instanceof KillerShip) {
+        if (object instanceof KillerShip && !ship.equals(object)) {
             if (false) {
                 KillerRules.collisionShipWithShip(this, ship, (KillerShip) (object));
             }
@@ -238,7 +238,7 @@ public class KillerGame extends JFrame {
         }
 
         // Collision with Shot
-        if (object instanceof Shoot) {
+        if (object instanceof Shoot && !shoot.equals(object)) {
             if (false) {
                 KillerRules.collisionShootWithShoot(this, shoot, (Shoot) (object));
             }
@@ -263,7 +263,7 @@ public class KillerGame extends JFrame {
     private void checkCollisionAsteroid(Asteroid asteroid, VisibleObject object) {
 
         // Collision with Asteroid
-        if (object instanceof Asteroid) {
+        if (object instanceof Asteroid && !asteroid.equals(object)) {
             if (false) {
                 KillerRules.collisionAsteroidWithAsteroid(this, asteroid, (Asteroid) (object));
             }
@@ -351,7 +351,7 @@ public class KillerGame extends JFrame {
         }
 
         // Collision with Pacman
-        if (object instanceof Pacman) {
+        if (object instanceof Pacman && !pacman.equals(object)) {
             if (false) {
                 KillerRules.collisionPacmanWithPacman(this, pacman, (Pacman) (object));
             }
