@@ -399,7 +399,10 @@ public class KillerGame extends JFrame {
      */
     public void removeObject(VisibleObject object) {
         try {
-            this.objects.remove(this);
+            this.objects.remove(object);
+            if (object instanceof Alive) {
+                object.stop();
+            }
         } catch (Exception e) {
             System.out.println("Este objecto no se encuentra en la array");
         }
@@ -420,8 +423,19 @@ public class KillerGame extends JFrame {
         this.newViewer();
 
         // Add walls
-        addWalls();
+        this.addWalls();
+        
+        // Start threads
+        this.startThreads();
 
+    }
+    
+    public void startThreads() {
+        for (VisibleObject object : this.objects) {
+            if (object instanceof Alive) {
+                new Thread(object).start();
+            }
+        }
     }
 
     // ***************************************************************************************************** //
@@ -588,7 +602,6 @@ public class KillerGame extends JFrame {
         KillerShip ship = new KillerShip(this, 150, 150, ip, user, type);
         this.ships.put(ip, ship);
         this.objects.add(ship);
-        new Thread(ship).start();
     }
 
     /**
