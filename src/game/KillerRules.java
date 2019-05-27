@@ -1,81 +1,350 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game;
 
-import visibleObjects.Automata;
-import visibleObjects.VisibleObject;
-import visibleObjects.Alive;
-import visibleObjects.Shoot;
-import visibleObjects.Controlled;
+import visibleObjects.*;
 
 /**
- *
- * @author berna
+ * @author Alvaro & Christian
  */
 public class KillerRules {
 
-    public static void collision(VisibleObject obj1, VisibleObject obj2) {
-        if (obj1 instanceof Alive && obj2 instanceof Alive) {
-            collisionAlive((Alive) obj1, (Alive) obj2);
+    // ***************************************************************************************************** //
+    // *************************** [          Statistics Ships           ] ********************************* //
+    // ***************************************************************************************************** //
+    public static final int OCTANE_HEALTH = 100;
+    public static final int OCTANE_DAMAGE = 20;
+    public static final int OCTANE_MAX_SPEED = 4;
+    public static final int OCTANE_MAX_SPEED_NEBULOSA = 3;
+    public static final int BATMOBILE_HEALTH = 75;
+    public static final int BATMOBILE_DAMAGE = 30;
+    public static final int BATMOBILE_MAX_SPEED = 5;
+    public static final int BATMOBILE_MAX_SPEED_NEBULOSA = 3;
+    public static final int MARAUDER_HEALTH = 150;
+    public static final int MARAUDER_DAMAGE = 10;
+    public static final int MARAUDER_MAX_SPEED = 3;
+    public static final int MARAUDER_MAX_SPEED_NEBULOSA = 3;
+    public static final int PACMAN_INITIAL_HEALTH = 10;
+    public static final int PACMAN_INCREMENT = 10;
+    public static final int PACMAN_DECREMENT = 1;
+
+    // ***************************************************************************************************** //
+    // *************************** [            Collision Alive          ] ********************************* //
+    // ***************************************************************************************************** //
+    /**
+     * @author Christian
+     * @param game
+     * @param alive
+     * @param wall
+     */
+    public static void collisionAliveWithWall(KillerGame game, Alive alive, Wall wall) {
+
+        // Detect wall type
+        if (wall.getType() == Wall.Limit.UP) {
+            // Teleport to bottom
+            alive.setY((game.getHeight()) - (alive.getImgHeight() + 1));
         }
+
+        if (wall.getType() == Wall.Limit.DOWN) {
+            // Teleport to top
+            alive.setY(0 + alive.getImgHeight() + 1);
+        }
+
+        if (wall.getType() == Wall.Limit.RIGHT) {
+            // Send alive to the prev module
+            game.sendObjectToNext(alive);
+            // Delete from the array
+            alive.setState(Alive.State.DEAD);
+        }
+
+        if (wall.getType() == Wall.Limit.LEFT) {
+            // Send alive to the next module
+            game.sendObjectToPrev(alive);
+            // Delete from the array
+            alive.setState(Alive.State.DEAD);
+        }
+
     }
 
-    public static void collisionAlive(Alive obj1, Alive obj2) {
+    // ***************************************************************************************************** //
+    // *************************** [            Collision Ship           ] ********************************* //
+    // ***************************************************************************************************** //
+    public static void collisionShipWithAsteroid(KillerGame game, KillerShip ship, Asteroid asteroid) {
 
-//        obj1.collision();
-//        obj2.collision();
-        if (obj1 instanceof Controlled && obj2 instanceof Controlled) {
+        KillerRules.substractHealthShip(game, ship, 0); // Remplazar 0 por metodo de fisica que calcula el daño
 
-            if (!((Controlled) obj1).isDeath() && !((Controlled) obj2).isDeath()) {
-//                ((Controlled) obj2).kill();
-//                ((Controlled) obj1).kill();
-//                System.out.println("muertos");
-//            } else {
-//                if (!((Controlled) obj1).isDeath() && ((Controlled) obj1).isDeath()) {
-//                    System.out.println("muerto1");
-//                    ((Controlled) obj2).kill();
-//                }
-//                if (!((Controlled) obj2).isDeath() && !((Controlled) obj1).isDeath()) {
-//                    System.out.println("muerto2");
-//                    ((Controlled) obj1).kill();
-//                }
-            }
+    }
 
-        } else  {
-            if (obj1 instanceof Controlled && obj2 instanceof Automata
-                    && !((Controlled) obj1).isDeath()) {
-                ((Controlled) obj1).kill();
-                obj1.death();
-            }
+    public static void collisionShipWithBlackHole(KillerGame game, KillerShip ship) {
 
-            if (obj2 instanceof Controlled && obj1 instanceof Automata
-                    && !((Controlled) obj2).isDeath()) {
-                ((Controlled) obj2).kill();
-                obj1.death();
-            }
+        // Math random de -1 a 1
+        // Si da < 0 hacer un game.sendobjecttoprev con la nave
+        // Si da >= 0 hacer un game.sendobjecttonext con la nave
+    }
 
+    /**
+     * @author Alvaro
+     * @param ship
+     */
+    public static void collisionShipWithNebulosa(KillerShip ship) {
+
+        if (ship.getType() == KillerShip.ShipType.OCTANE) {
+            ship.setMaxspeed(KillerRules.OCTANE_MAX_SPEED_NEBULOSA);
+            ship.setTiempoEnNebulosa(10);
+        }
+
+        if (ship.getType() == KillerShip.ShipType.BATMOBILE) {
+            ship.setMaxspeed(KillerRules.BATMOBILE_MAX_SPEED_NEBULOSA);
+            ship.setTiempoEnNebulosa(10);
+        }
+
+        if (ship.getType() == KillerShip.ShipType.MARAUDER) {
+            ship.setMaxspeed(KillerRules.MARAUDER_MAX_SPEED_NEBULOSA);
+            ship.setTiempoEnNebulosa(10);
         }
 
     }
 
-    public static void collisionShoot(Shoot obj1, Alive obj2) {
+    public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
 
-        if (obj2 instanceof Controlled && !((Controlled) obj2).isDeath()) {
-            System.out.println(obj1.getShip().getIp()
-            +"/"+((Controlled) obj2).getIp());
-            if (!obj1.getShip().getIp().equals(((Controlled) obj2).getIp())) {
-                ((Controlled) obj2).kill();
-                obj1.points(5);
-            }
-        } else if (obj2 instanceof Automata) {
-            obj2.death();
-            obj1.points(2);
+        // La nave muere
+        // Pacman aumenta vidao en PACMAN_INCREMENT
+        // Pacman aumenta de tamaño en PACMAN_INCREMENT / Si maria implementa que la vida y el tamaño son el mismo atributo solo sumar vida
+    }
+
+    public static void collisionShipWithPlaneta(KillerGame game, KillerShip ship, Planeta planeta) {
+
+        // Se calcula el rebote de la nave con Physics
+        // Se calcula el daño que recibe la nave con Physiscs
+        // Se llama al metodo restar vida de nave de Killerrules
+    }
+
+    public static void collisionShipWithPowerUp(KillerGame game, KillerShip ship, PowerUp powerUp) {
+
+        // Se comprueba si el powerup tiene envoltorio o no
+        // True
+        // Se calcula el daño que recibe la nave con Physiscs
+        // Se llama al metodo restar vida de nave de Killerrules
+        // False
+        // Se elimina el powerup de la array de killargame
+        // Se entrega el bufo a la nave
+    }
+
+    public static void collisionShipWithShip(KillerGame game, KillerShip ship, KillerShip ship2) {
+
+        // Se calcula el daño que reciben las naves con Physiscs
+        // Se llama al metodo restar vida de nave de Killerrules para cada nave
+    }
+
+    /**
+     * @author Christian
+     * @param shoot
+     * @param ship
+     */
+    public static void collisionShipWithShoot(KillerGame game, KillerShip ship, Shoot shoot) {
+
+        if (KillerRules.substractHealthShip(game, ship, shoot.getDamage())) {
+
+            // Se pide el mando a la nave que disparo ese disparo
+            // Se envia al mando un mensaje de score
         }
 
-        obj1.death();
+        // Remove shot from the array
+        shoot.setState(Alive.State.DEAD);
+
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [            Collision Shoot          ] ********************************* //
+    // ***************************************************************************************************** //
+    public static void collisionShootWithAsteroid(KillerGame game, Shoot shot, Asteroid asteroid) {
+
+        // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
+        // Remove shot from the array
+        shot.setState(Alive.State.DEAD);
+
+    }
+
+    public static void collisionShootWithBlackHole(KillerGame game, Shoot shot, BlackHole blackhole) {
+
+        // Remove shot from the array
+        shot.setState(Alive.State.DEAD);
+
+    }
+
+    public static void collisionShootWithNebulosa(Shoot shot) {
+
+        // Por ahora no pasa nada, aunque se podria implementar que los disparos fuesen mas lento igual que las naves
+    }
+
+    public static void collisionShootWithPacman(KillerGame game, Shoot shot, Pacman pacman) {
+
+        // Restar vida al pacman en PACMAN_DECREMENT
+        // Hacer pacman mas pequeño / Si maria implementa que la vida y el tamaño son el mismo atributo solo restar vida
+        // Hacer que el pacman cambie de direccion
+        // Remove shot from the array
+        shot.setState(Alive.State.DEAD);
+
+    }
+
+    public static void collisionShootWithPlaneta(KillerGame game, Shoot shot, Planeta planeta) {
+
+        // Remove shot from the array
+        shot.setState(Alive.State.DEAD);
+
+    }
+
+    public static void collisionShootWithPowerUp(KillerGame game, Shoot shot, PowerUp powerUp) {
+
+        // Se comprueba si el powerup tiene envoltorio
+        // True
+        // Restar vida al envoltorio del powerup
+        // Remove shot from the array
+        shot.setState(Alive.State.DEAD);
+
+        // False
+    }
+
+    /**
+     * @author Christian
+     * @param shoot
+     * @param shooot Easter egg :)
+     */
+    public static void collisionShootWithShoot(KillerGame game, Shoot shoot, Shoot shooot) {
+        // Remove shots from the array
+        shoot.setState(Alive.State.DEAD);
+        shooot.setState(Alive.State.DEAD);
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [          Collision Asteroid         ] ********************************* //
+    // ***************************************************************************************************** //
+    static void collisionAsteroidWithAsteroid(KillerGame aThis, Asteroid asteroid, Asteroid asteroid0) {
+
+        // Quitar vida a los asteroides / Posible metodo substract health to alive de killer rules
+        // Aplicar metodo de Physics para el rebote
+    }
+
+    static void collisionAsteroidWithBlackHole(KillerGame aThis, Asteroid asteroid, BlackHole blackHole) {
+
+        // Por ahora nada
+    }
+
+    static void collisionAsteroidWithNebulosa(Asteroid asteroid) {
+
+        // Por ahora nada
+    }
+
+    static void collisionAsteroidWithPacman(KillerGame aThis, Asteroid asteroid, Pacman pacman) {
+
+        // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
+        // Aplicar metodo de Physics para el rebote
+    }
+
+    static void collisionAsteroidWithPlaneta(Asteroid asteroid) {
+
+        // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
+        // Aplicar metodo de Physics para el rebote
+    }
+
+    static void collisionAsteroidWithPowerUp(KillerGame aThis, Asteroid asteroid, PowerUp powerUp) {
+
+        // Por ahora nada
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [          Collision Pacman           ] ********************************* //
+    // ***************************************************************************************************** //
+    static void collisionPacmanWithBlackHole(Pacman pacman) {
+
+        // Math random de -1 a 1
+        // Si da < 0 hacer un game.sendobjecttoprev con el pacman
+        // Si da >= 0 hacer un game.sendobjecttonext con el pacman
+    }
+
+    static void collisionPacmanWithNebulosa(Pacman pacman) {
+
+        // Por ahora nada
+    }
+
+    static void collisionPacmanWithPacman(KillerGame aThis, Pacman pacman, Pacman pacwoman) {
+
+        // Si pacman.health > pacwomen.health
+        // Elimnar a pacwoman
+        // Sumar a pacman la vida de pacwoman
+        // Si pacwoman.health > pacman.health
+        // Elimnar a pacman
+        // Sumar a pacwoman la vida de pacman
+        // Si pacman.health == pacwoman.health
+        // Eliminar ambos
+    }
+
+    static void collisionPacmanWithPlaneta(Pacman pacman) {
+
+        // Aplicar fisicas de rebote
+    }
+
+    static void collisionPacmanWithPowerUp(KillerGame aThis, Pacman pacman, PowerUp powerUp) {
+
+        // Eliminar powerup de la array
+        // Aumentar la vida de pacman en PACMAN_INCREMENT x 3
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [           Auxiliar Methods          ] ********************************* //
+    // ***************************************************************************************************** //
+    /**
+     * @author Alvaro
+     * @param game
+     * @param ship
+     * @param damage
+     * @return True if Ship state becomes dead and False if it still alive.
+     */
+    private static boolean substractHealthShip(KillerGame game, KillerShip ship, int damage) {
+
+        // Dead
+        boolean dead = false;
+
+        // Substract heatlh to ship
+        ship.quitarVida(damage);
+
+        // Set die status to KillerShip
+        if (ship.getHealth() <= 0) {
+            ship.changeState(Alive.State.DEAD);
+            // Sacar nave de la array
+            // Enviar al mando que la nave ha muerto
+            dead = true;
+        }
+
+        // Return live status
+        return dead;
+
+    }
+
+    /**
+     * @author Alvaro
+     * @param game
+     * @param ship
+     * @param damage
+     * @return True if Alive state becomes dead and False if it still alive.
+     */
+    private static boolean substractHealthAlive(KillerGame game, Alive alive, int damage) {
+
+        // Dead
+        boolean dead = false;
+
+        // Substract heatlh to ship
+        alive.quitarVida(damage);
+
+        // Set die status to KillerShip
+        if (alive.getHealth() <= 0) {
+            alive.changeState(Alive.State.DEAD);
+            // Sacar alive de la array
+            // Enviar al mando que la nave ha muerto
+            dead = true;
+        }
+
+        // Return live status
+        return dead;
+
     }
 
 }

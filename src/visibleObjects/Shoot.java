@@ -1,145 +1,129 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package visibleObjects;
 
-import communications.KillerPad;
 import game.KillerGame;
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.Graphics2D;
+import physics.PhysicsShoot;
 
-/**
- *
- * @author berna
- */
-public class Shoot extends Automata implements Runnable {
+public class Shoot extends Automata {
 
-    private int radius;
-    private double speed;
-    private boolean frightdir;
-    private Controlled ship;
-    public Rectangle hitbox;
+    private String id;
+    private int damage;
+    private PhysicsShoot physicsShoot;
 
-    private boolean alive;
+    /**
+     * 
+     * @param game
+     * @param ship 
+     */
+    public Shoot(KillerGame game, KillerShip ship) {
+        super();
+        this.game = game;
+        this.id = ship.getId();
+        this.state = State.ALIVE; 
+        this.damage = ship.getDamage(); // Daño de su nave
+        
+        this.maxspeed = 7;
+        this.health = 1;
 
-    public Shoot(KillerGame kg, Color color, Controlled ship) {
-        super(kg, color);
-        this.ship = ship;
-        this.radius = (int) (Math.min(ship.HEIGHT, ship.WIDTH) / 2);
-        this.x = ship.getX();
-        this.y = ship.getY() + (this.radius / 2);
-        hitbox = new Rectangle((int) this.x, (int) this.y, this.radius, this.radius);
-        this.frightdir = ship.fright;
-        this.speed = 15;
-        alive = true;
+        this.imgHeight = 15;
+        this.imgWidth = 15;
+        this.radius = this.imgHeight / 2;  // --> imgHeight
+        
+        // Posición según la posición del morro de la nave
+        this.x = ship.getTx() - this.radius; // --> radius
+        this.y = ship.getTy() - this.radius; // --> radius
+        
+        this.radians = ship.radians + Math.PI/2;
+        this.m = 30;
+        this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
+
+        
+    }
+
+    /**
+     * Constructor para replicar objeto enviado desde otro pc
+     * @param game
+     * @param x
+     * @param y
+     * @param radians
+     * @param vx
+     * @param vy
+     * @param id
+     * @param damage
+     * @param health
+     * @param state 
+     */
+    public Shoot(KillerGame game, double x, double y, double radians, double vx, double vy, String id, int damage, int health, State state) {
+        super(game, x, y);
+        
+        this.radians = radians; // Repetido en vo.
+        this.vx = vx; // quitar? Bernat
+        this.vy = vy; // quitar? Bernat
+        this.m = 30;
+        
+        this.id = id;
+        this.state = state;
+        this.damage = damage;
+        
+        this.maxspeed = 7;
+        this.health = health;
+
+        // Modificar con imgSize, añadir img
+        this.imgWidth = 15;
+        this.imgHeight = 15;
+        this.radius = this.imgHeight / 2;
+        this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
 
     }
 
     @Override
-    public void run() {
+    protected void move() {
+        physicsShoot.move();
+    }
 
-        while (alive) {
-            move();
-            try {
-                Thread.sleep(15);
-            } catch (InterruptedException ex) {
-
-            }
-        }
+    @Override
+    protected void setImage() {
 
     }
 
-    public void death() {
-        ship.getShoots().remove(this);
-        alive = false;
+    // ********************************************************
+    // *                     Interfaces                       *
+    // ********************************************************
+    // INTERFAZ Renderizable
+    @Override
+    public void render(Graphics2D g2d) {
+        g2d.setColor(Color.CYAN);
+        g2d.fillOval((int) x, (int) y, imgWidth, imgHeight);
+
     }
 
-    public void move() {
-        kg.checkColision(this);
-        if (this.frightdir) {
-            x += (int) speed;
-        } else {
-            x -= (int) speed;
-        }
-        updateHitBox();
+    // *********************
+    // * Getters & Setters *
+    // *********************
+
+    public String getId() {
+        return id;
     }
 
-    public void points(int points) {
-        KillerPad.sendMessageToPad("pnt" + points, kg, ship.getIp(), kg.getIplocal());
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void updateHitBox() {
-        hitbox.setBounds((int) x, (int) y, radius, radius);
+    public int getDamage() {
+        return damage;
     }
 
-    public Controlled getControlled() {
-        return ship;
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
-    public double getX() {
-        return x;
+    public PhysicsShoot getPhysicsShoot() {
+        return physicsShoot;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public boolean isFrightdir() {
-        return frightdir;
-    }
-
-    public void setFrightdir(boolean frightdir) {
-        this.frightdir = frightdir;
-    }
-
-    public Rectangle getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(Rectangle hitbox) {
-        this.hitbox = hitbox;
-    }
-
-    public Controlled getShip() {
-        return ship;
-    }
-
-    public void setShip(Controlled ship) {
-        this.ship = ship;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
+    public void setPhysicsShoot(PhysicsShoot physicsShoot) {
+        this.physicsShoot = physicsShoot;
     }
 
 }

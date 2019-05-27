@@ -1,471 +1,824 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game;
 
-import visualEffects.Viewer;
-import visibleObjects.Automata;
-import visibleObjects.VisibleObject;
-import visibleObjects.Alive;
-import visibleObjects.Shoot;
-import visibleObjects.Controlled;
-import communications.VisualHandler;
-import communications.KillerServer;
-import communications.KillerPad;
+// Import Killer Game pakages
+import visualEffects.*;
+import visibleObjects.*;
+import communications.*;
+import gameRoom.*;
+import sound.*;
+// Other imports
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
+import java.awt.GridLayout;
+import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
-import java.net.*;
+import java.util.Hashtable;
+import javax.sound.sampled.Clip;
+import physics.CollidePhysics;
+import visibleObjects.PowerUp.Power;
 
 /**
- *
- * @author berna
+ * @author Alvaro & Christian
  */
 public class KillerGame extends JFrame {
 
-    //Objetos a pintar + Canvas
+    // ***************************************************************************************************** //
+    // *************************** [         KillerGame Attributes       ] ********************************* //
+    // ***************************************************************************************************** //
+    // Game Attributes
+    public enum Status {
+        ROOM,
+        GAME
+    };
+
+    private Status status;
+
+    // Object list
     private ArrayList<VisibleObject> objects = new ArrayList<>();
+
+    // KillerShip list | <ip, ship>
+    private Hashtable<String, KillerShip> ships = new Hashtable();
+
+    // Server
+    private KillerServer server;
+
+    // Visual Handlers
+    private VisualHandler nextModule;
+    private VisualHandler prevModule;
+    private int serversQuantity = 0;
+    private boolean synchro = false;
+
+    // Gamepad List | <ip, pads>
+    private Hashtable<String, KillerPad> pads = new Hashtable();
+
+    // Viewer
     private Viewer viewer;
 
-    //Comunicaciones
-    private KillerServer server;
-    private String iplocal;
-    private int SERVERPORT = 8000;
-    private VisualHandler nk = new VisualHandler(this, true);
-    private VisualHandler pk = new VisualHandler(this, false);
+    // Room
+    private KillerRoom room;
 
-    //Gamepad (Móvil)
-    private ArrayList<KillerPad> kpads = new ArrayList();
+    // Radio
+    private KillerRadio radio;
 
-    //JFrame connections
-    JFrame connection;
-    JTextField ipnext;
-    JTextField portnext;
-    JTextField ipprev;
-    JTextField portprev;
+    // Sounds
+    private KillerSound sound;
 
-    int frameW = 1900;
-    int frameH = 700;
-
+    // ***************************************************************************************************** //
+    // *************************** [        KillerGame Constructors      ] ********************************* //
+    // ***************************************************************************************************** //
+    /**
+     * @author Alvaro
+     */
     public KillerGame() {
-        //    portFrame();
-        startServer();
-        ipframe();
+
+        // Open communications
+        this.generateComunnications();
+
+        // Set game status
+        this.status = Status.ROOM;
+
+        // Show room
+        this.newRoom();
+
     }
 
-    public static void main(String[] args) {
-        new KillerGame();
-    }
+    // ***************************************************************************************************** //
+    // *************************** [          KillerGame Methods         ] ********************************* //
+    // ***************************************************************************************************** //
+    /**
+     * @author Christian & Alvaro
+     * @param alive
+     */
+    public synchronized void checkColision(Alive alive) {
 
-    public void checkColision(Alive obj) {
+        if (alive.getState() != Alive.State.SAFE) {
 
-        //colision con limites
-        if (obj instanceof Automata) {
-            if ((obj.y + obj.dy) >= viewer.getHeight() - obj.HEIGHT || (obj.y + obj.dy) <= 0) {
-                obj.dy *= -1;
-            } else if (((obj.x + obj.dx) >= viewer.getWidth() - obj.WIDTH && nk.getSock() == null)
-                    || ((obj.x + obj.dx) <= 0 && pk.getSock() == null)) {
-                System.out.println("choque");
-                obj.dx *= -1;
-
-            } else if ((obj.x + obj.dx) >= viewer.getWidth() - (obj.WIDTH * (1f / 4f)) && nk.getSock() != null) {
-                System.out.println("send");
-                nk.sendMessage(nk.sendAutomata((Automata) obj, false), "d", iplocal);
-                obj.setAlive(false);
-                objects.remove(obj);
-            } else if ((obj.x + obj.dx) <= (-obj.WIDTH * (3f / 4f)) && pk.getSock() != null) {
-                System.out.println("send");
-                pk.sendMessage(pk.sendAutomata((Automata) obj, true), "d", iplocal);
-                obj.setAlive(false);
-                objects.remove(obj);
+            if (alive instanceof KillerShip) {
+                for (int inc = 0; inc < this.objects.size(); inc++) {
+                    VisibleObject object = this.objects.get(inc);
+                    this.checkColisionShip((KillerShip) (alive), object);
+                }
             }
 
-        } else if (obj instanceof Controlled) {
-            if ((obj.y + obj.dy) >= viewer.getHeight() - obj.HEIGHT) {
-                ((Controlled) obj).setWdown(true);
-                System.out.println(obj.x + obj.dx);
-            } else if (obj.y + obj.dy <= 0) {
-                ((Controlled) obj).setWup(true);
-                System.out.println(obj.x + obj.dx);
+            if (alive instanceof Shoot) {
+                for (int inc = 0; inc < this.objects.size(); inc++) {
+                    VisibleObject object = this.objects.get(inc);
+                    this.checkCollisionShoot((Shoot) (alive), object);
+                }
             }
 
-            if ((obj.x + obj.dx) >= viewer.getWidth() - obj.WIDTH && nk.getSock() == null) {
-                ((Controlled) obj).setWright(true);
-                System.out.println("pum al lado der");
-            } else if ((obj.x + obj.dx) >= viewer.getWidth() - (obj.WIDTH * (1f / 4f)) && nk.getSock() != null) {
-                System.out.println("por la derecha!");
-                nk.sendMessage(nk.sendPlayer((Controlled) obj, false), "d", iplocal);
-                obj.setAlive(false);
-                objects.remove(obj);
+            if (alive instanceof Asteroid) {
+                for (int inc = 0; inc < this.objects.size(); inc++) {
+                    VisibleObject object = this.objects.get(inc);
+                    this.checkCollisionAsteroid((Asteroid) (alive), object);
+                }
             }
 
-            if ((obj.x + obj.dx) <= 0 && pk.getSock() == null) {
-                ((Controlled) obj).setWleft(true);
-                System.out.println("pum al lado izq");
-
-            } else if ((obj.x + obj.dx) <= 0 - obj.WIDTH * (3f / 4f) && pk.getSock() != null) {
-                System.out.println("por la izquierda!");
-                pk.sendMessage(pk.sendPlayer((Controlled) obj, true), "d", iplocal);
-                obj.setAlive(false);
-                objects.remove(obj);
+            if (alive instanceof Pacman) {
+                for (int inc = 0; inc < this.objects.size(); inc++) {
+                    VisibleObject object = this.objects.get(inc);
+                    this.checkCollisionPacman((Pacman) (alive), object);
+                }
             }
 
         }
 
-        for (int i = 0; i < objects.size(); i++) {
-
-            VisibleObject objCol = null;
-
-            if (objects.get(i) != obj) {
-                objCol = objects.get(i);
-            }
-
-            if (objCol instanceof Alive) {
-                if (obj.nextMove().intersects(((Alive) objCol).hitbox)) {
-                    KillerRules.collision(obj, objCol);
-                }
-
-            }
-
-        }
     }
 
-    public void checkColision(Shoot obj) {
+    /**
+     * @author Alvaro
+     * @param shoot
+     * @param object
+     */
+    private void checkColisionShip(KillerShip ship, VisibleObject object) {
 
-        //colision con limites
-        if (obj.getY() >= viewer.getHeight() || obj.getY() <= 0
-                || obj.getX() >= viewer.getWidth() || obj.getX() <= 0) {
-            obj.death();
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            if (false) {
+                KillerRules.collisionShipWithAsteroid(this, ship, (Asteroid) (object));
+            }
         }
 
-        for (int i = 0; i < objects.size(); i++) {
-
-            VisibleObject objCol = null;
-            if (objects.get(i) != obj.getControlled()) {
-                objCol = objects.get(i);
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            if (false) {
+                KillerRules.collisionShipWithBlackHole(this, ship);
             }
-
-            if (objCol instanceof Alive) {
-                if (obj.hitbox.intersects(((Alive) objCol).hitbox)) {
-                    KillerRules.collisionShoot(obj, (Alive) objCol);
-
-                }
-
-            }
-
         }
-    }
 
-    public void createControlled(Controlled contr) {
-
-        objects.add(contr);
-        new Thread(contr).start();
-
-    }
-
-    public void createAutomata(Automata auto) {
-        objects.add(auto);
-        new Thread(auto).start();
-
-    }
-
-    public void createShoot(Shoot shoot) {
-
-    }
-
-    public void frame() {
-
-        setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width,
-                Toolkit.getDefaultToolkit().getScreenSize().height));
-        //setResizable(false);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        //setUndecorated(true);
-        getContentPane().add(viewer = new Viewer(this));
-        viewer.images();
-        pack();
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setVisible(true);
-
-        new Thread(viewer).start();
-
-    }
-
-    public void ipframe() {
-        connection = new JFrame("Killer Game: Set IP's");
-        connection.setSize(500, 100);
-        connection.setLocationRelativeTo(null);
-        connection.setResizable(false);
-        connection.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        Container cp = connection.getContentPane();
-        connection.getContentPane().setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(3, 4, 4, 3);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridheight = 1;
-        c.gridwidth = 1;
-        JLabel ip1 = new JLabel("IP Previous:");
-        connection.add(ip1, c);
-        c.gridx = 1;
-        JLabel ip2 = new JLabel("PORT:");
-        connection.add(ip2, c);
-        c.gridx = 3;
-        JLabel ip3 = new JLabel("IP Next:");
-        connection.add(ip3, c);
-        c.gridx = 4;
-        JLabel ip4 = new JLabel("PORT:");
-        connection.add(ip4, c);
-        ipprev = new JTextField(10);
-        portprev = new JTextField(5);
-        ipnext = new JTextField(10);
-        portnext = new JTextField(5);
-
-        c.gridx = 0;
-        c.gridy = 1;
-
-        connection.add(ipprev, c);
-        c.gridx = 1;
-        connection.add(portprev, c);
-
-        c.gridx = 2;
-        c.insets = new Insets(3, 6, 6, 3);
-        JButton start = new JButton("START");
-        start.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    if (nk.getIp() == null && nk.getOriginport() == 0) {
-                        nk.setIp(ipnext.getText());
-                        if (!portnext.getText().trim().equals("")) {
-                            nk.setOriginport(Integer.parseInt(portnext.getText()));
-                        }
-                    }
-                    //
-                    if (pk.getIp() == null && pk.getOriginport() == 0) {
-                        pk.setIp(ipprev.getText());
-                        if (!portprev.getText().trim().equals("")) {
-                            pk.setOriginport(Integer.parseInt(portprev.getText()));
-                        }
-                    }
-
-                    // frame.dispose();
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    System.out.println("Nada de letras.");
-                }
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            if (false) {
+                KillerRules.collisionShipWithNebulosa(ship);
             }
-        });
+        }
 
-        start.setSize(100, 100);
-        connection.add(start, c);
-
-        c.insets = new Insets(3, 4, 4, 3);
-        c.gridx = 3;
-        connection.add(ipnext, c);
-        c.gridx = 4;
-        connection.add(portnext, c);
-        connection.setVisible(true);
-
-    }
-
-    public void portFrame() {
-        JFrame portframe = new JFrame("Killer Game: Set port");
-        portframe.setSize(240, 150);
-        Container cp = portframe.getContentPane();
-        portframe.getContentPane().setLayout(new GridBagLayout());
-
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.insets = new Insets(3, 3, 3, 3);
-        JLabel jl = new JLabel("Introduce puerto:");
-        cp.add(jl, c);
-        c.gridy = 1;
-        c.fill = GridBagConstraints.BOTH;
-        JTextField text = new JTextField();
-        cp.add(text, c);
-        JButton butt = new JButton("OK");
-        butt.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!text.getText().isEmpty()) {
-                    try {
-                        SERVERPORT = Integer.parseInt(text.getText());
-                        ipframe();
-                        portframe.dispose();
-                    } catch (Exception ex) {
-                        text.setText("Nada de letras");
-                    }
-                }
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            if (false) {
+                KillerRules.collisionShipWithPacman(this, ship, (Pacman) (object));
             }
+        }
 
-        });
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            if (false) {
+                KillerRules.collisionShipWithPlaneta(this, ship, (Planeta) (object));
+            }
+        }
 
-        c.gridy = 2;
-        cp.add(butt, c);
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            if (false) {
+                KillerRules.collisionShipWithPowerUp(this, ship, (PowerUp) (object));
+            }
+        }
 
-        portframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        portframe.setResizable(false);
-        portframe.setLocationRelativeTo(null);
-        portframe.setVisible(true);
+        // Collision with Ship
+        if (object instanceof KillerShip && !ship.equals(object)) {
+            if (false) {
+                KillerRules.collisionShipWithShip(this, ship, (KillerShip) (object));
+            }
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot) {
+            if (false) {
+                KillerRules.collisionShipWithShoot(this, ship, (Shoot) (object));
+            }
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            if (CollidePhysics.collisionObjxWall(ship, (Wall) object)) {
+                KillerRules.collisionAliveWithWall(this, ship, (Wall) (object));
+            }
+        }
+
     }
 
-    public void startServer() {
+    private void checkCollisionShoot(Shoot shoot, VisibleObject object) {
 
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            if (false) {
+                KillerRules.collisionShootWithAsteroid(this, shoot, (Asteroid) (object));
+            }
+        }
+
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            if (false) {
+                KillerRules.collisionShootWithBlackHole(this, shoot, (BlackHole) (object));
+            }
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            if (false) {
+                KillerRules.collisionShootWithNebulosa(shoot);
+            }
+        }
+
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            if (false) {
+                KillerRules.collisionShootWithPacman(this, shoot, (Pacman) (object));
+            }
+        }
+
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            if (false) {
+                KillerRules.collisionShootWithPlaneta(this, shoot, (Planeta) (object));
+            }
+        }
+
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            if (false) {
+                KillerRules.collisionShootWithPowerUp(this, shoot, (PowerUp) (object));
+            }
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot && !shoot.equals(object)) {
+            if (false) {
+                KillerRules.collisionShootWithShoot(this, shoot, (Shoot) (object));
+            }
+        }
+
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            if (false) {
+                KillerRules.collisionShipWithShoot(this, (KillerShip) (object), shoot);
+            }
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            if (CollidePhysics.collisionObjxWall(shoot, (Wall) object)) {
+                KillerRules.collisionAliveWithWall(this, shoot, (Wall) (object));
+            }
+        }
+
+    }
+
+    private void checkCollisionAsteroid(Asteroid asteroid, VisibleObject object) {
+
+        // Collision with Asteroid
+        if (object instanceof Asteroid && !asteroid.equals(object)) {
+            if (false) {
+                KillerRules.collisionAsteroidWithAsteroid(this, asteroid, (Asteroid) (object));
+            }
+        }
+
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            if (false) {
+                KillerRules.collisionAsteroidWithBlackHole(this, asteroid, (BlackHole) (object));
+            }
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            if (false) {
+                KillerRules.collisionAsteroidWithNebulosa(asteroid);
+            }
+        }
+
+        // Collision with Pacman
+        if (object instanceof Pacman) {
+            if (false) {
+                KillerRules.collisionAsteroidWithPacman(this, asteroid, (Pacman) (object));
+            }
+        }
+
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            if (false) {
+                KillerRules.collisionAsteroidWithPlaneta(asteroid);
+            }
+        }
+
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            if (false) {
+                KillerRules.collisionAsteroidWithPowerUp(this, asteroid, (PowerUp) (object));
+            }
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot) {
+            if (false) {
+                KillerRules.collisionShootWithAsteroid(this, (Shoot) (object), asteroid);
+            }
+        }
+
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            if (false) {
+                KillerRules.collisionShipWithAsteroid(this, (KillerShip) (object), asteroid);
+            }
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            if (CollidePhysics.collisionObjxWall(asteroid, (Wall) object)) {
+                KillerRules.collisionAliveWithWall(this, asteroid, (Wall) (object));
+            }
+        }
+
+    }
+
+    private void checkCollisionPacman(Pacman pacman, VisibleObject object) {
+
+        // Collision with Asteroid
+        if (object instanceof Asteroid) {
+            if (false) {
+                KillerRules.collisionAsteroidWithPacman(this, (Asteroid) (object), pacman);
+            }
+        }
+
+        // Collision with BlackHole
+        if (object instanceof BlackHole) {
+            if (false) {
+                KillerRules.collisionPacmanWithBlackHole(pacman);
+            }
+        }
+
+        // Collision with Nebulosa
+        if (object instanceof Nebulosa) {
+            if (false) {
+                KillerRules.collisionPacmanWithNebulosa(pacman);
+            }
+        }
+
+        // Collision with Pacman
+        if (object instanceof Pacman && !pacman.equals(object)) {
+            if (false) {
+                KillerRules.collisionPacmanWithPacman(this, pacman, (Pacman) (object));
+            }
+        }
+
+        // Collision with Planeta
+        if (object instanceof Planeta) {
+            if (false) {
+                KillerRules.collisionPacmanWithPlaneta(pacman);
+            }
+        }
+
+        // Collision with PowerUp
+        if (object instanceof PowerUp) {
+            if (false) {
+                KillerRules.collisionPacmanWithPowerUp(this, pacman, (PowerUp) (object));
+            }
+        }
+
+        // Collision with Shot
+        if (object instanceof Shoot) {
+            if (false) {
+                KillerRules.collisionShootWithPacman(this, (Shoot) (object), pacman);
+            }
+        }
+
+        // Collision with Ship
+        if (object instanceof KillerShip) {
+            if (false) {
+                KillerRules.collisionShipWithPacman(this, (KillerShip) (object), pacman);
+            }
+        }
+
+        // Collision with Wall
+        if (object instanceof Wall) {
+            if (CollidePhysics.collisionObjxWall(pacman, (Wall) object)) {
+                KillerRules.collisionAliveWithWall(this, pacman, (Wall) (object));
+            }
+        }
+
+    }
+
+    /**
+     * @author Christian
+     * @param object
+     */
+    public void removeObject(VisibleObject object) {
         try {
-            iplocal = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException ex) {
-            System.err.println("Error de red..");
+            this.objects.remove(object);
+            System.out.println("Eliminao!!!");
+//            if (object instanceof Alive) {
+//                object.stop();
+//            }
+        } catch (Exception e) {
+            System.out.println("Este objecto no se encuentra en la array");
         }
+    }
 
-        boolean ok = false;
-        while (!ok) {
+    public void startGame() {
 
-            try {
-                server = new KillerServer(this, SERVERPORT);
-                if (server.getServerSocket() != null) {
-                    ok = true;
-                    System.out.println("Server iniciado");
-                }
-            } catch (Exception ex) {
-                SERVERPORT++;
-                System.err.println("Socket ocupado, reconectando en el siguiente..");
-            }
-        }
+        // Hide room
+        this.room.setVisible(false);
 
-        new Thread(server).start();
-        new Thread(nk).start();
-        new Thread(pk).start();
+        // Change Status
+        this.status = KillerGame.Status.GAME;
 
-        frame();
-        for (int i = 0; i < 3; i++) {
-            objects.add(new Automata(this, Color.red));
-        }
+        // Mostrar ventana
+        this.showWindow();
 
-        // objects.add(new Controlled(this, Color.pink, 1));
-        startThreads();
+        // Add Viewer
+        this.newViewer();
+
+        // Add walls
+        this.addWalls();
+
+        // ---------------------------------------------------------------------
+        // Añadir Objetos de Prueba
+        this.objects.add(new Planeta(this, 300, 400, 100, 100));
+        this.objects.add(new Nebulosa(this, 400, 150, 120, 90));
+        this.objects.add(new BlackHole(this, 350, 500, 80, 80));
+        this.objects.add(new PowerUp(this, 100, 500, 70, 70, Power.HEALTH));
+        Asteroid a = new Asteroid(this, 75, 100, 40, 40, 6, 2);
+        this.objects.add(a);
+        Pacman p = new Pacman(this, 100, 450);
+        this.objects.add(p);
+
+        // Start threads
+        this.startThreads();
+
     }
 
     public void startThreads() {
-        for (int i = 0; i < objects.size(); i++) {
-            new Thread((Alive) objects.get(i)).start();
-
+        for (VisibleObject object : this.objects) {
+            if (object instanceof Alive) {
+                new Thread((Alive) object).start();
+            }
         }
-
     }
 
-    public Viewer getViewer() {
-        return viewer;
+    // ***************************************************************************************************** //
+    // *************************** [       Communication Methods         ] ********************************* //
+    // ***************************************************************************************************** //
+    /**
+     * @author Christian
+     */
+    private void generateComunnications() {
+        newPrevModule();
+        newNextModule();
+        newServer();
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void sendMessageToPrev(Message message) {
+        this.prevModule.sendMessage(message);
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void sendMessageToNext(Message message) {
+        this.nextModule.sendMessage(message);
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void sendObjectToPrev(Alive object) {
+        this.prevModule.sendObject(object);
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void sendObjectToNext(Alive object) {
+        this.nextModule.sendObject(object);
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void sendStart() {
+        if (this.status == Status.ROOM) {
+            this.nextModule.sendStart();
+            this.status = Status.GAME;
+        }
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [            Window Methods           ] ********************************* //
+    // ***************************************************************************************************** //
+    /**
+     * @author Christian
+     */
+    private void addWalls() {
+        // Add walls
+        this.newWall(Wall.Limit.RIGHT);
+        this.newWall(Wall.Limit.UP);
+        this.newWall(Wall.Limit.DOWN);
+        this.newWall(Wall.Limit.LEFT);
+    }
+
+    /**
+     * @author Alvaro
+     */
+    private void showWindow() {
+//        this.setSize(1120, 630);
+        this.setSize(1500, 800);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.getContentPane().setLayout(new GridLayout());
+        this.setResizable(false);
+        this.setUndecorated(true);
+        this.setVisible(true);
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [            Sound Methods           ] ********************************** //
+    // ***************************************************************************************************** //
+    /**
+     * @author Alvaro
+     * @param clip
+     */
+    public void startMusic(KillerRadio.ClipType clip) {
+        this.newRadio();
+        this.radio.setClip(clip);
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void stopMusic() {
+        this.radio.stopSound();
+    }
+
+    /**
+     * @author Alvaro
+     * @param clip
+     */
+    public void changeMusic(KillerRadio.ClipType clip) {
+        this.radio.setClip(clip);
+    }
+
+    /**
+     * @author Alvaro
+     * @param clip
+     */
+    public void startSound(KillerSound.ClipType clip) {
+        this.sound.addSound(sound.createSound(clip));
+    }
+
+    /**
+     * @author Alvaro
+     * @param clip
+     */
+    public void stopSound(Clip clip) {
+        this.sound.stopSound(clip);
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [             Methods New             ] ********************************* //
+    // ***************************************************************************************************** //
+    /**
+     * @author Alvaro
+     * @param ip
+     * @param socket
+     * @param user
+     * @param color
+     * @return
+     */
+    public boolean newPad(String ip, Socket socket, String user, String color) {
+        boolean result = false;
+        if (this.status == Status.ROOM) {
+            KillerPad pad = new KillerPad(this, socket, user, color);
+            this.pads.put(ip, pad);
+            new Thread(pad).start();
+            result = true;
+        }
+        return result;
+    }
+
+    /**
+     * @author Chirtsian
+     */
+    private void newRadio() {
+        this.radio = new KillerRadio();
+    }
+
+    /**
+     * @author Chirtsian
+     */
+    private void newRoom() {
+        this.room = new KillerRoom(this);
+        this.room.setVisible(true);
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void newShip(String ip, Color color, String user, KillerShip.ShipType type) {
+        KillerShip ship = new KillerShip(this, 150, 150, ip, user, type);
+        this.ships.put(ip, ship);
+        this.objects.add(ship);
+    }
+
+    /**
+     * @author Christian
+     */
+    public void newSound() {
+        this.sound = new KillerSound();
+    }
+
+    /**
+     * @author Alvaro
+     */
+    private void newPrevModule() {
+        this.prevModule = new VisualHandler(this, false);
+        new Thread(this.prevModule).start();
+    }
+
+    /**
+     * @author Alvaro
+     */
+    private void newNextModule() {
+        this.nextModule = new VisualHandler(this, true);
+        new Thread(this.nextModule).start();
+    }
+
+    /**
+     * @author Alvaro
+     */
+    private void newServer() {
+        try {
+            this.server = new KillerServer(this, 8000);
+            new Thread(this.server).start();
+        } catch (Exception exception) {
+            System.out.println("No ha sido posible encender el servidor debido a la siguiente excepcion : " + exception);
+        }
+    }
+
+    /**
+     * @author Alvaro
+     * @param ship
+     */
+    public void newShoot(KillerShip ship) {
+        Shoot shoot = new Shoot(this, ship);
+        this.objects.add(shoot);
+        new Thread(shoot).start();
+    }
+
+    /**
+     * Este metodo sirve para crear una nave cuando venga desde otra pantalla.
+     *
+     * @author Alvaro
+     * @param x
+     * @param y
+     * @param radians
+     * @param dx
+     * @param dy
+     * @param vx
+     * @param vy
+     * @param tx
+     * @param ty
+     * @param lx
+     * @param ly
+     * @param rx
+     * @param ry
+     * @param ip
+     * @param user
+     * @param type
+     * @param health
+     */
+    public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage) {
+        KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage);
+        int correctX = 1;
+        if (dx < 0) {
+            correctX = this.viewer.getWidth() - ship.getImgWidth() - 1;
+        }
+        ship.setX(correctX);
+        this.ships.put(ip, ship);
+        this.objects.add(ship);
+        new Thread(ship).start();
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
+        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage, 1, Alive.State.ALIVE);
+        this.objects.add(shoot);
+        new Thread(shoot).start();
+    }
+
+    // New Viewer
+    /**
+     * @author Alvaro
+     */
+    private void newViewer() {
+        this.viewer = new Viewer(this);
+        this.add(this.viewer, 0, 0);
+        new Thread(this.viewer).start();
+    }
+
+    /**
+     * @author Alvaro
+     */
+    private void newWall(Wall.Limit limit) {
+        Wall wall = new Wall(this, limit);
+        this.objects.add(wall);
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [             Methods Get             ] ********************************* //
+    // ***************************************************************************************************** //
+    public VisualHandler getNextModule() {
+        return this.nextModule;
     }
 
     public ArrayList<VisibleObject> getObjects() {
-        return objects;
+        return this.objects;
     }
 
-    public VisualHandler getNk() {
-        return nk;
+    public VisualHandler getPrevModule() {
+        return this.prevModule;
     }
 
-    public void setNk(VisualHandler nk) {
-        this.nk = nk;
+    public Hashtable<String, KillerPad> getPads() {
+        return pads;
     }
 
-    public VisualHandler getPk() {
-        return pk;
+    public KillerPad getPadByIP(String ip) {
+        return this.pads.get(ip);
     }
 
-    public void setPk(VisualHandler pk) {
-        this.pk = pk;
+    public KillerRoom getRoom() {
+        return room;
     }
 
     public KillerServer getServer() {
-        return server;
+        return this.server;
     }
 
-    public void setServer(KillerServer server) {
-        this.server = server;
+    public int getServersQuantity() {
+        return serversQuantity;
     }
 
-    public int getSERVERPORT() {
-        return SERVERPORT;
+    public Hashtable<String, KillerShip> getShips() {
+        return this.ships;
     }
 
-    public void setSERVERPORT(int SERVERPORT) {
-        this.SERVERPORT = SERVERPORT;
+    public KillerShip getShipByIP(String ip) {
+        return this.ships.get(ip);
     }
 
-    public ArrayList<KillerPad> getKpads() {
-        return kpads;
+    public Status getStatus() {
+        return this.status;
     }
 
-    public void setKpads(ArrayList<KillerPad> kpads) {
-        this.kpads = kpads;
+    public Viewer getViewer() {
+        return this.viewer;
     }
 
-    public JFrame getConnection() {
-        return connection;
+    public boolean isSynchronized() {
+        return synchro;
     }
 
-    public void setConnection(JFrame connection) {
-        this.connection = connection;
+    // ***************************************************************************************************** //
+    // *************************** [              Methods Set            ] ********************************* //
+    // ***************************************************************************************************** //
+    public void setIpPrev(String ip) {
+        this.prevModule.setDestinationIp(ip);
     }
 
-    public JTextField getIpnext() {
-        return ipnext;
+    public void setIpNext(String ip) {
+        this.nextModule.setDestinationIp(ip);
     }
 
-    public void setIpnext(JTextField ipnext) {
-        this.ipnext = ipnext;
+    public void setPortPrev(int port) {
+        this.prevModule.setDestinationPort(port);
     }
 
-    public JTextField getPortnext() {
-        return portnext;
+    public void setPortNext(int port) {
+        this.nextModule.setDestinationPort(port);
     }
 
-    public void setPortnext(JTextField portnext) {
-        this.portnext = portnext;
+    public void setServersQuantity(int serversQuantity) {
+        this.serversQuantity = serversQuantity;
     }
 
-    public JTextField getIpprev() {
-        return ipprev;
+    public void setSyncronized(boolean synchro) {
+        this.synchro = synchro;
+        this.room.getKPP().setButtonPlay(synchro);
     }
 
-    public void setIpprev(JTextField ipprev) {
-        this.ipprev = ipprev;
-    }
+    // ***************************************************************************************************** //
+    // *************************** [             Main Activity           ] ********************************* //
+    // ***************************************************************************************************** //
+    public static void main(String[] args) {
 
-    public JTextField getPortprev() {
-        return portprev;
-    }
+        // New KillerGame
+        KillerGame game = new KillerGame();
 
-    public void setPortprev(JTextField portprev) {
-        this.portprev = portprev;
-    }
-
-    public String getIplocal() {
-        return iplocal;
-    }
-
-    public void setIplocal(String iplocal) {
-        this.iplocal = iplocal;
     }
 
 }

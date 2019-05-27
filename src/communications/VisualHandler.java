@@ -1,448 +1,313 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package communications;
 
-import communications.KillerPad;
-import communications.KillerClient;
-import visibleObjects.Automata;
-import visibleObjects.Controlled;
 import game.KillerGame;
-import visibleObjects.Shoot;
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JTextField;
+import java.net.Socket;
+import visibleObjects.Alive;
 
-/**
- *
- * @author Bernat2
- */
-public class VisualHandler implements Runnable {
+public class VisualHandler extends ReceptionHandler implements Runnable {
 
-    private Socket sock;
-    private String ip;
-    private int originport;
-    private KillerGame killergame;
-    private BufferedReader in;
-    private PrintWriter out;
-    private KillerClient kc;
+    private KillerClient client;
+    private final boolean right;
+    private String destinationId;
+    private static final String EMPTY_STRING = "";
 
-    private boolean right;
+    private static final String STATUS_REQUEST = "ok";
+    private static final String BYE_LINE = "bye";
 
-    //  long time;
-    public VisualHandler(KillerGame kg, boolean right) {
-        kc = new KillerClient(this);
+    private static final String SEND_OBJECT_COMMAND = "object";
+    private static final String CLIENT_CONNECTED = "connected";
+    private static final String CLIENT_NOT_CONNECTED = "notConnected";
+    private static final String SYNC_REQUEST = "sync";
+    private static final String SYNC_CONFIRMATION = "sync-confirm";
+    private static final String SYNC_CHECK = "sync-check";
+    private static final String START_GAME = "start";
+    private static final String QUIT_GAME = "quit";
+    private static final String PAD_COMMAND = "pad(.*)";
+    private static final String DAMAGE_COMMAND = "pad_damage";
+    private static final String ACTION_COMMAND = "action";
+
+    private static final String SHOOT_TYPE = "shoot";
+    private static final String SHIP_TYPE = "ship";
+
+    public VisualHandler(final KillerGame killergame, final boolean right) {
+        super(killergame);
         this.right = right;
-        killergame = kg;
-        startClient();
+        this.startClient();
+    }
+
+    public boolean isRight() {
+        return this.right;
+    }
+
+    public String getDestinationId() {
+        return this.destinationId;
+    }
+
+    public void setDestinationId(final String id) {
+        this.destinationId = id;
+    }
+
+    @Override
+    public void setDestinationIp(final String ip) {
+        super.setDestinationIp(ip);
+        this.closeSocket();
+    }
+
+    @Override
+    public void setDestinationPort(final int port) {
+        super.setDestinationPort(port);
+    }
+
+    public KillerClient getClient() {
+        return this.client;
     }
 
     @Override
     public void run() {
         while (true) {
             try {
-                if (sock != null) {
-
-                    processMessage(in, out);
-
+                if (this.getSocket() != null) {
+                    this.listeningMessages();
                 }
-                Thread.sleep(200);
+                Thread.sleep(100);
             } catch (InterruptedException ex) {
 
             }
         }
     }
 
-    public void alert(String msg) {
-        try {
-            out.println(msg);
-        } catch (Exception ex) {
-            System.out.println("null de verdad");
-            nullSocket();
-        }
-    }
-
-    public void nullSocket() {
-
-        try {
-            sock.close();
-            sock = null;
-        } catch (Exception ex1) {
-            System.out.println(ex1.getCause() + ex1.getMessage());
-            System.out.println("hola");
-        }
-    }
-
-    public String notifyPad(String msg, String idkp) {
-
-        return ("topad/" + idkp + "/" + msg);
-
-    }
-
-    public String notifyVisual(String msg, String idkp) {
-        return ("tovisual/" + idkp + "/" + msg);
-    }
-
-    public void processMessage(BufferedReader in, PrintWriter out) {
+    private void listeningMessages() {
         boolean done = false;
-        String line;
 
         while (!done) {
             try {
-
-                line = in.readLine();
-                if (line != null) {
-                    request(line);
-                } else {
-                    done = true;
-                }
-
-            } catch (IOException ex) {
-                System.out.println(ex.getClass());
-                System.out.println(ex.getCause());
-                System.out.println(ex.getMessage());
-                System.out.println("Time out");
+                done = !this.processLine(this.readLine());
+            } catch (Exception ex) {
+                this.setSocket(null, this.destinationId);
                 done = true;
             }
-
         }
-        nullSocket();
+        this.setSocket(null);
+        this.updateRoom(false);
     }
 
-    public void request(String line) {
-        //  System.out.println(line);
+    private boolean processLine(final String line) {
+        if (line == null) {
+            return false;
+        }
+        if (BYE_LINE.equalsIgnoreCase(line)) {
+            this.disconnect();
+            return false;
+        }
+        if (!STATUS_REQUEST.equalsIgnoreCase(line)) {
+            this.processMessage(Message.readMessage(line));
+        }
+        return true;
+    }
 
-        if (line.equals("ok")) {
-            out.println("ok");
-//            time = System.currentTimeMillis();
+    private void processMessage(final Message message) {
 
-        } else {
-
-            String[] params = line.split("&");
-
-            String status = params[0];
-            String ipmsg = params[1];
-            String portmsg = params[2];
-            String[] info = params[3].split("/");
-
-            if (status.equals("r")) {
-                System.out.println("R!!");
-//
-//            if ((portmsg.equals(killergame.getSERVERPORT()))) {
-//                //if ((ipmsg.equals(killergame.getIplocal()))) {
-//                if (info[0].trim().equals("kpad")) {
-//
-//                    String kpid = info[1].trim();
-//                    KillerPad.sendMessageToPad("notfound", killergame, kpid, ipmsg);
-//
-//                } else if (info[0].trim().equals("topad")) {
-//
-//                    String kpid = info[1].trim();
-//                    KillerPad.sendMessageToPad("notfound", killergame, kpid, ipmsg);
-//
-//                }
-//              }
-
-                if (!(portmsg.equals(killergame.getSERVERPORT()))
-                        || !(portmsg.equals(killergame.getIplocal()))) {
-                    if (info[0].trim().equals("kpad")) {
-
-                        String kpid = info[1].trim();
-                        String kpmsg = info[2].trim();
-                        KillerPad.request(kpmsg, killergame, kpid, ipmsg);
-
-                    } else if (info[0].trim().equals("topad")) {
-
-                        String kpid = info[1].trim();
-                        String kpmsg = info[2].trim();
-
-                        KillerPad.sendMessageToPad(kpmsg, killergame, kpid, ipmsg);
-
-                    } else if (info[0].trim().equals("tovisual")) {
-
-                        String kpid = info[1].trim();
-                        String kpmsg = info[2].trim();
-                        System.out.println(kpid + "," + kpmsg);
-
-                        if (kpmsg.equals("death")) {
-                            KillerPad.lifeShip(kpmsg, killergame, kpid, ipmsg);
-                        } else if (kpmsg.equals("replay")) {
-                            KillerPad.lifeShip(kpmsg, killergame, kpid, ipmsg);
-                        } else if (kpmsg.equals("remove")) {
-                            KillerPad.removeShip(kpmsg, killergame, kpid, ipmsg);
-                        }
+        switch (message.getCommand()) {
+            case SEND_OBJECT_COMMAND:
+                this.receiveObject(message.getObjectResponse());
+                break;
+            case START_GAME:
+                this.processStart(message);
+                break;
+            case QUIT_GAME:
+                this.processQuitGame(message);
+                break;
+            case ACTION_COMMAND:
+                this.processPadCommand(message);
+                break;
+            case SYNC_REQUEST:
+                this.processSyncRequest(message.getSenderId(), message.getServersQuantity());
+                break;
+            case SYNC_CONFIRMATION:
+                this.processSyncConfirmation(message);
+                break;
+            case SYNC_CHECK:
+                this.processSyncCheck(message);
+                break;
+            case CLIENT_CONNECTED:
+                this.destinationId = message.getSenderId();
+                this.updateRoom(true);
+                break;
+            case CLIENT_NOT_CONNECTED:
+                this.disconnect();
+                break;
+            default:
+                final String command = message.getCommand();
+                if (command != null && command.matches(PAD_COMMAND)) {
+                    if (!this.isMessageMine(message.getSenderId())) {
+                        this.processInfoMessageToPad(message);
                     }
-
+                } else {
+                    System.out.println("VISUALHANDLER -> COMANDO DESCONOCIDO");
                 }
-
-            } else if (status.equals("d")) {
-
-                if (info[0].trim().equals("player")) {
-
-                    String ip = info[1];
-                    String user = info[2];
-                    String color = info[3];
-                    String percnt = info[4];
-                    String speed = info[5];
-                    String WIDTH = info[6];
-                    String HEIGHT = info[7];
-                    String dir = info[8];
-                    int axisX = Integer.parseInt(info[9]);
-                    int axisY = Integer.parseInt(info[10]);
-
-                    Controlled contr = new Controlled(killergame, Color.decode(color), ip, user);
-                    contr.y = killergame.getViewer().getHeight() * Double.valueOf(percnt);
-                    contr.speed = Double.valueOf(speed);
-                    contr.WIDTH = Integer.parseInt(WIDTH);
-                    contr.HEIGHT = Integer.parseInt(HEIGHT);
-
-                    if (dir.equals("right")) {
-                        contr.x = killergame.getViewer().getWidth() - contr.WIDTH / 2;
-                        contr.right = false;
-                    } else if (dir.equals("left")) {
-                        contr.x = -contr.WIDTH / 2;
-                        contr.right = true;
-                    }
-
-                    if (axisX == 1) {
-                        contr.right = true;
-                    } else if (axisX == -1) {
-                        contr.left = true;
-                    }
-
-                    if (axisY == 1) {
-                        contr.up = true;
-
-                    } else if (axisY == -1) {
-                        contr.down = true;
-                    }
-                    System.out.println(percnt);
-                    System.out.println(contr.y);
-                    killergame.createControlled(contr);
-
-                } else if (info[0].trim().equals("automata")) {
-
-                    String color = info[1];
-                    String percnt = info[2];
-                    String speed = info[3];
-                    String WIDTH = info[4];
-                    String HEIGHT = info[5];
-                    String dirx = info[6];
-                    String diry = info[7];
-
-                    Automata auto = new Automata(killergame, Color.decode(color));
-                    auto.y = killergame.getViewer().getHeight() * Double.valueOf(percnt);
-                    auto.speed = Double.valueOf(speed);
-                    auto.WIDTH = Integer.parseInt(WIDTH);
-                    auto.HEIGHT = Integer.parseInt(HEIGHT);
-
-                    if (dirx.equals("right")) {
-                        auto.x = killergame.getViewer().getWidth() - auto.WIDTH / 2;
-                        auto.dx = -Double.valueOf(speed);
-                    } else if (dirx.equals("left")) {
-                        auto.x = -auto.WIDTH / 2;
-                        auto.dx = Double.valueOf(speed);
-                    }
-                    auto.dy = Integer.parseInt(diry) * Double.valueOf(speed);
-                    killergame.createAutomata(auto);
-
-                } else if (info[0].trim().equals("shoot")) {
-
-                }
-            }
+                break;
         }
-
     }
 
-    public void sendMessage(String info, String status, String ip) {
+    private void processPadCommand(final Message message) {
 
-        String iptosend = null;
-        if (status.equals("r")) {
-            iptosend = ip;
-        } else if (status.equals("d")) {
-            iptosend = killergame.getIplocal();
-        }
-
-        String msg = status + "&" + iptosend + "&"
-                + killergame.getSERVERPORT() + "&" + info;
-        out.println(msg);
+        boolean sendNextModule = this.getKillergame().getPadByIP(message.getSenderId()) == null;
+        KillerPad.sendActionToPlayer(message, this.getKillergame(), sendNextModule);
     }
 
-    public String sendPlayer(Controlled obj, boolean right) {
+    private void receiveObject(final ObjectResponse object) {
 
-        double percentSc = (obj.y / killergame.getViewer().getHeight());
-        String dir = null;
-        if (right) {
-            dir = "right";
-        } else {
-            dir = "left";
-        }
+        switch (object.getObjectType()) {
+            case SHIP_TYPE:
+                this.createShip(object);
+                break;
+            case SHOOT_TYPE:
+                this.createShoot(object);
+                break;
+            default:
+                System.out.println("VISUALHANDLER -> ERROR: OBJETO DESCONOCIDO" + object.getObjectType());
+                break;
 
-        int axisX = 0;
-        int axisY = 0;
-
-        if (obj.left) {
-            axisX = -1;
+            //TODO los demas objetos
         }
-        if (obj.right) {
-            axisX = 1;
-        }
-        if (obj.up) {
-            axisY = 1;
-        }
-        if (obj.down) {
-            axisY = -1;
-        }
-
-        String msg = "player/" + obj.ip + "/" + obj.user + "/" + obj.colorhex
-                + "/" + percentSc + "/" + obj.speed + "/"
-                + obj.WIDTH + "/" + obj.HEIGHT + "/" + dir + "/"
-                + axisX + "/" + axisY;
-        return msg;
     }
 
-    public String sendAutomata(Automata obj, boolean right) {
-        double percentSc = (obj.y / killergame.getViewer().getHeight());
-        String dirx = null;
-        int diry = 0;
-        if (right) {
-            dirx = "right";
-        } else {
-            dirx = "left";
-        }
-
-        if (obj.dy >= 0) {
-            diry = 1;
-        } else if (obj.dy < 0) {
-            diry = -1;
-        }
-
-        String msg = "automata/" + obj.colorhex
-                + "/" + percentSc + "/" + obj.speed + "/"
-                + obj.WIDTH + "/" + obj.HEIGHT + "/" + dirx + "/" + diry;
-        return msg;
+    public void sendObject(final Alive object) {
+        final Message message = Message.Builder.builder(SEND_OBJECT_COMMAND, KillerServer.getId())
+                .withObject(ObjectResponse.convertObjectToObjectResponse(object))
+                .build();
+        this.sendMessage(message);
     }
 
-    public String sendShoot(Shoot obj, boolean right) {
-
-        double percentSc = (obj.y / killergame.getViewer().getHeight());
-        String dir = null;
-        if (right) {
-            dir = "right";
-        } else {
-            dir = "left";
-        }
-
-        String msg = "shoot/" + obj.getShip().ip + "/" + obj.color
-                + "/" + percentSc + "/" + obj.getSpeed() + "/"
-                + obj.WIDTH + "/" + obj.HEIGHT + "/" + dir;
-        return msg;
-
+    private void startClient() {
+        this.client = new KillerClient(this, this.getKillergame());
+        new Thread(this.client).start();
     }
 
-    public String sendPadAction(String msg, String idkp) {
-
-        return ("kpad/" + idkp + "/" + msg);
-
+    @Override
+    public synchronized Socket getSocket() {
+        return super.getSocket();
     }
 
-    public void startClient() {
-        new Thread(this.kc).start();
-    }
-
-    public synchronized Socket getSock() {
-        return sock;
-
-    }
-
-    public synchronized void setSock(Socket sock) {
-        this.sock = sock;
-        this.ip = sock.getInetAddress().getHostAddress();
+    private void closeSocket() {
         try {
-            in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            out = new PrintWriter(sock.getOutputStream(), true);
-
-            if (right) {
-                killergame.getIpnext().setEnabled(false);
-                killergame.getPortnext().setEnabled(false);
-                killergame.getIpnext().setText("Connected!");
-            } else {
-                killergame.getIpprev().setEnabled(false);
-                killergame.getPortprev().setEnabled(false);
-                killergame.getIpprev().setText("Connected!");
+            if (this.isConnected()) {
+                this.sendLine(BYE_LINE);
+                this.getSocket().close();
             }
-//            time = System.currentTimeMillis();
-            alert("ok");
-            this.sock.setSoTimeout(3500);
-
         } catch (Exception ex) {
-
+            System.out.println("VisualHandler ya cerrado");
         }
     }
 
-    public String getIp() {
-        return ip;
+    public synchronized boolean setSocket(final Socket sock, final String destinationId) {
+
+        if (super.setSocket(sock)) {
+            this.destinationId = destinationId;
+            return true;
+        }
+        return false;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
-
+    private void disconnect() {
+        this.setSocket(null, EMPTY_STRING);
+        super.setDestinationIp(EMPTY_STRING);
     }
 
-    public KillerGame getKillergame() {
-        return killergame;
+    public void sendStart() {
+        this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId()).build());
     }
 
-    public void setKillergame(KillerGame killergame) {
-        this.killergame = killergame;
+    private void processStart(final Message message) {
+        if (!isMessageMine(message.getSenderId())) {
+            this.sendMessage(message);
+        }
+        this.getKillergame().startGame();
     }
 
-    public BufferedReader getIn() {
-        return in;
+    private void processQuitGame(final Message message) {
+        if (!isMessageMine(message.getSenderId())) {
+            this.sendMessage(message);
+            //TODO this.getKillergame().quitGame();
+        }
     }
 
-    public void setIn(BufferedReader in) {
-        this.in = in;
+    private void processInfoMessageToPad(final Message message) {
+        final KillerPad pad = this.getKillergame().getPadByIP(message.getReceiverId());
+        if (pad != null) {
+            pad.sendMessage(message);
+        } else {
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
     }
 
-    public PrintWriter getOut() {
-        return out;
+    public void sendInfoMessageToPad(final String command, final String padIp) {
+        this.processInfoMessageToPad(Message.buildInfoMessageToPad(command, padIp));
     }
 
-    public void setOut(PrintWriter out) {
-        this.out = out;
+    public void sendInfoDamageMessageToPad(final String padIp, final int damage) {
+        this.processInfoMessageToPad(Message.buildDamageMessageToPad(DAMAGE_COMMAND, padIp, damage));
     }
 
-    public KillerClient getKc() {
-        return kc;
+    private void processSyncRequest(final String senderId, final int quantity) {
+        final Message messageToSend;
+        if (this.isMessageMine(senderId)) {
+            this.getKillergame().getNextModule().getClient().resetSyncTimeOut();
+            this.getKillergame().setServersQuantity(quantity);
+            this.getKillergame().setSyncronized(true);
+            messageToSend = Message.Builder.builder(SYNC_CONFIRMATION, senderId)
+                    .withServersQuantity(quantity)
+                    .build();
+        } else {
+            messageToSend = Message.Builder.builder(SYNC_REQUEST, senderId)
+                    .withServersQuantity(quantity + 1)
+                    .build();
+        }
+        this.getKillergame().getNextModule().sendMessage(messageToSend);
     }
 
-    public void setKc(KillerClient kc) {
-        this.kc = kc;
+    private void processSyncConfirmation(final Message message) {
+        if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().getNextModule().sendMessage(message);
+            this.getKillergame().getNextModule().getClient().resetSyncTimeOut();
+            this.getKillergame().setServersQuantity(message.getServersQuantity());
+            this.getKillergame().setSyncronized(true);
+        }
     }
 
-    public boolean isRight() {
-        return right;
+    private void processSyncCheck(final Message message) {
+        if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
+        this.getKillergame().getNextModule().getClient().resetSyncTimeOut();
     }
 
-    public void setRight(boolean right) {
-        this.right = right;
+    private boolean isMessageMine(final String id) {
+        return KillerServer.getId().equals(id);
     }
 
-    public int getOriginport() {
-        return originport;
+    private void createShip(ObjectResponse object) {
+        this.getKillergame().reciveShip(object.getX(), object.getY(), object.getRadians(),
+                object.getDx(), object.getDy(),
+                object.getVx(), object.getVy(),
+                object.getTx(), object.getTy(),
+                object.getLx(), object.getLy(),
+                object.getRx(), object.getRy(),
+                object.getId(), object.getUser(),
+                object.getType(), object.getHealth(),
+                object.getDamage());
     }
 
-    public void setOriginport(int originport) {
-        this.originport = originport;
+    private void createShoot(ObjectResponse object) {
+        this.getKillergame().reciveShoot(object.getX(), object.getY(), object.getRadians(),
+                object.getDx(), object.getDy(), object.getId(), object.getDamage());
     }
 
+    public void updateRoom(final boolean connected) {
+        if (this.right) {
+            this.getKillergame().getRoom().getKPP().setFeedbackConnetionRight(connected);
+        } else {
+            this.getKillergame().getRoom().getKPP().setFeedbackConnetionLeft(connected);
+        }
+    }
 }

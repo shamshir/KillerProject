@@ -1,33 +1,82 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package visibleObjects;
 
 import game.KillerGame;
-import interfaces.Renderizable;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import visualEffects.KillerImage;
 
-/**
- *
- * @author berna
- */
 public abstract class VisibleObject implements Renderizable {
 
-    public KillerGame kg;
+    protected double radians;
+    protected BufferedImage img;
+    protected KillerGame game;
+    protected int imgHeight;
+    protected int imgWidth;
+    protected double m; // masa
+    protected double x;
+    protected double y;
+    protected double radius;
+    // Añadido para error en KI
+    protected KillerImage kImg = null;
 
-    public double x;
-    public double y;
-
-    public int HEIGHT;
-    public int WIDTH;
-
-    public KillerGame getKg() {
-        return kg;
+    public VisibleObject() {
     }
 
-    public void setKg(KillerGame kg) {
-        this.kg = kg;
+    public VisibleObject(KillerGame game, double x, double y) {
+        this.game = game;
+        this.x = x;
+        this.y = y;
+        this.radians = 0;
+    }
+
+    /**
+     * Método para pasar a loadImg la url que corresponde
+     */
+    protected abstract void setImage();
+
+    /**
+     * Método para cargar la imagen que se pintará
+     *
+     * @param url
+     */
+    protected void loadImg(String url) {
+
+        try {
+            this.img = ImageIO.read(new File(url));
+        } catch (IOException e) {
+            System.out.println("File not found");
+        }
+    }
+
+    /**
+     * El ancho de la img que se renderiza se calcula en proporción a las
+     * dimensiones de la img original
+     */
+    protected void setImgSize() {
+        this.imgWidth = this.imgHeight * this.img.getWidth() / this.img.getHeight();
+    }
+
+    // ********************************************************
+    // *                     Interfaces                       *
+    // ********************************************************
+    // Interfaz Renderizable
+    @Override
+    public void render(Graphics2D g2d) {
+        g2d.drawImage(this.img, (int) x, (int) y, imgWidth, imgHeight, null);
+    }
+
+    // *********************
+    // * Getters & Setters *
+    // *********************
+    public KillerGame getGame() {
+        return game;
+    }
+
+    public void setGame(KillerGame game) {
+        this.game = game;
     }
 
     public double getX() {
@@ -46,20 +95,60 @@ public abstract class VisibleObject implements Renderizable {
         this.y = y;
     }
 
-    public int getHEIGHT() {
-        return HEIGHT;
+    public int getImgHeight() {
+        return imgHeight;
     }
 
-    public void setHEIGHT(int HEIGHT) {
-        this.HEIGHT = HEIGHT;
+    public void setImgHeight(int imgHeight) {
+        this.imgHeight = imgHeight;
     }
 
-    public int getWIDTH() {
-        return WIDTH;
+    public int getImgWidth() {
+        return imgWidth;
     }
 
-    public void setWIDTH(int WIDTH) {
-        this.WIDTH = WIDTH;
+    public void setImgWidth(int imgWidth) {
+        this.imgWidth = imgWidth;
+    }
+
+    public double getRadians() {
+        return radians;
+    }
+
+    public void setRadians(double radians) {
+        this.radians = radians;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+    
+    public KillerImage getKillerImage() {
+        return this.kImg;
+    }
+
+    public double getM() {
+        return m;
+    }
+
+    public void setM(double m) {
+        this.m = m;
+    }
+
+    public BufferedImage getImg() {
+        return img;
+    }
+
+    public void setImg(BufferedImage img) {
+        this.img = img;
+    }
+
+    public KillerImage getkImg() {
+        return kImg;
+    }
+
+    public void setkImg(KillerImage kImg) {
+        this.kImg = kImg;
     }
 
 }

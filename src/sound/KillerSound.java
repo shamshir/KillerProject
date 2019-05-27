@@ -5,10 +5,101 @@
  */
 package sound;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+
 /**
  *
- * @author Javi
+ * @author Christian
  */
-public class KillerSound {
-    
+public class KillerSound implements Runnable {
+
+    private ArrayList<Clip> clips;
+
+    public enum ClipType {
+        SHOT,
+        ROCKET,
+        BOOST,
+        JUMP,
+        EXPLOSION,
+        MOBILE_CLICK,
+        PC_CLICK, 
+        WASTED_DIE,
+        SOUL_DIE,
+        TELEPORT, 
+        POWER_UP
+    }
+
+    private Hashtable<ClipType, String> clipNames = new Hashtable<ClipType, String>();
+
+    public KillerSound() {
+
+        this.clips = new ArrayList<Clip>();
+
+        clipNames.put(ClipType.SHOT, "shot.wav");
+        clipNames.put(ClipType.ROCKET, "rocket.wav");
+        clipNames.put(ClipType.BOOST, "boost.wav");
+        clipNames.put(ClipType.JUMP, "jump.wav");
+        clipNames.put(ClipType.EXPLOSION, "explosion.wav");
+        clipNames.put(ClipType.MOBILE_CLICK, "mobile_click.wav");
+        clipNames.put(ClipType.PC_CLICK, "pc_click.wav");
+        clipNames.put(ClipType.WASTED_DIE, "wasted_die.wav");
+        clipNames.put(ClipType.SOUL_DIE, "you_die.wav");
+        clipNames.put(ClipType.TELEPORT, "teleport.wav");
+        clipNames.put(ClipType.POWER_UP, "power_up.wav");
+
+    }
+
+    public Clip createSound(KillerSound.ClipType clipType) {
+        return getSound(this.clipNames.get(clipType));
+    }
+
+    public void addSound(Clip clip) {
+        this.clips.add(clip);
+    }
+
+    public Clip getSound(String file) {
+
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/soundsGame/" + file));
+            AudioFormat format = audioInputStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            Clip sound = (Clip) AudioSystem.getLine(info);
+            sound.open(audioInputStream);
+            return sound;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public void stopSound(Clip clip) {
+        this.clips.remove(clip);
+        clip.stop();
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            for (int i = 0; i < clips.size(); i++) {
+                Clip clip = clips.get(i);
+                try {
+                    if (clip.getFramePosition() == clip.getFrameLength()) {
+                        this.stopSound(clip);
+                    } else if (!clip.isActive()) {
+                        clip.setFramePosition(0);
+                        clip.start();
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
 }
