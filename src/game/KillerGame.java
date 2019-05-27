@@ -89,37 +89,37 @@ public class KillerGame extends JFrame {
      * @param alive
      */
     public void checkColision(Alive alive) {
-        
-        if (Alive.getStatus() != Alive.STATUS.SAFE) {
 
-        if (alive instanceof KillerShip) {
-            for (int inc = 0; inc < this.objects.size(); inc++) {
-                VisibleObject object = this.objects.get(inc);
-                this.checkColisionShip((KillerShip) (alive), object);
-            }
-        }
+        if (alive.getState() != Alive.State.SAFE) {
 
-        if (alive instanceof Shoot) {
-            for (int inc = 0; inc < this.objects.size(); inc++) {
-                VisibleObject object = this.objects.get(inc);
-                this.checkCollisionShoot((Shoot) (alive), object);
+            if (alive instanceof KillerShip) {
+                for (int inc = 0; inc < this.objects.size(); inc++) {
+                    VisibleObject object = this.objects.get(inc);
+                    this.checkColisionShip((KillerShip) (alive), object);
+                }
             }
-        }
 
-        if (alive instanceof Asteroid) {
-            for (int inc = 0; inc < this.objects.size(); inc++) {
-                VisibleObject object = this.objects.get(inc);
-                this.checkCollisionAsteroid((Asteroid) (alive), object);
+            if (alive instanceof Shoot) {
+                for (int inc = 0; inc < this.objects.size(); inc++) {
+                    VisibleObject object = this.objects.get(inc);
+                    this.checkCollisionShoot((Shoot) (alive), object);
+                }
             }
-        }
 
-        if (alive instanceof Pacman) {
-            for (int inc = 0; inc < this.objects.size(); inc++) {
-                VisibleObject object = this.objects.get(inc);
-                this.checkCollisionPacman((Pacman) (alive), object);
+            if (alive instanceof Asteroid) {
+                for (int inc = 0; inc < this.objects.size(); inc++) {
+                    VisibleObject object = this.objects.get(inc);
+                    this.checkCollisionAsteroid((Asteroid) (alive), object);
+                }
             }
-        }
-            
+
+            if (alive instanceof Pacman) {
+                for (int inc = 0; inc < this.objects.size(); inc++) {
+                    VisibleObject object = this.objects.get(inc);
+                    this.checkCollisionPacman((Pacman) (alive), object);
+                }
+            }
+
         }
 
     }
@@ -289,7 +289,7 @@ public class KillerGame extends JFrame {
         // Collision with Pacman
         if (object instanceof Pacman) {
             if (false) {
-            KillerRules.collisionAsteroidWithPacman(this, asteroid, (Pacman) (object));
+                KillerRules.collisionAsteroidWithPacman(this, asteroid, (Pacman) (object));
             }
         }
 
@@ -323,7 +323,7 @@ public class KillerGame extends JFrame {
 
         // Collision with Wall
         if (object instanceof Wall) {
-            if (CollidePhysics.collisionObjxWall(asteroid,(Wall) object)) {
+            if (CollidePhysics.collisionObjxWall(asteroid, (Wall) object)) {
                 KillerRules.collisionAliveWithWall(this, asteroid, (Wall) (object));
             }
         }
@@ -404,9 +404,9 @@ public class KillerGame extends JFrame {
     public void removeObject(VisibleObject object) {
         try {
             this.objects.remove(object);
-            if (object instanceof Alive) {
-                object.stop();
-            }
+//            if (object instanceof Alive) {
+//                object.stop();
+//            }
         } catch (Exception e) {
             System.out.println("Este objecto no se encuentra en la array");
         }
@@ -428,16 +428,16 @@ public class KillerGame extends JFrame {
 
         // Add walls
         this.addWalls();
-        
+
         // Start threads
         this.startThreads();
 
     }
-    
+
     public void startThreads() {
         for (VisibleObject object : this.objects) {
             if (object instanceof Alive) {
-                new Thread(object).start();
+                new Thread((Alive) object).start();
             }
         }
     }
