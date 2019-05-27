@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.util.Hashtable;
 import javax.sound.sampled.Clip;
 import physics.CollidePhysics;
+import visibleObjects.PowerUp.Power;
 
 /**
  * @author Alvaro & Christian
@@ -88,7 +89,7 @@ public class KillerGame extends JFrame {
      * @author Christian & Alvaro
      * @param alive
      */
-    public void checkColision(Alive alive) {
+    public synchronized void checkColision(Alive alive) {
 
         if (alive.getState() != Alive.State.SAFE) {
 
@@ -404,6 +405,7 @@ public class KillerGame extends JFrame {
     public void removeObject(VisibleObject object) {
         try {
             this.objects.remove(object);
+            System.out.println("Eliminao!!!");
 //            if (object instanceof Alive) {
 //                object.stop();
 //            }
@@ -428,6 +430,17 @@ public class KillerGame extends JFrame {
 
         // Add walls
         this.addWalls();
+
+        // ---------------------------------------------------------------------
+        // Añadir Objetos de Prueba
+        this.objects.add(new Planeta(this, 300, 400, 100, 100));
+        this.objects.add(new Nebulosa(this, 400, 150, 120, 90));
+        this.objects.add(new BlackHole(this, 350, 500, 80, 80));
+        this.objects.add(new PowerUp(this, 100, 500, 70, 70, Power.HEALTH));
+        Asteroid a = new Asteroid(this, 75, 100, 40, 40, 6, 2);
+        this.objects.add(a);
+        Pacman p = new Pacman(this, 100, 450);
+        this.objects.add(p);
 
         // Start threads
         this.startThreads();
@@ -500,17 +513,18 @@ public class KillerGame extends JFrame {
      */
     private void addWalls() {
         // Add walls
-        this.newWall(Wall.Limit.EAST);
-        this.newWall(Wall.Limit.NORTH);
-        this.newWall(Wall.Limit.SOUTH);
-        this.newWall(Wall.Limit.WEST);
+        this.newWall(Wall.Limit.RIGHT);
+        this.newWall(Wall.Limit.UP);
+        this.newWall(Wall.Limit.DOWN);
+        this.newWall(Wall.Limit.LEFT);
     }
 
     /**
      * @author Alvaro
      */
     private void showWindow() {
-        this.setSize(1120, 630);
+//        this.setSize(1120, 630);
+        this.setSize(1500, 800);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new GridLayout());

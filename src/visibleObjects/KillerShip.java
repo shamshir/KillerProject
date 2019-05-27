@@ -57,8 +57,6 @@ public class KillerShip extends Controlled {
         this.m = 100;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
         this.tiempoEnNebulosa = 0;
-
-        this.timer = System.currentTimeMillis();
         
         this.kImg = new FireEffect(this, this.img);
     }
@@ -129,6 +127,9 @@ public class KillerShip extends Controlled {
     @Override
     public void run() {
         new Thread(this.kImg).start();
+        
+        this.timer = System.currentTimeMillis();
+        
         while (state != State.DEAD) {
 
             if (state == State.SAFE) {
