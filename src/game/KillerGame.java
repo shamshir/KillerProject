@@ -89,6 +89,8 @@ public class KillerGame extends JFrame {
      * @param alive
      */
     public void checkColision(Alive alive) {
+        
+        if (Alive.getStatus() != Alive.STATUS.SAFE) {
 
         if (alive instanceof KillerShip) {
             for (int inc = 0; inc < this.objects.size(); inc++) {
@@ -116,6 +118,8 @@ public class KillerGame extends JFrame {
                 VisibleObject object = this.objects.get(inc);
                 this.checkCollisionPacman((Pacman) (alive), object);
             }
+        }
+            
         }
 
     }
