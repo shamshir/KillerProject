@@ -108,7 +108,8 @@ public class KillerShip extends Controlled {
         this.ry = ry;
         this.configureSpeed();
         
-        this.state = State.SAFE;
+        //this.state = State.SAFE;
+        this.state = State.ALIVE;
         this.health = health;
         this.damage = damage;
         this.setImage();

@@ -49,17 +49,17 @@ public class KillerRules {
         }
 
         if (wall.getType() == Wall.Limit.RIGHT) {
-            // Delete from the array
-            alive.setState(Alive.State.DEAD);
             // Send alive to the prev module
             game.sendObjectToNext(alive);
+            // Delete from the array
+            alive.setState(Alive.State.DEAD);
         }
 
         if (wall.getType() == Wall.Limit.LEFT) {
-            // Delete from the array
-            alive.setState(Alive.State.DEAD);
             // Send alive to the next module
             game.sendObjectToPrev(alive);
+            // Delete from the array
+            alive.setState(Alive.State.DEAD);
         }
 
     }

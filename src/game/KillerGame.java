@@ -691,6 +691,11 @@ public class KillerGame extends JFrame {
      */
     public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage) {
         KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage);
+        int correctX = 1;
+        if (dx < 0) {
+            correctX = this.viewer.getWidth() - ship.getImgWidth() - 1;
+        }
+        ship.setX(correctX);
         this.ships.put(ip, ship);
         this.objects.add(ship);
         new Thread(ship).start();
