@@ -94,7 +94,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
         System.out.println("Killerpad -> ACTION RECIBIDA: " + message.getAction().getCommand() );
 
         KillerShip player = kg.getShipByIP(message.getSenderId());
-        if (player != null) {
+        if (player != null && kg.getStatus() == KillerGame.Status.GAME) {
             player.doAction(message.getAction());
         } else if (sendNextModule) {
             kg.getNextModule().sendMessage(message);
