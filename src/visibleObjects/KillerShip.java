@@ -6,6 +6,7 @@ import game.KillerRules;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import physics.PhysicsShip;
 import visualEffects.FireEffect;
@@ -349,6 +350,11 @@ public class KillerShip extends Controlled {
             g2d.setStroke(new BasicStroke(2));
             g2d.drawOval((int) x - 6, (int) y - 6, imgWidth + 12, imgHeight + 12);
         }
+
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(Color.white);
+        g2d.drawString(this.user, (int) x, (int) y - 10);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
     // *********************
