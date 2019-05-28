@@ -71,6 +71,95 @@ public class CollidePhysics {
 
     }
 
+    public static boolean collisionTxC(KillerShip obj1, VisibleObject obj2) {
+
+        double radius = obj2.getRadius();
+
+        // si el círculo toca uno de los vertices del triangulo.
+//        double v1x = obj2.getX() - obj1.getTx();
+//        double v1y = obj2.getY() - obj1.getTy();
+//
+//        double v2x = obj2.getX() - obj1.getLx();
+//        double v2y = obj2.getY() - obj1.getLy();
+//
+//        double v3x = obj2.getX() - obj1.getRx();
+//        double v3y = obj2.getY() - obj1.getRy();
+//
+//        if (Math.sqrt(v1x * v1x + v1y * v1y) <= Math.sqrt(radius * radius)
+//                || Math.sqrt(v2x * v2x + v2y * v2y) <= Math.sqrt(radius * radius)
+//                || Math.sqrt(v3x * v3x + v3y * v3y) <= Math.sqrt(radius * radius)) {
+//            //  return false;
+//        }
+
+
+        //si colisiona con la recta AB (T-L)
+        double c1x = obj2.getX() - obj1.getTx();
+        double c1y = obj2.getY() - obj1.getTy();
+
+        double e1x = obj1.getLx() - obj1.getTx();
+        double e1y = obj1.getLy() - obj1.getTy();
+
+        double c1sqr = c1x * c1x + c1y * c1y - radius * radius;
+
+        double producto = c1x * e1x + c1y * e1y;
+
+        if (producto > 0) {
+            double len = e1x * e1x + e1y * e1y;
+            if (producto < len) {
+                if (c1sqr * len <= producto * producto) {
+                    return true;
+
+                }
+            }
+
+        }
+        //si colisiona con la recta BC (L-R)
+        double c2x = obj2.getX() - obj1.getLx();
+        double c2y = obj2.getY() - obj1.getLy();
+
+        double e2x = obj1.getRx() - obj1.getLx();
+        double e2y = obj1.getRy() - obj1.getLy();
+
+        double c2sqr = c2x * c2x + c2y * c2y - radius * radius;
+
+        producto = c2x * e2x + c2y * e2y;
+
+        if (producto > 0) {
+            double len = e2x * e2x + e2y * e2y;
+            if (producto < len) {
+                if (c2sqr * len <= producto * producto) {
+                    return true;
+
+                }
+            }
+
+        }
+
+        //si colisiona con la recta CA (R-T)
+        double c3x = obj2.getX() - obj1.getRx();
+        double c3y = obj2.getY() - obj1.getRy();
+
+        double e3x = obj1.getTx() - obj1.getRx();
+        double e3y = obj1.getTy() - obj1.getRy();
+
+        double c3sqr = c3x * c3x + c3y * c3y - radius * radius;
+
+        producto = c3x * e3x + c3y * e3y;
+
+        if (producto > 0) {
+            double len = e3x * e3x + e3y * e3y;
+            if (producto < len) {
+                if (c3sqr * len <= producto * producto) {                    
+                    return true;
+
+                }
+            }
+
+        }
+
+        return false;
+    }
+
     public static boolean collisionObjxWall(VisibleObject obj, Wall wall) {
 
         if (wall.getType() == Wall.Limit.NORTH) {
