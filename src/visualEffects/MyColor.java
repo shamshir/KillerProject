@@ -12,7 +12,7 @@ package visualEffects;
 public class MyColor {
 
     int a, r, g, b;
-    
+       
     public MyColor(int a, int b, int g, int r){
         this.a = a;
         this.b = b;
