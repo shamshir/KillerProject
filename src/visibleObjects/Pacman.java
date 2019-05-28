@@ -33,6 +33,42 @@ public class Pacman extends Automata {
 
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
+        
+        // Instanciar physicsPacman
+    }
+
+    /**
+     * 
+     * @param game
+     * @param x
+     * @param y
+     * @param m
+     * @param health
+     * @param radians
+     * @param vx
+     * @param vy
+     * @param a 
+     */
+    public Pacman(KillerGame game, double x, double y, double m, int health, 
+            double radians, double vx, double vy, double a) {
+        super(game, x, y);
+        
+        this.m = m;
+        this.health = health;
+        this.imgHeight = health;
+        this.imgWidth = health;
+        this.radius = this.imgHeight / 2;
+        this.radians = radians;
+        this.vx = vx;
+        this.vy = vy;
+        this.a = a;
+        
+        this.maxspeed = 8;
+
+        mouthOpened = true;
+        fpsControlTime = System.currentTimeMillis();
+        
+        // Instanciar physicsPacman
     }
     
     /**

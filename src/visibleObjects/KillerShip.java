@@ -43,7 +43,8 @@ public class KillerShip extends Controlled {
      * @param type
      * @param color
      */
-    public KillerShip(KillerGame game, double x, double y, String id, String user, ShipType type, Color color) {
+    public KillerShip(KillerGame game, double x, double y, String id, 
+            String user, ShipType type, Color color) {
         super(game, x, y);
         this.id = id;
         this.user = user;
@@ -89,9 +90,9 @@ public class KillerShip extends Controlled {
      * @param damage
      * @param color
      */
-    public KillerShip(KillerGame game, double x, double y, double radians,
-            double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly,
-            double rx, double ry, String id, String user, ShipType type, int health, int damage, Color color) {
+    public KillerShip(KillerGame game, double x, double y, double radians, double dx, double dy, 
+            double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, 
+            String id, String user, ShipType type, int health, int damage, Color color) {
         super(game, x, y);
 
         this.id = id;
