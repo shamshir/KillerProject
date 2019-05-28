@@ -23,6 +23,7 @@ public class KillerShip extends Controlled {
     private int damage;
     private PhysicsShip physicsShip;
     private int tiempoEnNebulosa;
+    private Color color;
 
     // Físicas
     private double tx; // posición del morro de la nave
@@ -40,11 +41,13 @@ public class KillerShip extends Controlled {
      * @param id
      * @param user
      * @param type
+     * @param color
      */
-    public KillerShip(KillerGame game, double x, double y, String id, String user, ShipType type) {
+    public KillerShip(KillerGame game, double x, double y, String id, String user, ShipType type, Color color) {
         super(game, x, y);
         this.id = id;
         this.user = user;
+        this.color = color;
         this.type = type;
         this.state = State.SAFE;
 
@@ -84,14 +87,16 @@ public class KillerShip extends Controlled {
      * @param type
      * @param health
      * @param damage
+     * @param color
      */
     public KillerShip(KillerGame game, double x, double y, double radians,
             double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly,
-            double rx, double ry, String id, String user, ShipType type, int health, int damage) {
+            double rx, double ry, String id, String user, ShipType type, int health, int damage, Color color) {
         super(game, x, y);
 
         this.id = id;
         this.user = user;
+        this.color = color;
         this.type = type;
         // Físicas ---> que parámetros pasan?
         this.a = 0.07;
@@ -451,6 +456,14 @@ public class KillerShip extends Controlled {
 
     public void setTiempoEnNebulosa(int tiempoEnNebulosa) {
         this.tiempoEnNebulosa = tiempoEnNebulosa;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
 }
