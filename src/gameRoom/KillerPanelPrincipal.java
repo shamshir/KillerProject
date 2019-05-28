@@ -7,6 +7,7 @@ package gameRoom;
 
 import game.KillerGame;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,6 +18,8 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     private KillerRoom kr;
     private KillerGame kg;
     
+    private int cont = 0;
+    
     //getKillerShips()  para la lista
     
     /**
@@ -25,29 +28,37 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
      */
     public KillerPanelPrincipal(KillerRoom kr) {
         this.kr = kr;
-        kg = kr.getKg();
         initComponents();
-        jButtonJugar.setEnabled(true);
-
+        kg = kr.getKg();
+        jButtonJugar.setEnabled(false);
+        //setFeedbackConnetionLeft(true);
+        //setFeedbackConnetionRight(true);
+        
     }
     
     public void setFeedbackConnetionLeft(Boolean aux){
         if(aux == true){
          jLabelConFeedackL.setForeground(Color.GREEN);
          jLabelConFeedackL.setText("CONECTADO");
+         jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
+         //kr.kpc.setFeedbackConnetionLeft2(true);
     }else{
          jLabelConFeedackL.setForeground(Color.RED);
          jLabelConFeedackL.setText("DESCONECTADO");
+         jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
+         //kr.kpc.setFeedbackConnetionRight2(aux);
         }
     }
     
     public void setFeedbackConnetionRight(Boolean aux){
         if(aux == true){
          jLabelConFeedackR.setForeground(Color.GREEN);
-         jLabelConFeedackL.setText("CONECTADO");
+         jLabelConFeedackR.setText("CONECTADO");
+         jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
     }else{
          jLabelConFeedackR.setForeground(Color.RED);
-         jLabelConFeedackL.setText("DESCONECTADO");
+         jLabelConFeedackR.setText("DESCONECTADO");
+         jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
         }
     }
     
@@ -82,6 +93,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         jButtonSalir = new javax.swing.JButton();
         jLabelConFeedackL = new javax.swing.JLabel();
         jLabelConFeedackR = new javax.swing.JLabel();
+        jLabelSound = new javax.swing.JLabel();
         jLabelFondo = new javax.swing.JLabel();
 
         setMaximumSize(new java.awt.Dimension(525, 525));
@@ -97,53 +109,91 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         jLabelCopy.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabelCopy.setForeground(new java.awt.Color(255, 255, 255));
         jLabelCopy.setText("KillerTeam ®");
+        jLabelCopy.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelCopyMouseClicked(evt);
+            }
+        });
         add(jLabelCopy, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 510, -1, -1));
 
-        jButtonJugar.setText("JUGAR");
+        jButtonJugar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/jugar.png"))); // NOI18N
+        jButtonJugar.setBorderPainted(false);
+        jButtonJugar.setContentAreaFilled(false);
+        jButtonJugar.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/jugarBlocked .png"))); // NOI18N
         jButtonJugar.setPreferredSize(new java.awt.Dimension(100, 30));
+        jButtonJugar.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/jugarOscuro.png"))); // NOI18N
+        jButtonJugar.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/jugarBrillante.png"))); // NOI18N
+        jButtonJugar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonJugarMouseClicked(evt);
+            }
+        });
         jButtonJugar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonJugarActionPerformed(evt);
             }
         });
-        add(jButtonJugar, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 220, -1, -1));
+        add(jButtonJugar, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 230, -1, -1));
 
-        jButtonConectar.setText("CONECTAR");
-        jButtonConectar.setPreferredSize(new java.awt.Dimension(100, 30));
+        jButtonConectar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Conectar.png"))); // NOI18N
+        jButtonConectar.setBorderPainted(false);
+        jButtonConectar.setContentAreaFilled(false);
+        jButtonConectar.setPreferredSize(new java.awt.Dimension(140, 50));
+        jButtonConectar.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/ConectarOscuro.png"))); // NOI18N
+        jButtonConectar.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/ConectarBrillante.png"))); // NOI18N
         jButtonConectar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonConectarActionPerformed(evt);
             }
         });
-        add(jButtonConectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 270, -1, -1));
+        add(jButtonConectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 270, 150, 40));
 
-        jButtonAjustes.setText("AJUSTES");
+        jButtonAjustes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/ajustes.png"))); // NOI18N
+        jButtonAjustes.setBorderPainted(false);
+        jButtonAjustes.setContentAreaFilled(false);
         jButtonAjustes.setPreferredSize(new java.awt.Dimension(100, 30));
+        jButtonAjustes.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/ajustesOscuro.png"))); // NOI18N
+        jButtonAjustes.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/ajustesBrillante.png"))); // NOI18N
         jButtonAjustes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAjustesActionPerformed(evt);
             }
         });
-        add(jButtonAjustes, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 320, -1, -1));
+        add(jButtonAjustes, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 330, 130, -1));
 
-        jButtonSalir.setText("SALIR");
+        jButtonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/salir.png"))); // NOI18N
+        jButtonSalir.setBorderPainted(false);
+        jButtonSalir.setContentAreaFilled(false);
         jButtonSalir.setPreferredSize(new java.awt.Dimension(100, 30));
+        jButtonSalir.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/salirOscuro.png"))); // NOI18N
+        jButtonSalir.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/salirBrillante.png"))); // NOI18N
         jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSalirActionPerformed(evt);
             }
         });
-        add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 370, -1, -1));
+        add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 380, -1, -1));
 
-        jLabelConFeedackL.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabelConFeedackL.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabelConFeedackL.setForeground(new java.awt.Color(255, 0, 0));
+        jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png"))); // NOI18N
         jLabelConFeedackL.setText("DESCONECTADO");
-        add(jLabelConFeedackL, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, -1, -1));
+        add(jLabelConFeedackL, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
 
-        jLabelConFeedackR.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabelConFeedackR.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabelConFeedackR.setForeground(new java.awt.Color(255, 0, 0));
+        jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png"))); // NOI18N
         jLabelConFeedackR.setText("DESCONECTADO");
-        add(jLabelConFeedackR, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 270, -1, -1));
+        jLabelConFeedackR.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        add(jLabelConFeedackR, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 160, -1, -1));
+
+        jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sound.png"))); // NOI18N
+        jLabelSound.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelSoundMouseClicked(evt);
+            }
+        });
+        add(jLabelSound, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 490, -1, -1));
 
         jLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/stars.gif"))); // NOI18N
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -166,8 +216,32 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
     private void jButtonJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJugarActionPerformed
         // JUGAR
-        kr.getKg().sendStart();
+        kg.sendStart();
     }//GEN-LAST:event_jButtonJugarActionPerformed
+
+    private void jLabelCopyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCopyMouseClicked
+        // CREDITOS KILLER GAME
+    }//GEN-LAST:event_jLabelCopyMouseClicked
+
+    private void jLabelSoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelSoundMouseClicked
+        // CAMBIAR ESTADO DE SONIDO DEL MENU
+        if(cont%2==0){
+            jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/noSound.png")));
+            System.out.println("SI");
+            cont++;
+        }else{
+            jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sound.png")));
+            System.out.println("NO");
+            cont++;
+        }
+    }//GEN-LAST:event_jLabelSoundMouseClicked
+
+    private void jButtonJugarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonJugarMouseClicked
+        // Shhhhh...
+        if (evt.getClickCount() == 50) {
+        JOptionPane.showMessageDialog(this,"¿Crees que te vamos a dar un logro por esto?","Pesado",JOptionPane.WARNING_MESSAGE);       
+        }
+    }//GEN-LAST:event_jButtonJugarMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -179,6 +253,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     private javax.swing.JLabel jLabelConFeedackR;
     private javax.swing.JLabel jLabelCopy;
     private javax.swing.JLabel jLabelFondo;
+    private javax.swing.JLabel jLabelSound;
     private javax.swing.JLabel jLabelTitulo;
     // End of variables declaration//GEN-END:variables
 }
