@@ -304,7 +304,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     public void updateRoom(final boolean connected) {
-        System.out.println("VisualHandler -> " + connected + " Lado: " + this.right);
         if (this.right) {
             this.getKillergame().getRoom().getKPP().setFeedbackConnetionRight(connected);
         } else {
