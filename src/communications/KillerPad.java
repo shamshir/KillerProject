@@ -47,7 +47,10 @@ public class KillerPad extends ReceptionHandler implements Runnable {
             }
         }
         System.out.println("Killerpad -> PAD-Disconnected con id: " + this.id);
-        this.getKillergame().removePad(this);
+        if (this.getKillergame().getStatus() == KillerGame.Status.GAME) {
+                this.getKillergame().getNextModule().sendDecement();
+        }
+        this.getKillergame().removePad(this);        
     }
 
     private void listeningMessages() {
@@ -60,7 +63,6 @@ public class KillerPad extends ReceptionHandler implements Runnable {
                 System.out.println("KillerPad -> listeningMessages: " + ex.getMessage());
                 done = true;
             }
-
         }
         this.setSocket(null);
     }
@@ -97,6 +99,16 @@ public class KillerPad extends ReceptionHandler implements Runnable {
             player.doAction(message.getAction());
         } else if (sendNextModule) {
             kg.getNextModule().sendMessage(message);
+        }
+    }
+    
+    public void closeSocket() {
+        try {
+                this.sendLine(DISCONNECTION_COMMAND);
+                this.disconnected=true;
+                this.getSocket().close();
+        } catch (Exception ex) {
+            System.out.println("KillerPad -> ya cerrado");
         }
     }
 }
