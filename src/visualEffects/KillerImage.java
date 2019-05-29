@@ -34,6 +34,10 @@ public class KillerImage extends BufferedImage implements Runnable {
         // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
         this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
 
+        if (vo instanceof VisibleObject) {
+            this.paintUserColor();
+        }
+
         this.setRenderHeight();
         this.setRenderWidth();
 
@@ -41,17 +45,43 @@ public class KillerImage extends BufferedImage implements Runnable {
 
     @Override
     public void run() {
+    }
 
+    public void paintUserColor() {
+        int a, b, g, r;
+        
+        // falta pillar el color del usuario
+        MyColor userColor = new MyColor(255, 0, 060, 250);
+
+        for (int pos = 0; pos < this.raster.length; pos += 4) {
+            a = Byte.toUnsignedInt(this.raster[pos]);
+            b = Byte.toUnsignedInt(this.raster[pos + 1]);
+            g = Byte.toUnsignedInt(this.raster[pos + 2]);
+            r = Byte.toUnsignedInt(this.raster[pos + 3]);
+
+            if ((a == 255) && (b == 0) && (g == 255) && (r == 0)) {
+                this.raster[pos] = (byte) userColor.getA();
+                this.raster[pos + 1] = (byte) userColor.getB();
+                this.raster[pos + 2] = (byte) userColor.getG();
+                this.raster[pos + 3] = (byte) userColor.getR();
+            }
+        }
     }
 
     public KillerImage(VisibleObject vo) {
-        super(300, 300, BufferedImage.TYPE_4BYTE_ABGR);
+        super(vo.getImg().getWidth(), vo.getImg().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
         this.visibleObject = vo;
+        this.originalImage = vo.getImg();
+        this.raster = this.getKillerRaster(this);
+        this.graphics = (Graphics2D) this.getGraphics();
+        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
 
-        // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
-        //this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
-        this.renderWidth = this.visibleObject.getImgWidth();
-        this.renderHeight = (this.visibleObject.getImgWidth() * this.getHeight()) / this.getWidth();
+        if (vo instanceof VisibleObject) {
+            this.paintUserColor();
+        }
+
+        this.setRenderHeight();
+        this.setRenderWidth();
     }
 
     /**
