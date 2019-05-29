@@ -330,9 +330,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     public void updateRoom(final boolean connected) {
         if (this.right) {
-            this.getKillergame().getRoom().getKPP().setFeedbackConnetionRight(connected);
+            this.getKillergame().getRoom().setFeedbackConnetionRight(connected);
         } else {
-            this.getKillergame().getRoom().getKPP().setFeedbackConnetionLeft(connected);
+            this.getKillergame().getRoom().setFeedbackConnetionLeft(connected);
         }
     }
 }
