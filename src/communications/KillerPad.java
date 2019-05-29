@@ -31,6 +31,8 @@ public class KillerPad extends ReceptionHandler implements Runnable {
             if (this.getSocket() != null) {
                 this.disconnectTime = 200;
                 System.out.println("Killerpad -> PAD-Connected con id: " + this.id);
+                this.sendMessage(Message.buildDamageMessageToPad("pad_damage", "IP", 10));
+                this.sendMessage(Message.buildInfoMessageToPad("pad_kill", "IP"));
                 this.listeningMessages();
             }
             try {
