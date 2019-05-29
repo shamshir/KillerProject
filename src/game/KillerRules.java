@@ -128,9 +128,9 @@ public class KillerRules {
 
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
 
-        // La nave muere
-        // Pacman aumenta vidao en PACMAN_INCREMENT
-        // Pacman aumenta de tamaño en PACMAN_INCREMENT / Si maria implementa que la vida y el tamaño son el mismo atributo solo sumar vida
+        ship.changeState(Alive.State.DEAD);
+        pacman.setSize(KillerRules.PACMAN_INCREMENT);
+
     }
 
     public static void collisionShipWithPlaneta(KillerGame game, KillerShip ship, Planeta planeta) {
@@ -155,12 +155,12 @@ public class KillerRules {
 
         // Se calcula el daño que reciben las naves con Physiscs
         // Se llama al metodo restar vida de nave de Killerrules para cada nave
-        
+
         double[] damages = ship.getPhysicsShip().collisionXShip(ship2);
-        
+
         KillerRules.substractHealthShip(ship, ((int) damages[0] * KillerRules.DAMAGE_BY_COLLISION ));
         KillerRules.substractHealthShip(ship2, ((int) damages[1] * KillerRules.DAMAGE_BY_COLLISION ));
-        
+
     }
 
     /**
@@ -184,9 +184,12 @@ public class KillerRules {
     // ***************************************************************************************************** //
     // *************************** [            Collision Shoot          ] ********************************* //
     // ***************************************************************************************************** //
+
     public static void collisionShootWithAsteroid(KillerGame game, Shoot shot, Asteroid asteroid) {
 
         // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
+        KillerRules.substractHealthAlive(asteroid, shot.getDamage());
+
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
 
@@ -362,7 +365,7 @@ public class KillerRules {
      * @param damage
      * @return True if Alive state becomes dead and False if it still alive.
      */
-    private static boolean substractHealthAlive(KillerGame game, Alive alive, int damage) {
+    private static boolean substractHealthAlive(Alive alive, int damage) {
 
         // Dead
         boolean dead = false;

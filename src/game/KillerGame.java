@@ -6,6 +6,7 @@ import visibleObjects.*;
 import communications.*;
 import gameRoom.*;
 import sound.*;
+
 // Other imports
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -25,12 +26,9 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [         KillerGame Attributes       ] ********************************* //
     // ***************************************************************************************************** //
-    // Game Attributes
-    public enum Status {
-        ROOM,
-        GAME
-    };
 
+    // Game status
+    public enum Status { ROOM, GAME };
     private Status status;
 
     // Object list
@@ -52,6 +50,9 @@ public class KillerGame extends JFrame {
     // Gamepad List | <ip, pads>
     private Hashtable<String, KillerPad> pads = new Hashtable();
 
+    // Number of pads in all screens
+    private int padsNum;
+
     // Viewer
     private Viewer viewer;
 
@@ -63,6 +64,7 @@ public class KillerGame extends JFrame {
 
     // Sounds
     private KillerSound sound;
+
 
     // ***************************************************************************************************** //
     // *************************** [        KillerGame Constructors      ] ********************************* //
@@ -81,6 +83,9 @@ public class KillerGame extends JFrame {
         // Init radio
         this.newRadio();
 
+        // Init sounds
+        this.newSound();
+
         // Show room
         this.newRoom();
 
@@ -89,6 +94,7 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [          KillerGame Methods         ] ********************************* //
     // ***************************************************************************************************** //
+
     /**
      * @author Christian & Alvaro
      * @param alive
@@ -133,43 +139,43 @@ public class KillerGame extends JFrame {
     private void checkColisionShip(KillerShip ship, VisibleObject object) {
 
         // Collision with Asteroid
-        if (object instanceof Asteroid && ship.getState() != Alive.State.ALIVE) {
-            if (false) {
+        if (object instanceof Asteroid && ship.getState() == Alive.State.ALIVE) {
+            if (CollidePhysics.collisionTxC(ship, (Asteroid) object )) {
                 KillerRules.collisionShipWithAsteroid(this, ship, (Asteroid) (object));
             }
         }
 
         // Collision with BlackHole
-        if (object instanceof BlackHole && ship.getState() != Alive.State.ALIVE) {
-            if (false) {
+        if (object instanceof BlackHole && ship.getState() == Alive.State.ALIVE) {
+            if (CollidePhysics.collisionTxC(ship, (BlackHole) object )) {
                 KillerRules.collisionShipWithBlackHole(this, ship);
             }
         }
 
         // Collision with Nebulosa
-        if (object instanceof Nebulosa && ship.getState() != Alive.State.ALIVE) {
-            if (false) {
+        if (object instanceof Nebulosa && ship.getState() == Alive.State.ALIVE) {
+            if (CollidePhysics.collisionTxC(ship, (Nebulosa) object )) {
                 KillerRules.collisionShipWithNebulosa(ship);
             }
         }
 
         // Collision with Pacman
-        if (object instanceof Pacman && ship.getState() != Alive.State.ALIVE) {
-            if (false) {
+        if (object instanceof Pacman && ship.getState() == Alive.State.ALIVE) {
+            if (CollidePhysics.collisionTxC(ship, (Pacman) object )) {
                 KillerRules.collisionShipWithPacman(this, ship, (Pacman) (object));
             }
         }
 
         // Collision with Planeta
-        if (object instanceof Planeta && ship.getState() != Alive.State.ALIVE) {
-            if (false) {
+        if (object instanceof Planeta && ship.getState() == Alive.State.ALIVE) {
+            if (CollidePhysics.collisionTxC(ship, (Pacman) object )) {
                 KillerRules.collisionShipWithPlaneta(this, ship, (Planeta) (object));
             }
         }
 
         // Collision with PowerUp
         if (object instanceof PowerUp) {
-            if (false) {
+            if (CollidePhysics.collisionTxC(ship, (PowerUp) object )) {
                 KillerRules.collisionShipWithPowerUp(this, ship, (PowerUp) (object));
             }
         }
@@ -183,7 +189,7 @@ public class KillerGame extends JFrame {
 
         // Collision with Shot
         if (object instanceof Shoot) {
-            if (false) {
+            if (CollidePhysics.collisionTxC(ship, (Shoot) object )) {
                 KillerRules.collisionShipWithShoot(ship, (Shoot) (object));
             }
         }
@@ -197,46 +203,51 @@ public class KillerGame extends JFrame {
 
     }
 
+    /**
+     * @author Alvaro
+     * @param shoot
+     * @param object
+     */
     private void checkCollisionShoot(Shoot shoot, VisibleObject object) {
 
         // Collision with Asteroid
         if (object instanceof Asteroid) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(shoot, (Asteroid) object )) {
                 KillerRules.collisionShootWithAsteroid(this, shoot, (Asteroid) (object));
             }
         }
 
         // Collision with BlackHole
         if (object instanceof BlackHole) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(shoot, (BlackHole) object )) {
                 KillerRules.collisionShootWithBlackHole(this, shoot, (BlackHole) (object));
             }
         }
 
         // Collision with Nebulosa
         if (object instanceof Nebulosa) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(shoot, (Nebulosa) object )) {
                 KillerRules.collisionShootWithNebulosa(shoot);
             }
         }
 
         // Collision with Pacman
         if (object instanceof Pacman) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(shoot, (Pacman) object )) {
                 KillerRules.collisionShootWithPacman(this, shoot, (Pacman) (object));
             }
         }
 
         // Collision with Planeta
         if (object instanceof Planeta) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(shoot, (Planeta) object )) {
                 KillerRules.collisionShootWithPlaneta(this, shoot, (Planeta) (object));
             }
         }
 
         // Collision with PowerUp
         if (object instanceof PowerUp) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(shoot, (PowerUp) object )) {
                 KillerRules.collisionShootWithPowerUp(this, shoot, (PowerUp) (object));
             }
         }
@@ -250,7 +261,7 @@ public class KillerGame extends JFrame {
 
         // Collision with Ship
         if (object instanceof KillerShip) {
-            if (false) {
+            if (CollidePhysics.collisionTxC((KillerShip) object, shoot)) {
                 KillerRules.collisionShipWithShoot((KillerShip) (object), shoot);
             }
         }
@@ -264,60 +275,65 @@ public class KillerGame extends JFrame {
 
     }
 
+    /**
+     * @author Alvaro
+     * @param asteroid
+     * @param object
+     */
     private void checkCollisionAsteroid(Asteroid asteroid, VisibleObject object) {
 
         // Collision with Asteroid
         if (object instanceof Asteroid && !asteroid.equals(object)) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(asteroid , (Asteroid) object)) {
                 KillerRules.collisionAsteroidWithAsteroid(this, asteroid, (Asteroid) (object));
             }
         }
 
         // Collision with BlackHole
         if (object instanceof BlackHole) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(asteroid, (BlackHole) object)) {
                 KillerRules.collisionAsteroidWithBlackHole(this, asteroid, (BlackHole) (object));
             }
         }
 
         // Collision with Nebulosa
         if (object instanceof Nebulosa) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(asteroid, (Nebulosa) object)) {
                 KillerRules.collisionAsteroidWithNebulosa(asteroid);
             }
         }
 
         // Collision with Pacman
         if (object instanceof Pacman) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(asteroid, (Pacman) object)) {
                 KillerRules.collisionAsteroidWithPacman(this, asteroid, (Pacman) (object));
             }
         }
 
         // Collision with Planeta
         if (object instanceof Planeta) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(asteroid, (Planeta) object)) {
                 KillerRules.collisionAsteroidWithPlaneta(asteroid);
             }
         }
 
         // Collision with PowerUp
         if (object instanceof PowerUp) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(asteroid, (PowerUp) object)) {
                 KillerRules.collisionAsteroidWithPowerUp(this, asteroid, (PowerUp) (object));
             }
         }
 
         // Collision with Shot
         if (object instanceof Shoot) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(asteroid, (Shoot) object)) {
                 KillerRules.collisionShootWithAsteroid(this, (Shoot) (object), asteroid);
             }
         }
 
         // Collision with Ship
         if (object instanceof KillerShip) {
-            if (false) {
+            if (CollidePhysics.collisionTxC((KillerShip) object, asteroid)) {
                 KillerRules.collisionShipWithAsteroid(this, (KillerShip) (object), asteroid);
             }
         }
@@ -331,60 +347,65 @@ public class KillerGame extends JFrame {
 
     }
 
+    /**
+     * @author Alvaro
+     * @param pacman
+     * @param object
+     */
     private void checkCollisionPacman(Pacman pacman, VisibleObject object) {
 
         // Collision with Asteroid
         if (object instanceof Asteroid) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(pacman, (Asteroid) object)) {
                 KillerRules.collisionAsteroidWithPacman(this, (Asteroid) (object), pacman);
             }
         }
 
         // Collision with BlackHole
         if (object instanceof BlackHole) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(pacman, (BlackHole) object)) {
                 KillerRules.collisionPacmanWithBlackHole(pacman);
             }
         }
 
         // Collision with Nebulosa
         if (object instanceof Nebulosa) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(pacman, (Nebulosa) object)) {
                 KillerRules.collisionPacmanWithNebulosa(pacman);
             }
         }
 
         // Collision with Pacman
         if (object instanceof Pacman && !pacman.equals(object)) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(pacman, (Pacman) object)) {
                 KillerRules.collisionPacmanWithPacman(this, pacman, (Pacman) (object));
             }
         }
 
         // Collision with Planeta
         if (object instanceof Planeta) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(pacman, (Planeta) object)) {
                 KillerRules.collisionPacmanWithPlaneta(pacman);
             }
         }
 
         // Collision with PowerUp
         if (object instanceof PowerUp) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(pacman, (PowerUp) object)) {
                 KillerRules.collisionPacmanWithPowerUp(this, pacman, (PowerUp) (object));
             }
         }
 
         // Collision with Shot
         if (object instanceof Shoot) {
-            if (false) {
+            if (CollidePhysics.collisionCxC(pacman, (Shoot) object)) {
                 KillerRules.collisionShootWithPacman(this, (Shoot) (object), pacman);
             }
         }
 
         // Collision with Ship
         if (object instanceof KillerShip) {
-            if (false) {
+            if (CollidePhysics.collisionCxC((KillerShip) object, pacman)) {
                 KillerRules.collisionShipWithPacman(this, (KillerShip) (object), pacman);
             }
         }
@@ -398,6 +419,9 @@ public class KillerGame extends JFrame {
 
     }
 
+    /**
+     * @author Alvaro
+     */
     public void startGame() {
 
         // Hide room
@@ -414,15 +438,31 @@ public class KillerGame extends JFrame {
 
         // Add walls
         this.addWalls();
-        
+
         // Start threads
         this.startThreads();
 
         // Start music
         this.changeMusic(KillerRadio.ClipType.BATTLE);
 
+    }
 
-        /*/ ---------------------------------------------------------------------
+    /**
+     * @author Alvaro
+     */
+    public void startThreads() {
+        for (VisibleObject object : this.objects) {
+            if (object instanceof Alive) {
+                new Thread((Alive) object).start();
+            }
+        }
+    }
+
+    /**
+     * @author Alvaro
+     */
+    public void addObjects() {
+
         // Añadir Objetos de Prueba
         this.objects.add(new Planeta(this, 300, 400, 100, 100));
         this.objects.add(new Nebulosa(this, 400, 150, 120, 90));
@@ -432,23 +472,13 @@ public class KillerGame extends JFrame {
         this.objects.add(a);
         Pacman p = new Pacman(this, 100, 450);
         this.objects.add(p);
-        /*/
-        
-        
 
-    }
-
-    public void startThreads() {
-        for (VisibleObject object : this.objects) {
-            if (object instanceof Alive) {
-                new Thread((Alive) object).start();
-            }
-        }
     }
 
     // ***************************************************************************************************** //
     // *************************** [       Communication Methods         ] ********************************* //
     // ***************************************************************************************************** //
+
     /**
      * @author Christian
      */
@@ -499,6 +529,7 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [            Window Methods           ] ********************************* //
     // ***************************************************************************************************** //
+
     /**
      * @author Christian
      */
@@ -527,11 +558,12 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [            Sound Methods           ] ********************************** //
     // ***************************************************************************************************** //
+
     /**
      * @author Alvaro
      * @param clip
      */
-    private void startMusic(KillerRadio.ClipType clip) {
+    public void changeMusic(KillerRadio.ClipType clip) {
         this.radio.setClip(clip);
     }
 
@@ -540,14 +572,6 @@ public class KillerGame extends JFrame {
      */
     public void stopMusic() {
         this.radio.stopSound();
-    }
-
-    /**
-     * @author Alvaro
-     * @param clip
-     */
-    public void changeMusic(KillerRadio.ClipType clip) {
-        this.radio.setClip(clip);
     }
 
     /**
@@ -569,6 +593,31 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [             Methods New             ] ********************************* //
     // ***************************************************************************************************** //
+
+    /**
+     * @author Alvaro
+     * @param x
+     * @param y
+     * @param imgHeight
+     * @param m
+     * @param health
+     * @param maxspeed
+     */
+    public void newAsteroid(double x, double y, int imgHeight, double m, int health, double maxspeed) {
+        Asteroid asteroid = new Asteroid(this, x, y, imgHeight, m, health, maxspeed);
+        this.objects.add(asteroid);
+    }
+
+    /**
+     * @author Alvaro
+     * @param x
+     * @param y
+     */
+    public void newPacman(double x, double y) {
+        Pacman pacman = new Pacman(this, x, y);
+        this.objects.add(pacman);
+    }
+
     /**
      * @author Alvaro
      * @param ip
@@ -608,7 +657,7 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void newShip(String ip, Color color, String user, KillerShip.ShipType type) {
-        KillerShip ship = new KillerShip(this, 150, 150, ip, user, type);
+        KillerShip ship = new KillerShip(this, 150, 150, ip, user, type, color);
         this.ships.put(ip, ship);
         this.objects.add(ship);
     }
@@ -618,6 +667,7 @@ public class KillerGame extends JFrame {
      */
     public void newSound() {
         this.sound = new KillerSound();
+        new Thread(this.sound).start();
     }
 
     /**
@@ -660,7 +710,6 @@ public class KillerGame extends JFrame {
 
     /**
      * Este metodo sirve para crear una nave cuando venga desde otra pantalla.
-     *
      * @author Alvaro
      * @param x
      * @param y
@@ -680,8 +729,8 @@ public class KillerGame extends JFrame {
      * @param type
      * @param health
      */
-    public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage) {
-        KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage);
+    public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage, Color color) {
+        KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage, color);
         int correctX = 1;
         if (dx < 0) {
             correctX = this.viewer.getWidth() - ship.getImgWidth() - 1;
@@ -694,7 +743,6 @@ public class KillerGame extends JFrame {
 
     /**
      * Este metodo sirve para crear una bala cuando venga desde otra pantalla. // Este metodo no es utilizado
-     *
      * @author Alvaro
      */
     public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
@@ -703,7 +751,53 @@ public class KillerGame extends JFrame {
         new Thread(shoot).start();
     }
 
-    // New Viewer
+    /**
+     * @author Alvaro
+     * @param x
+     * @param y
+     * @param radians
+     * @param dx
+     * @param dy
+     * @param vx
+     * @param vy
+     * @param tx
+     * @param ty
+     * @param lx
+     * @param ly
+     * @param rx
+     * @param ry
+     * @param id
+     * @param user
+     * @param type
+     * @param health
+     * @param damage
+     * @param color
+     */
+    public void reciveAsteroid(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String id, String user, ShipType type, int health, int damage, Color color) {
+        Asteroid asteroid = newAsteroid(this, x, y, radians, dx, dy, vx, vy, tx, ty,  lx,  ly,  rx, ry,  id,  user, type,  health,  damage, color);
+        this.objects.add(asteroid);
+        new Thread(asteroid).start();
+    }
+
+    /**
+     * @author Christian
+     * @param game
+     * @param x
+     * @param y
+     * @param imgHeight
+     * @param m
+     * @param health
+     * @param radians
+     * @param vx
+     * @param vy
+     * @param a
+     */
+    public void recivePacman(KillerGame game, double x, double y, int imgHeight, double m, int health, double radians, double vx, double vy, double a) {
+        Pacman pacman = newPacman(this, game, x, y, imgHeight, m, health, radians, vx, vy, a);
+        this.objects.add(pacman);
+        new Thread(pacman).start();
+    }
+
     /**
      * @author Alvaro
      */
@@ -742,6 +836,14 @@ public class KillerGame extends JFrame {
 
     public KillerPad getPadByIP(String ip) {
         return this.pads.get(ip);
+    }
+
+    public int getPadsNum(){
+        return this.padsNum;
+    }
+
+    public int getPadsSize(){
+       return this.pads.size();
     }
 
     public KillerRoom getRoom() {
@@ -783,6 +885,7 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [              Methods Set            ] ********************************* //
     // ***************************************************************************************************** //
+
     public void setIpPrev(String ip) {
         this.prevModule.setDestinationIp(ip);
     }
@@ -791,12 +894,20 @@ public class KillerGame extends JFrame {
         this.nextModule.setDestinationIp(ip);
     }
 
+    public void setPadsNum(int padsSize){
+        this.padsNum = padsSize;
+    }
+
     public void setPortPrev(int port) {
         this.prevModule.setDestinationPort(port);
     }
 
     public void setPortNext(int port) {
         this.nextModule.setDestinationPort(port);
+    }
+
+    public void decrementPadsNum(){
+        this.padsNum--;
     }
 
     public void setServersQuantity(int serversQuantity) {
@@ -815,6 +926,7 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [            Methods Remove           ] ********************************* //
     // ***************************************************************************************************** //
+
     /**
      * @author Alvaro
      * @param pad
