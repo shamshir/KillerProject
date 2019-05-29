@@ -167,7 +167,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             default:
                 System.out.println("VISUALHANDLER -> ERROR: OBJETO DESCONOCIDO" + object.getObjectType());
                 break;
-
             //TODO los demas objetos
         }
     }
@@ -259,6 +258,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                     .withServersQuantity(quantity)
                     .build();
         } else {
+            this.getKillergame().setWindowNumber(quantity+1);
             messageToSend = Message.Builder.builder(SYNC_REQUEST, senderId)
                     .withServersQuantity(quantity + 1)
                     .build();
