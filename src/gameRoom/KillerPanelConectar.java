@@ -7,6 +7,8 @@ package gameRoom;
 
 import game.KillerGame;
 import java.awt.Color;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 
 
 
@@ -33,6 +35,18 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         this.kr = kr;
         initComponents();
         kg =kr.getKg();
+        setTextData();
+    }
+    
+    public void setTextData(){
+        try {
+            jTextFieldIpIzq.setText(Inet4Address.getLocalHost().getHostAddress());
+            jTextFieldIpDer.setText(Inet4Address.getLocalHost().getHostAddress());
+            jTextFieldPortIzq.setText("8000");
+            jTextFieldPortDer.setText("8000");
+        } catch (Exception e) {
+        }
+        
     }
     
     public KillerPanelConectar getKillerPanelConectar(){
@@ -141,10 +155,13 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jLabelPortIzq.setText("Puerto izquierda");
         add(jLabelPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, -1, -1));
 
+        jTextFieldIpIzq.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldIpIzq.setForeground(new java.awt.Color(255, 255, 255));
         jTextFieldIpIzq.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextFieldIpIzq.setToolTipText("");
-        jTextFieldIpIzq.setBorder(null);
+        jTextFieldIpIzq.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jTextFieldIpIzq.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jTextFieldIpIzq.setOpaque(false);
         jTextFieldIpIzq.setPreferredSize(new java.awt.Dimension(90, 20));
         add(jTextFieldIpIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, -1));
 
@@ -153,7 +170,11 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jLabel1IpDer.setText("IP derecha");
         add(jLabel1IpDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 220, -1, -1));
 
+        jTextFieldIpDer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldIpDer.setForeground(new java.awt.Color(255, 255, 255));
         jTextFieldIpDer.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldIpDer.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jTextFieldIpDer.setOpaque(false);
         jTextFieldIpDer.setPreferredSize(new java.awt.Dimension(90, 20));
         add(jTextFieldIpDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 240, -1, -1));
 
@@ -162,11 +183,19 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jLabel1PortDer.setText("Puerto derecha");
         add(jLabel1PortDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 280, -1, -1));
 
+        jTextFieldPortDer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldPortDer.setForeground(new java.awt.Color(255, 255, 255));
         jTextFieldPortDer.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldPortDer.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jTextFieldPortDer.setOpaque(false);
         jTextFieldPortDer.setPreferredSize(new java.awt.Dimension(40, 20));
         add(jTextFieldPortDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 300, -1, -1));
 
+        jTextFieldPortIzq.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldPortIzq.setForeground(new java.awt.Color(255, 255, 255));
         jTextFieldPortIzq.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldPortIzq.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jTextFieldPortIzq.setOpaque(false);
         jTextFieldPortIzq.setPreferredSize(new java.awt.Dimension(40, 20));
         add(jTextFieldPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, -1, -1));
 

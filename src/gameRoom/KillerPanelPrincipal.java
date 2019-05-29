@@ -7,6 +7,9 @@ package gameRoom;
 
 import game.KillerGame;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Timer;
 import javax.swing.JOptionPane;
 
 /**
@@ -18,7 +21,10 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     private KillerRoom kr;
     private KillerGame kg;
     
-    private int cont = 0;
+    private boolean s = true;
+    
+    int[] sequence = {38, 38, 40, 40, 37, 39, 37, 39, 66, 65};
+    int currentButton = 0;
     
     //getKillerShips()  para la lista
     
@@ -31,9 +37,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         initComponents();
         kg = kr.getKg();
         jButtonJugar.setEnabled(false);
-        //setFeedbackConnetionLeft(true);
-        //setFeedbackConnetionRight(true);
-        
+
     }
     
     public void setFeedbackConnetionLeft(Boolean aux){
@@ -41,12 +45,10 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
          jLabelConFeedackL.setForeground(Color.GREEN);
          jLabelConFeedackL.setText("CONECTADO");
          jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
-         //kr.kpc.setFeedbackConnetionLeft2(true);
     }else{
          jLabelConFeedackL.setForeground(Color.RED);
          jLabelConFeedackL.setText("DESCONECTADO");
          jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
-         //kr.kpc.setFeedbackConnetionRight2(aux);
         }
     }
     
@@ -66,7 +68,17 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         return this;
     }
     
-    
+    public void checkEvent(int keyP) {
+    if (keyP == sequence[currentButton]) {
+        currentButton ++ ;
+    }else{
+        currentButton = 0;
+    }
+    if(currentButton == sequence.length) {
+        currentButton = 0;
+        System.out.println("SHHHHHHHHHHHHHHHH");
+    }
+}
     
     public void setButtonPlay(Boolean aux){
         if (aux == true) {
@@ -95,6 +107,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         jLabelConFeedackR = new javax.swing.JLabel();
         jLabelSound = new javax.swing.JLabel();
         jLabelFondo = new javax.swing.JLabel();
+        jTextFieldSecret = new javax.swing.JTextField();
 
         setMaximumSize(new java.awt.Dimension(525, 525));
         setMinimumSize(new java.awt.Dimension(525, 525));
@@ -197,6 +210,14 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
         jLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/stars.gif"))); // NOI18N
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        jTextFieldSecret.setText("jTextField1");
+        jTextFieldSecret.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldSecretKeyPressed(evt);
+            }
+        });
+        add(jTextFieldSecret, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 20, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
@@ -221,18 +242,18 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
     private void jLabelCopyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCopyMouseClicked
         // CREDITOS KILLER GAME
+        String[]args = null;
+        KillerCredits.main(args);
     }//GEN-LAST:event_jLabelCopyMouseClicked
 
     private void jLabelSoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelSoundMouseClicked
         // CAMBIAR ESTADO DE SONIDO DEL MENU
-        if(cont%2==0){
+        if(s == true){
             jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/noSound.png")));
-            System.out.println("SI");
-            cont++;
+            s = false;
         }else{
             jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sound.png")));
-            System.out.println("NO");
-            cont++;
+            s = true;
         }
     }//GEN-LAST:event_jLabelSoundMouseClicked
 
@@ -242,6 +263,11 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this,"¿Crees que te vamos a dar un logro por esto?","Pesado",JOptionPane.WARNING_MESSAGE);       
         }
     }//GEN-LAST:event_jButtonJugarMouseClicked
+
+    private void jTextFieldSecretKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSecretKeyPressed
+        // TODO add your handling code here:
+        checkEvent(evt.getKeyCode());
+    }//GEN-LAST:event_jTextFieldSecretKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -255,5 +281,6 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     private javax.swing.JLabel jLabelFondo;
     private javax.swing.JLabel jLabelSound;
     private javax.swing.JLabel jLabelTitulo;
+    static javax.swing.JTextField jTextFieldSecret;
     // End of variables declaration//GEN-END:variables
 }
