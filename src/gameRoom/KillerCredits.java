@@ -41,7 +41,7 @@ public class KillerCredits extends JPanel {
         Color cb = new Color(0, 0, 0, 0);
         gradientPaing = new GradientPaint(pa, ca, pb, cb);
         try {
-            textImage = ImageIO.read(getClass().getResourceAsStream("text.png"));
+            textImage = ImageIO.read(getClass().getResourceAsStream("/gameRoom/img/text.png"));
         } catch (IOException ex) {
             Logger.getLogger(KillerCredits.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
@@ -112,7 +112,7 @@ public class KillerCredits extends JPanel {
         });
         
         javax.swing.Timer t;
-        t = new javax.swing.Timer(150000, new ActionListener () {
+        t = new javax.swing.Timer(70000, new ActionListener () {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("win");
