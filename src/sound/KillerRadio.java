@@ -48,7 +48,7 @@ public class KillerRadio implements Runnable {
 
     public Clip getSound(String file) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/sound/soundsGame/" + file));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/sound/SoundsGame/" + file));
             AudioFormat format = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             Clip sound = (Clip) AudioSystem.getLine(info);
@@ -65,7 +65,10 @@ public class KillerRadio implements Runnable {
     }
 
     public void stopSound() {
-        this.clip.stop();
+        try {
+            this.clip.stop();
+        } catch (Exception e) {
+        }
     }
     
     // Main activity
