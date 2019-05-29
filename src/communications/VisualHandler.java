@@ -303,7 +303,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getRx(), object.getRy(),
                 object.getId(), object.getUser(),
                 object.getType(), object.getHealth(),
-                object.getDamage());
+                object.getDamage(), object.getColor());
     }
 
     private void createShoot(ObjectResponse object) {
