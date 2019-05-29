@@ -25,6 +25,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String PAD_COMMAND = "pad(.*)";
     private static final String DAMAGE_COMMAND = "pad_damage";
     private static final String ACTION_COMMAND = "action";
+    private static final String DECREMENT_PADS_NUM = "decrementPadsNum";
+    private static final String WIN_COMMAND = "win";
+    private static final String PAD_WIN_COMMAND = "pad_win";
 
     private static final String SHOOT_TYPE = "shoot";
     private static final String SHIP_TYPE = "ship";
@@ -138,6 +141,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case CLIENT_NOT_CONNECTED:
                 this.disconnect();
                 break;
+            case DECREMENT_PADS_NUM:
+                this.processDecrement(message);
+                break;
+            case WIN_COMMAND:
+                this.processWin(message);
+                break;
             default:
                 final String command = message.getCommand();
                 if (command != null && command.matches(PAD_COMMAND)) {
@@ -171,11 +180,10 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 break;
             case PACMAN_TYPE:
                 this.createPacman(object);
-                break;        
+                break;
             default:
                 System.out.println("VISUALHANDLER -> ERROR: OBJETO DESCONOCIDO" + object.getObjectType());
                 break;
-            //TODO los demas objetos
         }
     }
 
@@ -222,12 +230,20 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     public void sendStart() {
-        this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId()).build());
+        this.getKillergame().setNumPads(0);
+        this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId())
+                .withServersQuantity(this.getKillergame().getPadsSize())
+                .build());
     }
 
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
-            this.sendMessage(message);
+            this.getKillergame().setNumPads(0);
+            this.sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
+                    .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
+                    .build());
+        } else {
+            this.getKillergame().setPadsNum(message.getServersQuantity());
         }
         this.getKillergame().startGame();
     }
@@ -266,7 +282,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                     .withServersQuantity(quantity)
                     .build();
         } else {
-            this.getKillergame().setWindowNumber(quantity+1);
+            this.getKillergame().setWindowNumber(quantity + 1);
             messageToSend = Message.Builder.builder(SYNC_REQUEST, senderId)
                     .withServersQuantity(quantity + 1)
                     .build();
@@ -307,24 +323,24 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     private void createShoot(ObjectResponse object) {
-        this.getKillergame().reciveShoot(object.getX(), object.getY(), 
-                object.getRadians(), object.getDx(), 
-                object.getDy(), object.getId(), 
+        this.getKillergame().reciveShoot(object.getX(), object.getY(),
+                object.getRadians(), object.getDx(),
+                object.getDy(), object.getId(),
                 object.getDamage());
     }
-    
+
     private void createAsteroid(ObjectResponse object) {
-        this.getKillergame().reciveAsteroid(object.getX(), object.getY(), 
+        this.getKillergame().reciveAsteroid(object.getX(), object.getY(),
                 object.getImgHeight(), object.getM(),
-                object.getHealth(), object.getRadians(), 
-                object.getVx(), object.getVy(), 
-                object.getA());        
+                object.getHealth(), object.getRadians(),
+                object.getVx(), object.getVy(),
+                object.getA());
     }
 
     private void createPacman(ObjectResponse object) {
-        this.getKillergame().recivePacman(object.getX(), object.getY(), 
-                object.getM(), object.getHealth(), 
-                object.getRadians(), object.getVx(), 
+        this.getKillergame().recivePacman(object.getX(), object.getY(),
+                object.getM(), object.getHealth(),
+                object.getRadians(), object.getVx(),
                 object.getVy(), object.getA());
     }
 
@@ -333,6 +349,30 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             this.getKillergame().getRoom().setFeedbackConnetionRight(connected);
         } else {
             this.getKillergame().getRoom().setFeedbackConnetionLeft(connected);
+        }
+    }
+
+    public void sendDecement() {
+        this.sendMessage(Message.Builder.builder(DECREMENT_PADS_NUM, KillerServer.getId()).build());
+    }
+
+    private void processDecrement(final Message message) {
+        if (this.getPadsNum() > 0) {
+            this.getKillergame().decrementPadsNum();
+        }
+        if (!this.isMessageMine(message.getSenderId())) {
+            this.sendMessage(message);
+        }
+    }
+
+    private void processWin(final Message message) {
+        KillerPad pad = this.getKillergame().getLastPad();
+        if (pad != null) {
+            pad.sendMessage(Message.Builder.builder(PAD_WIN_COMMAND, KillerServer.getId())
+                    .withReceiverId(pad.getId())
+                    .build());
+        } else if (!this.isMessageMine(message.getSenderId())) {
+            this.sendMessage(message);
         }
     }
 }

@@ -80,12 +80,4 @@ public class ReceptionHandler {
         this.destinationIp = socket.getInetAddress().getHostAddress();
         return true;
     }
-
-    private void closeSocket() {
-        try {
-            this.sock.close();
-        } catch (Exception ex) {
-            System.out.println("ReceptionHandler -> error al cerrar socket (ReceptionHandler: closeSocket)");
-        }
-    }
 }
