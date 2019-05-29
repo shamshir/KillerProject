@@ -785,18 +785,16 @@ public class KillerGame extends JFrame {
 
     /**
      * @author Christian
-     * @param game
      * @param x
      * @param y
-     * @param imgHeight
      * @param m
      * @param health
      * @param radians
      * @param vx
      * @param vy
-     * @param a
+     * @param a 
      */
-    public void recivePacman(KillerGame game, double x, double y, double m, int health, double radians, double vx, double vy, double a) {
+    public void recivePacman(double x, double y, double m, int health, double radians, double vx, double vy, double a) {
         Pacman pacman = new Pacman(this, x, y, m, health, radians, vx, vy, a);
         int correctX = 0;
         if (vx < 0) {
