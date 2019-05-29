@@ -4,6 +4,7 @@ import game.KillerGame;
 import game.KillerRules;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 /**
  *
@@ -33,6 +34,42 @@ public class Pacman extends Automata {
 
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
+        
+        // Instanciar physicsPacman
+    }
+
+    /**
+     * 
+     * @param game
+     * @param x
+     * @param y
+     * @param m
+     * @param health
+     * @param radians
+     * @param vx
+     * @param vy
+     * @param a 
+     */
+    public Pacman(KillerGame game, double x, double y, double m, int health, 
+            double radians, double vx, double vy, double a) {
+        super(game, x, y);
+        
+        this.m = m;
+        this.health = health;
+        this.imgHeight = health;
+        this.imgWidth = health;
+        this.radius = this.imgHeight / 2;
+        this.radians = radians;
+        this.vx = vx;
+        this.vy = vy;
+        this.a = a;
+        
+        this.maxspeed = 8;
+
+        mouthOpened = true;
+        fpsControlTime = System.currentTimeMillis();
+        
+        // Instanciar physicsPacman
     }
     
     /**
@@ -70,19 +107,13 @@ public class Pacman extends Automata {
             this.fpsControlTime = System.currentTimeMillis();
         }
 
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (mouthOpened) {
-            if (dx >= 0) {
-                g2d.fillArc((int) x, (int) y, imgWidth, imgHeight, 50, 260);
-            } else {
-                g2d.fillArc((int) x, (int) y, imgWidth, imgHeight, 230, 260);
-            }
+            g2d.fillArc((int) x, (int) y, this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
         } else {
-            if (dx >= 0) {
-                g2d.fillArc((int) x, (int) y, imgWidth, imgHeight, 20, 320);
-            } else {
-                g2d.fillArc((int) x, (int) y, imgWidth, imgHeight, 200, 320);
-            }
+            g2d.fillArc((int) x, (int) y, this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
         }
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         
     }
     
