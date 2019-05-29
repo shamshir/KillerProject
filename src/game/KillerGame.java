@@ -775,25 +775,31 @@ public class KillerGame extends JFrame {
      */
     public void reciveAsteroid(double x, double y, int imgHeight, double m, int health, double radians, double vx, double vy, double a) {
         Asteroid asteroid = new Asteroid(this, x, y, imgHeight, m, health, radians, vx, vy, a);
+        int correctX = 0;
+        if (vx < 0) {
+            correctX = this.viewer.getWidth() - asteroid.getImgWidth() - 1;
+        }
         this.objects.add(asteroid);
         new Thread(asteroid).start();
     }
 
     /**
      * @author Christian
-     * @param game
      * @param x
      * @param y
-     * @param imgHeight
      * @param m
      * @param health
      * @param radians
      * @param vx
      * @param vy
-     * @param a
+     * @param a 
      */
-    public void recivePacman(KillerGame game, double x, double y, int imgHeight, double m, int health, double radians, double vx, double vy, double a) {
-        Pacman pacman = newPacman(this, game, x, y, imgHeight, m, health, radians, vx, vy, a);
+    public void recivePacman(double x, double y, double m, int health, double radians, double vx, double vy, double a) {
+        Pacman pacman = new Pacman(this, x, y, m, health, radians, vx, vy, a);
+        int correctX = 0;
+        if (vx < 0) {
+            correctX = this.viewer.getWidth() - pacman.getImgWidth() - 1;
+        }
         this.objects.add(pacman);
         new Thread(pacman).start();
     }
