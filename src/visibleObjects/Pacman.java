@@ -5,6 +5,7 @@ import game.KillerRules;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import sound.KillerRadio;
 
 /**
  *
@@ -14,6 +15,7 @@ public class Pacman extends Automata {
 
     private long fpsControlTime;
     private boolean mouthOpened;
+    private KillerRadio killerRadio;
 
     /**
      * 
@@ -36,6 +38,8 @@ public class Pacman extends Automata {
         fpsControlTime = System.currentTimeMillis();
         
         // Instanciar physicsPacman
+        
+        this.killerRadio = new KillerRadio();
     }
 
     /**
@@ -70,6 +74,8 @@ public class Pacman extends Automata {
         fpsControlTime = System.currentTimeMillis();
         
         // Instanciar physicsPacman
+        
+        this.killerRadio = new KillerRadio();
     }
     
     /**
@@ -121,4 +127,12 @@ public class Pacman extends Automata {
     // *********************
     // * Getters & Setters *
     // *********************
+
+    public KillerRadio getKillerRadio() {
+        return killerRadio;
+    }
+
+    public void setKillerRadio(KillerRadio killerRadio) {
+        this.killerRadio = killerRadio;
+    }
 }

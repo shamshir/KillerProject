@@ -144,10 +144,18 @@ public class KillerShip extends Controlled {
                 this.checkSafe();
             }
 
-            if (this.tiempoEnNebulosa == 0) {
-                this.configureSpeed();
-            } else {
+//            if (this.tiempoEnNebulosa == 0) {
+//                this.configureSpeed();
+//            } else {
+//                this.tiempoEnNebulosa--;
+//            }
+
+            // Control de la maxspeed cuando se atraviesa una nebulosa
+            if (this.tiempoEnNebulosa > 0) {
                 this.tiempoEnNebulosa--;
+                if (this.tiempoEnNebulosa == 0) {
+                    this.configureSpeed();
+                }
             }
             
             this.move();
@@ -179,16 +187,16 @@ public class KillerShip extends Controlled {
                 this.moveShip(kAction.getSpeedX(), kAction.getSpeedY());
                 break;
             case "pad_dash":
-
+                this.dash();
                 break;
             case "pad_powerup":
 
                 break;
             case "pad_turbo_start":
-
+                this.turboStart();
                 break;
             case "pad_turbo_end":
-
+                this.turboEnd();
                 break;
         }
     }
@@ -316,6 +324,18 @@ public class KillerShip extends Controlled {
                 break;
         }
         
+    }
+    
+    private void dash() {
+        this.physicsShip.dash();
+    }
+    
+    private void turboEnd() {
+        this.configureSpeed();
+    }
+    
+    private void turboStart() {
+        this.maxspeed += KillerRules.MAX_SPEED_INCREMENT;
     }
 
     // ********************************************************
