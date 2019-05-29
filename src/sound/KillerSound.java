@@ -8,6 +8,8 @@ package sound;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -23,16 +25,17 @@ public class KillerSound implements Runnable {
     private ArrayList<Clip> clips;
 
     public enum ClipType {
+
         SHOT,
         ROCKET,
         BOOST,
         JUMP,
         EXPLOSION,
         MOBILE_CLICK,
-        PC_CLICK, 
+        PC_CLICK,
         WASTED_DIE,
         SOUL_DIE,
-        TELEPORT, 
+        TELEPORT,
         POWER_UP
     }
 
@@ -57,7 +60,8 @@ public class KillerSound implements Runnable {
     }
 
     public Clip createSound(KillerSound.ClipType clipType) {
-        return getSound(this.clipNames.get(clipType));
+        Clip clip = getSound(this.clipNames.get(clipType));
+        return clip;
     }
 
     public void addSound(Clip clip) {
@@ -67,7 +71,7 @@ public class KillerSound implements Runnable {
     public Clip getSound(String file) {
 
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/soundsGame/" + file));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/sound/SoundsGame/" + file));
             AudioFormat format = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             Clip sound = (Clip) AudioSystem.getLine(info);
@@ -86,17 +90,24 @@ public class KillerSound implements Runnable {
 
     @Override
     public void run() {
+
         while (true) {
+            try {
+                Thread.sleep(0);
+            } catch (Exception e) {
+
+            }
             for (int i = 0; i < clips.size(); i++) {
+                //System.out.println(i);
                 Clip clip = clips.get(i);
                 try {
-                    if (clip.getFramePosition() == clip.getFrameLength()) {
-                        this.stopSound(clip);
-                    } else if (!clip.isActive()) {
+                    if (!clip.isActive()) {
                         clip.setFramePosition(0);
                         clip.start();
+                        this.clips.remove(clip);
                     }
                 } catch (Exception e) {
+                    //System.out.println("algo");
                 }
             }
         }
