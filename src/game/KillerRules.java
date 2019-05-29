@@ -26,6 +26,7 @@ public class KillerRules {
     public static final int PACMAN_INCREMENT = 10;
     public static final int PACMAN_DECREMENT = 1;
     public static final int DAMAGE_BY_COLLISION = 100;
+    public static final int MAX_SPEED_INCREMENT = 3;
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Alive          ] ********************************* //
