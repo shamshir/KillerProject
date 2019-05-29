@@ -51,7 +51,7 @@ public class KillerImage extends BufferedImage implements Runnable {
         int a, b, g, r;
         
         // falta pillar el color del usuario
-        MyColor userColor = new MyColor(255, 234, 060, 100);
+        MyColor userColor = new MyColor(255, 0, 060, 250);
 
         for (int pos = 0; pos < this.raster.length; pos += 4) {
             a = Byte.toUnsignedInt(this.raster[pos]);

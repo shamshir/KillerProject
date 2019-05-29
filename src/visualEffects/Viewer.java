@@ -27,7 +27,7 @@ public class Viewer extends Canvas implements Runnable {
 
     private KillerGame killerGame;
 
-    private final int FPS = 610;
+    private final int FPS = 60;
     private double target = 1000 / FPS;
 
     private BufferedImage backgroundImg;
@@ -36,7 +36,6 @@ public class Viewer extends Canvas implements Runnable {
     public Viewer(KillerGame kg) {
         this.killerGame = kg;
         this.setSize(new Dimension(this.killerGame.getWidth(), this.killerGame.getHeight()));
-        this.setBackground(Color.WHITE);
         this.setFocusable(true);
         this.requestFocus();
     }
@@ -126,7 +125,8 @@ public class Viewer extends Canvas implements Runnable {
 //    }
     public void loadBackgroundImage() {
         // comprobar el numero de monitor del kgame
-//        int monitorNumber = this.killerGame.getMonitorNumber();
+        // int TOTAL_BACKGOUND_IMGS = 2; // subir a atributo de clase??
+//        int monitorNumber = this.killerGame.getMonitorNumber() % TOTAL_BACKGOUND_IMGS;
 
         try {
             this.backgroundImg = ImageIO.read(new File("src/visualEffects/img/fondoLM.png"));
@@ -136,6 +136,8 @@ public class Viewer extends Canvas implements Runnable {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
 
     public void updateFrame() {
         BufferStrategy bs;
@@ -143,7 +145,7 @@ public class Viewer extends Canvas implements Runnable {
         bs = this.getBufferStrategy();
         if (bs == null) {
             System.out.println("no tira");
-            return; //============================================>>>>>
+            return; //=====================================================>>>>>
         }
 
         // en que se diferencia con el createGraphics?
