@@ -773,8 +773,8 @@ public class KillerGame extends JFrame {
      * @param damage
      * @param color
      */
-    public void reciveAsteroid(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String id, String user, ShipType type, int health, int damage, Color color) {
-        Asteroid asteroid = newAsteroid(this, x, y, radians, dx, dy, vx, vy, tx, ty,  lx,  ly,  rx, ry,  id,  user, type,  health,  damage, color);
+    public void reciveAsteroid(double x, double y, int imgHeight, double m, int health, double radians, double vx, double vy, double a) {
+        Asteroid asteroid = new Asteroid(this, x, y, imgHeight, m, health, radians, vx, vy, a);
         this.objects.add(asteroid);
         new Thread(asteroid).start();
     }
@@ -881,6 +881,13 @@ public class KillerGame extends JFrame {
     public boolean isSynchronized() {
         return synchro;
     }
+    
+    public KillerPad getLastPad() {
+       if (this.pads.size() == 1) {
+            return this.pads.entrySet().iterator().next().getValue();
+        }
+       return null;
+    }
 
     // ***************************************************************************************************** //
     // *************************** [              Methods Set            ] ********************************* //
@@ -908,6 +915,9 @@ public class KillerGame extends JFrame {
 
     public void decrementPadsNum(){
         this.padsNum--;
+        if (this.padsNum == 1) {
+            this.nextModule.sendMessage(Message.Builder.builder("win", KillerServer.getId()).build());
+        }
     }
 
     public void setServersQuantity(int serversQuantity) {
