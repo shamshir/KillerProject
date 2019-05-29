@@ -28,6 +28,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private static final String SHOOT_TYPE = "shoot";
     private static final String SHIP_TYPE = "ship";
+    private static final String PACMAN_TYPE = "pacman";
+    private static final String ASTEROID_TYPE = "asteroid";
 
     public VisualHandler(final KillerGame killergame, final boolean right) {
         super(killergame);
@@ -164,6 +166,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case SHOOT_TYPE:
                 this.createShoot(object);
                 break;
+            case ASTEROID_TYPE:
+                this.createAsteroid(object);
+                break;
+            case PACMAN_TYPE:
+                this.createPacman(object);
+                break;        
             default:
                 System.out.println("VISUALHANDLER -> ERROR: OBJETO DESCONOCIDO" + object.getObjectType());
                 break;
@@ -299,8 +307,25 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     private void createShoot(ObjectResponse object) {
-        this.getKillergame().reciveShoot(object.getX(), object.getY(), object.getRadians(),
-                object.getDx(), object.getDy(), object.getId(), object.getDamage());
+        this.getKillergame().reciveShoot(object.getX(), object.getY(), 
+                object.getRadians(), object.getDx(), 
+                object.getDy(), object.getId(), 
+                object.getDamage());
+    }
+    
+    private void createAsteroid(ObjectResponse object) {
+        this.getKillergame().reciveAsteroid(object.getX(), object.getY(), 
+                object.getImgHeight(), object.getM(),
+                object.getHealth(), object.getRadians(), 
+                object.getVx(), object.getVy(), 
+                object.getA());        
+    }
+
+    private void createPacman(ObjectResponse object) {
+        this.getKillergame().recivePacman(object.getX(), object.getY(), 
+                object.getM(), object.getHealth(), 
+                object.getRadians(), object.getVx(), 
+                object.getVy(), object.getA());
     }
 
     public void updateRoom(final boolean connected) {
