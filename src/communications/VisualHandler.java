@@ -230,7 +230,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     public void sendStart() {
-        this.getKillergame().setNumPads(0);
+        this.getKillergame().setPadsNum(0);
         this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId())
                 .withServersQuantity(this.getKillergame().getPadsSize())
                 .build());
@@ -238,7 +238,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
-            this.getKillergame().setNumPads(0);
+            this.getKillergame().setPadsNum(0);
             this.sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
                     .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
                     .build());
@@ -346,9 +346,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     public void updateRoom(final boolean connected) {
         if (this.right) {
-            this.getKillergame().getRoom().setFeedbackConnetionRight(connected);
+            this.getKillergame().getRoom().setFeedBackConnectionRight(connected);
         } else {
-            this.getKillergame().getRoom().setFeedbackConnetionLeft(connected);
+            this.getKillergame().getRoom().setFeedBackConnectionLeft(connected);
         }
     }
 
@@ -357,7 +357,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     }
 
     private void processDecrement(final Message message) {
-        if (this.getPadsNum() > 0) {
+        if (this.getKillergame().getPadsNum() > 0) {
             this.getKillergame().decrementPadsNum();
         }
         if (!this.isMessageMine(message.getSenderId())) {
