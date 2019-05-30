@@ -6,6 +6,7 @@
 package physics;
 
 import visibleObjects.Asteroid;
+import visibleObjects.Planeta;
 
 /**
  *
@@ -39,7 +40,7 @@ public class PhysicsAsteroid {
         setValues();
     }
 
-    public void collisionXAsteroid(Asteroid alive) {
+    public double[] collisionXAsteroid(Asteroid alive) {
 
         double aliveradius = alive.getRadius();
         double alivex = alive.getX();
@@ -91,6 +92,9 @@ public class PhysicsAsteroid {
         double vx2 = tangentX * pTan2 + normalX * mom2 * 0.6;
         double vy2 = tangentY * pTan2 + normalY * mom2 * 0.6;
 
+        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 100;
+        double result2 = Math.sqrt(vx2 * vx2 + vy2 * vy2) / 100;
+
         double max = 0.6;
 
         if (vx1 > max) {
@@ -134,6 +138,79 @@ public class PhysicsAsteroid {
 //        this.vy = vy1;
 //        alive.vx = vx2;
 //        alive.vy = vy2;
+
+        return new double[]{result1, result2};
+
+    }
+
+    public double[] collisionXPlanet(Planeta alive) {
+
+        double aliveradius = alive.getRadius();
+        double alivex = alive.getX();
+        double alivey = alive.getY();
+        double alivem = alive.getM();
+
+        //distancia entre los dos objetos basado en sus centros
+        double distance = Math.sqrt(Math.pow(this.x - alivex, 2) + Math.pow(this.y - alivey, 2));
+        //distancia que habrán de separarse cada uno del otro en base al radio
+        double overlap = (distance - this.radius - aliveradius) / 2;
+        //desplazamiento del primer objeto en x e y utilizando el vector unitario direccional 
+        //obtenido entre el centro de los objetos, multiplicado por la distancia a separarse
+        this.x -= overlap * (this.x - alivex) / distance;
+        this.x -= overlap * (this.y - alivey) / distance;
+
+        this.ast.setX(x);
+        this.ast.setY(y);
+
+        alivex += overlap * (this.x - alivex) / distance;
+        alivey += overlap * (this.y - alivey) / distance;
+
+
+        //vector normal al vector tangente a los circulos
+        double normalX = (alivex - this.x) / distance;
+        double normalY = (alivey - this.y) / distance;
+
+        //vector tangente
+        double tangentX = -normalY;
+        double tangentY = normalX;
+
+        //producto punto tangente (hacia donde va a cambiar la dirección con respuesta tangente)
+        double pTan1 = this.vx * tangentX + this.vy * tangentY;
+
+        //producto punto normal (hacia donde va a cambiar la dirección con respuesta normal)
+        double pNorm1 = this.vx * normalX + this.vy * normalY;
+        double pNorm2 = 0 * normalX + 0 * normalY;
+
+        //conservación del momento
+        double mom1 = (pNorm1 * (this.m - alivem) + 2 * alivem * pNorm2) / (this.m + alivem);
+        double mom2 = (pNorm2 * (alivem - this.m) + 2 * this.m * pNorm1) / (this.m + alivem);
+
+        double vx1 = tangentX * pTan1 + normalX * mom1 * 0.6;
+        double vy1 = tangentY * pTan1 + normalY * mom1 * 0.6;
+
+        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 100;
+
+        double max = 0.6;
+
+        if (vx1 > max) {
+            this.vx = max;
+        } else if (vx1 < -max) {
+            this.vx = -max;
+        } else {
+            this.vx = vx1;
+        }
+
+        if (vy1 > max) {
+            this.vy = max;
+        } else if (vy1 < -max) {
+            this.vy = -max;
+        } else {
+            this.vy = vy1;
+        }
+
+        setValues();
+
+        return new double[]{result1, 0};
 
     }
 

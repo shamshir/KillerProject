@@ -75,21 +75,21 @@ public class CollidePhysics {
 
         double radius = obj2.getRadius();
 
-        // si el círculo toca uno de los vertices del triangulo.
-//        double v1x = obj2.getX() - obj1.getTx();
-//        double v1y = obj2.getY() - obj1.getTy();
-//
-//        double v2x = obj2.getX() - obj1.getLx();
-//        double v2y = obj2.getY() - obj1.getLy();
-//
-//        double v3x = obj2.getX() - obj1.getRx();
-//        double v3y = obj2.getY() - obj1.getRy();
-//
-//        if (Math.sqrt(v1x * v1x + v1y * v1y) <= Math.sqrt(radius * radius)
-//                || Math.sqrt(v2x * v2x + v2y * v2y) <= Math.sqrt(radius * radius)
-//                || Math.sqrt(v3x * v3x + v3y * v3y) <= Math.sqrt(radius * radius)) {
-//            //  return false;
-//        }
+    //     si el círculo toca uno de los vertices del triangulo.
+        double v1x = obj2.getX() - obj1.getTx();
+        double v1y = obj2.getY() - obj1.getTy();
+
+        double v2x = obj2.getX() - obj1.getLx();
+        double v2y = obj2.getY() - obj1.getLy();
+
+        double v3x = obj2.getX() - obj1.getRx();
+        double v3y = obj2.getY() - obj1.getRy();
+
+        if (Math.sqrt(v1x * v1x + v1y * v1y) <= Math.sqrt(radius * radius)
+                || Math.sqrt(v2x * v2x + v2y * v2y) <= Math.sqrt(radius * radius)
+                || Math.sqrt(v3x * v3x + v3y * v3y) <= Math.sqrt(radius * radius)) {
+              return true;
+        }
 
 
         //si colisiona con la recta AB (T-L)
