@@ -161,9 +161,7 @@ public class PhysicsAsteroid {
 
         this.ast.setX(x);
         this.ast.setY(y);
-
-        alivex += overlap * (this.x - alivex) / distance;
-        alivey += overlap * (this.y - alivey) / distance;
+ 
 
 
         //vector normal al vector tangente a los circulos
@@ -183,14 +181,13 @@ public class PhysicsAsteroid {
 
         //conservación del momento
         double mom1 = (pNorm1 * (this.m - alivem) + 2 * alivem * pNorm2) / (this.m + alivem);
-        double mom2 = (pNorm2 * (alivem - this.m) + 2 * this.m * pNorm1) / (this.m + alivem);
 
-        double vx1 = tangentX * pTan1 + normalX * mom1 * 0.6;
-        double vy1 = tangentY * pTan1 + normalY * mom1 * 0.6;
+        double vx1 = tangentX * pTan1 + normalX * mom1 *3;
+        double vy1 = tangentY * pTan1 + normalY * mom1 *3;
 
         double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 100;
 
-        double max = 0.6;
+        double max = 1.6;
 
         if (vx1 > max) {
             this.vx = max;
