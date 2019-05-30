@@ -159,11 +159,11 @@ public class KillerRules {
             powerUp.setAvailable(false);
 
             if (powerUp.getType() == PowerUp.Power.DAMAGE) {
-                // Enviar al mando que la nave tiene el power up
+                game.getPadByIP(shoot.getId()).sendInfoMessageToPad();
             }
             
             if (powerUp.getType() == PowerUp.Power.HEALTH) {
-                // Enviar al mando que la nave tiene el power up
+                game.getPadByIP(shoot.getId()).sendInfoMessageToPad();
             }
 
         } else {
