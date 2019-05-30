@@ -22,7 +22,7 @@ import visibleObjects.PowerUp.Power;
 /**
  * @author Alvaro & Christian
  */
-public class KillerGame extends JFrame {
+public class KillerGame extends JFrame implements KeyListener {
 
     // ***************************************************************************************************** //
     // *************************** [         KillerGame Attributes       ] ********************************* //
@@ -31,6 +31,9 @@ public class KillerGame extends JFrame {
     // Game status
     public enum Status { ROOM, GAME };
     private Status status;
+
+    // Exit counter
+    public int exitCounter = 0;
 
     // Object list
     private ArrayList<VisibleObject> objects = new ArrayList<>();
@@ -91,15 +94,24 @@ public class KillerGame extends JFrame {
         this.newRoom();
 
     }
-    
-     
-    public void keyPressed(KeyEvent e) {
-       
-    }
 
     // ***************************************************************************************************** //
     // *************************** [          KillerGame Methods         ] ********************************* //
     // ***************************************************************************************************** //
+
+    /**
+     * 
+     */
+    public void keyPressed(KeyEvent e) {
+       
+        if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.exitCounter++;
+            if (exitCounter > 1) {
+                System.exit(0);
+            }
+        }
+
+    }
 
     /**
      * @author Christian & Alvaro
@@ -945,6 +957,10 @@ public class KillerGame extends JFrame {
         this.windowNumber = windowNumber;
     }
 
+    public void resetexitCounter() {
+        this.exitcounter = 0;
+    }
+
     // ***************************************************************************************************** //
     // *************************** [            Methods Remove           ] ********************************* //
     // ***************************************************************************************************** //
@@ -984,8 +1000,19 @@ public class KillerGame extends JFrame {
     // *************************** [             Main Activity           ] ********************************* //
     // ***************************************************************************************************** //
     public static void main(String[] args) {
+
         // New KillerGame
         KillerGame game = new KillerGame();
+
+        while (true) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+
+            }
+            game.resetExitCounter();
+        }
+
     }
 
 }
