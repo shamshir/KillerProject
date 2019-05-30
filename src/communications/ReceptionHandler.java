@@ -72,7 +72,7 @@ public class ReceptionHandler {
         try {
             this.in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             this.out = new PrintWriter(sock.getOutputStream(), true);
-            this.sock.setSoTimeout(3500);
+            //this.sock.setSoTimeout(3500);
         } catch (Exception ex) {
             System.out.println("ReceptionHandler -> ERROR setsocket");
             return false;

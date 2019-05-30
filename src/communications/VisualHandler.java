@@ -303,26 +303,11 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getDx(), object.getDy(), object.getId(), object.getDamage());
     }
 
-    public void updateRoom(boolean connected) {
-
-        if (connected) {
-            if(right){
-             System.out.println("VisualHandler -> Connected a la derecha");
-            }else{
-             System.out.println("VisualHandler -> Connected a la izquierda");                
-            }
-        }else{
-            if(right){
-             System.out.println("VisualHandler -> Disconnected a la derecha");
-            }else{
-             System.out.println("VisualHandler -> Disconnected a la izquierda");                
-            }
-        }
-
+    public void updateRoom(final boolean connected) {
         if (this.right) {
-            //TODO this.getKillergame().getRoom().setFeedbackConnetionRight(connected);
+            this.getKillergame().getRoom().getKPP().setFeedbackConnetionRight(connected);
         } else {
-            //TODO this.getKillergame().getRoom().setFeedbackConnetionLeft(connected);            
+            this.getKillergame().getRoom().getKPP().setFeedbackConnetionLeft(connected);
         }
     }
 }

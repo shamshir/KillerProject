@@ -67,7 +67,11 @@ public class Viewer extends Canvas implements Runnable {
     public void drawComponents(Graphics2D g2d) {
 
         for (int i = 0; i < killerGame.getObjects().size(); i++) {
-            this.killerGame.getObjects().get(i).render(g2d);
+            try {
+               this.killerGame.getObjects().get(i).render(g2d); 
+            } catch (NullPointerException e) {
+                
+            }
         }
 //        drawConnectionInfo(g2d);
 

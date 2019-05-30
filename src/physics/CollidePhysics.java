@@ -162,19 +162,19 @@ public class CollidePhysics {
 
     public static boolean collisionObjxWall(VisibleObject obj, Wall wall) {
 
-        if (wall.getType() == Wall.Limit.NORTH) {
+        if (wall.getType() == Wall.Limit.UP) {
 
             return (obj.getY() + obj.getImgHeight() / 2 < wall.getY());
 
-        } else if (wall.getType() == Wall.Limit.SOUTH) {
+        } else if (wall.getType() == Wall.Limit.DOWN) {
 
             return (obj.getY() + obj.getImgHeight() / 2 > wall.getY());
 
-        } else if (wall.getType() == Wall.Limit.EAST) {
+        } else if (wall.getType() == Wall.Limit.RIGHT) {
 
             return (obj.getX() + obj.getImgWidth() / 2 > wall.getX());
 
-        } else if (wall.getType() == Wall.Limit.WEST) {
+        } else if (wall.getType() == Wall.Limit.LEFT) {
 
             return (obj.getX() + obj.getImgHeight() / 2 < wall.getX());
         }
