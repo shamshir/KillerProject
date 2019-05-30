@@ -88,6 +88,7 @@ public class ConnectionHandler implements Runnable {
         final Message message = Message.Builder.builder(SYNC_REQUEST, KillerServer.getId())
                 .withServersQuantity(1)
                 .build();
+        this.kg.setWindowNumber(1);
         this.kg.getNextModule().sendMessage(message);
     }
 
@@ -133,8 +134,6 @@ public class ConnectionHandler implements Runnable {
         if (this.kg.newPad(senderId, this.socket, connectionResponse.getUserName(), connectionResponse.getColor())) {
             this.kg.newShip(senderId, Color.decode(connectionResponse.getColor()),
                     connectionResponse.getUserName(), connectionResponse.getShipType());
-//            this.kg.newShip(senderId,
-//                    connectionResponse.getUserName(), connectionResponse.getShipType());
             message = Message.Builder.builder(PAD_CONNECTED, KillerServer.getId()).build();
         } else {
             KillerPad pad = this.kg.getPadByIP(senderId);

@@ -25,10 +25,13 @@ public class KillerRules {
     public static final int PACMAN_INITIAL_HEALTH = 10;
     public static final int PACMAN_INCREMENT = 10;
     public static final int PACMAN_DECREMENT = 1;
+    public static final int DAMAGE_BY_COLLISION = 100;
+    public static final int MAX_SPEED_INCREMENT = 3;
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Alive          ] ********************************* //
     // ***************************************************************************************************** //
+
     /**
      * @author Christian
      * @param game
@@ -67,17 +70,38 @@ public class KillerRules {
     // ***************************************************************************************************** //
     // *************************** [            Collision Ship           ] ********************************* //
     // ***************************************************************************************************** //
+
+    /**
+     * @author Alvaro
+     * @param game
+     * @param ship
+     * @param asteroid
+     */
     public static void collisionShipWithAsteroid(KillerGame game, KillerShip ship, Asteroid asteroid) {
 
-        KillerRules.substractHealthShip(game, ship, 0); // Remplazar 0 por metodo de fisica que calcula el daño
+        KillerRules.substractHealthShip(ship, 0); // Remplazar 0 por metodo de fisica que calcula el daño
 
     }
 
+    /**
+     * @author Alvaro
+     * @param game
+     * @param ship
+     */
     public static void collisionShipWithBlackHole(KillerGame game, KillerShip ship) {
 
         // Math random de -1 a 1
         // Si da < 0 hacer un game.sendobjecttoprev con la nave
         // Si da >= 0 hacer un game.sendobjecttonext con la nave
+
+        if (Math.random() < 0.5) {
+            game.sendObjectToPrev(ship);
+            ship.setState(Alive.State.DEAD);
+        } else {
+            game.sendObjectToNext(ship);
+            ship.setState(Alive.State.DEAD);
+        }
+
     }
 
     /**
@@ -105,9 +129,9 @@ public class KillerRules {
 
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
 
-        // La nave muere
-        // Pacman aumenta vidao en PACMAN_INCREMENT
-        // Pacman aumenta de tamaño en PACMAN_INCREMENT / Si maria implementa que la vida y el tamaño son el mismo atributo solo sumar vida
+        ship.changeState(Alive.State.DEAD);
+        pacman.setSize(KillerRules.PACMAN_INCREMENT);
+
     }
 
     public static void collisionShipWithPlaneta(KillerGame game, KillerShip ship, Planeta planeta) {
@@ -128,10 +152,16 @@ public class KillerRules {
         // Se entrega el bufo a la nave
     }
 
-    public static void collisionShipWithShip(KillerGame game, KillerShip ship, KillerShip ship2) {
+    public static void collisionShipWithShip(KillerShip ship, KillerShip ship2) {
 
         // Se calcula el daño que reciben las naves con Physiscs
         // Se llama al metodo restar vida de nave de Killerrules para cada nave
+
+        double[] damages = ship.getPhysicsShip().collisionXShip(ship2);
+
+        KillerRules.substractHealthShip(ship, ((int) damages[0] * KillerRules.DAMAGE_BY_COLLISION ));
+        KillerRules.substractHealthShip(ship2, ((int) damages[1] * KillerRules.DAMAGE_BY_COLLISION ));
+
     }
 
     /**
@@ -139,9 +169,9 @@ public class KillerRules {
      * @param shoot
      * @param ship
      */
-    public static void collisionShipWithShoot(KillerGame game, KillerShip ship, Shoot shoot) {
+    public static void collisionShipWithShoot(KillerShip ship, Shoot shoot) {
 
-        if (KillerRules.substractHealthShip(game, ship, shoot.getDamage())) {
+        if (KillerRules.substractHealthShip(ship, shoot.getDamage())) {
 
             // Se pide el mando a la nave que disparo ese disparo
             // Se envia al mando un mensaje de score
@@ -155,9 +185,12 @@ public class KillerRules {
     // ***************************************************************************************************** //
     // *************************** [            Collision Shoot          ] ********************************* //
     // ***************************************************************************************************** //
+
     public static void collisionShootWithAsteroid(KillerGame game, Shoot shot, Asteroid asteroid) {
 
         // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
+        KillerRules.substractHealthAlive(asteroid, shot.getDamage());
+
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
 
@@ -202,6 +235,13 @@ public class KillerRules {
 
         // False
     }
+
+    public static void collisionShootWithWall(KillerGame game, Shoot shot, Wall wall) {
+        // Remove shot from the array
+        shot.setState(Alive.State.DEAD);
+    }
+
+    // crear aqui un shot with wall y pegar lo mismo que en alive with wall pero sin enviar, solo matando
 
     /**
      * @author Christian
@@ -298,7 +338,7 @@ public class KillerRules {
      * @param damage
      * @return True if Ship state becomes dead and False if it still alive.
      */
-    private static boolean substractHealthShip(KillerGame game, KillerShip ship, int damage) {
+    private static boolean substractHealthShip(KillerShip ship, int damage) {
 
         // Dead
         boolean dead = false;
@@ -326,7 +366,7 @@ public class KillerRules {
      * @param damage
      * @return True if Alive state becomes dead and False if it still alive.
      */
-    private static boolean substractHealthAlive(KillerGame game, Alive alive, int damage) {
+    private static boolean substractHealthAlive(Alive alive, int damage) {
 
         // Dead
         boolean dead = false;

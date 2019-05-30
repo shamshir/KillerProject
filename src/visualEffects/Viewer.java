@@ -9,6 +9,7 @@ import game.KillerGame;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -26,21 +27,17 @@ public class Viewer extends Canvas implements Runnable {
 
     private KillerGame killerGame;
 
-    private int fps = 60;
-    private double averageFPS;
-    private double target = 1000 / fps;
+    private final int FPS = 60;
+    private double target = 1000 / FPS;
 
-    private BufferedImage fondo;
     private BufferedImage backgroundImg;
     public Graphics2D g2dBackground;
 
-    public Viewer(KillerGame k) {
-        killerGame = k;
-        setSize(new Dimension(killerGame.getWidth(), killerGame.getHeight()));
-        setBackground(Color.WHITE);
-        setFocusable(true);
-        requestFocus();
-
+    public Viewer(KillerGame kg) {
+        this.killerGame = kg;
+        this.setSize(new Dimension(this.killerGame.getWidth(), this.killerGame.getHeight()));
+        this.setFocusable(true);
+        this.requestFocus();
     }
 
     @Override
@@ -48,8 +45,13 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     @Override
+    public void paint(Graphics g) {
+
+    }
+
+    @Override
     public void run() {
-       
+
         this.createBufferStrategy(2);
         this.loadBackgroundImage();
 
@@ -66,11 +68,11 @@ public class Viewer extends Canvas implements Runnable {
 
     public void drawComponents(Graphics2D g2d) {
 
-        for (int i = 0; i < killerGame.getObjects().size(); i++) {
+        for (int i = 0; i < this.killerGame.getObjects().size(); i++) {
             try {
-               this.killerGame.getObjects().get(i).render(g2d); 
+                this.killerGame.getObjects().get(i).render(g2d);
             } catch (NullPointerException e) {
-                
+                System.out.println(e);
             }
         }
 //        drawConnectionInfo(g2d);
@@ -121,15 +123,21 @@ public class Viewer extends Canvas implements Runnable {
 //        }
 //
 //    }
-    
-    public void loadBackgroundImage(){
+    public void loadBackgroundImage() {
+        // comprobar el numero de monitor del kgame
+        // int TOTAL_BACKGOUND_IMGS = 2; // subir a atributo de clase??
+//        int monitorNumber = this.killerGame.getMonitorNumber() % TOTAL_BACKGOUND_IMGS;
+
         try {
             this.backgroundImg = ImageIO.read(new File("src/visualEffects/img/fondoLM.png"));
+//            this.backgroundImg = ImageIO.read(new File("src/b" + monitorNumber + ".jpeg"));
+//            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/b" + 1 + ".jpeg"));
         } catch (IOException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-   
+    
+    
 
     public void updateFrame() {
         BufferStrategy bs;
@@ -137,25 +145,22 @@ public class Viewer extends Canvas implements Runnable {
         bs = this.getBufferStrategy();
         if (bs == null) {
             System.out.println("no tira");
-            return; //============================================>>>>>
+            return; //=====================================================>>>>>
         }
 
         // en que se diferencia con el createGraphics?
         Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
-        
-        g2d.drawImage(this.backgroundImg, 0, 0, null);
 
-//        g2d.setColor(Color.PINK);
-//        g2d.fillRect(0, 0, 1920, 1080);
+        g2d.drawImage(this.backgroundImg, 0, 0, null);
 
         //pintamos todos los componentes en los graphics de la imagen
         this.drawComponents(g2d);
 
-        //pintamos la imagen en el canvas
+        //mostramos la imagen del canvas
         bs.show();
-        
+
+        // liberamos recursos
         g2d.dispose();
     }
-
 
 }

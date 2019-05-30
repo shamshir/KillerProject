@@ -31,8 +31,8 @@ public class Shoot extends Automata {
         this.radius = this.imgHeight / 2;  // --> imgHeight
         
         // Posición según la posición del morro de la nave
-        this.x = ship.getTx() - this.radius; // --> radius
-        this.y = ship.getTy() - this.radius; // --> radius
+        this.x = ship.getTx();
+        this.y = ship.getTy();
         
         this.radians = ship.radians + Math.PI/2;
         this.m = 30;
@@ -94,7 +94,7 @@ public class Shoot extends Automata {
     @Override
     public void render(Graphics2D g2d) {
         g2d.setColor(Color.CYAN);
-        g2d.fillOval((int) x, (int) y, imgWidth, imgHeight);
+        g2d.fillOval((int)(this.x  - this.radius), (int)(this.y  - this.radius), this.imgWidth, this.imgHeight);
 
     }
 

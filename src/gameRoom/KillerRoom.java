@@ -12,10 +12,10 @@ import game.KillerGame;
  * @author Yeray
  */
 public class KillerRoom extends javax.swing.JFrame {
-    private KillerPanelPrincipal kpp;
-    private KillerPanelAjustes kpa;
-    private KillerPanelConectar kpc;
-    private KillerGame kg;
+    public KillerPanelPrincipal kpp;
+    public KillerPanelAjustes kpa;
+    public KillerPanelConectar kpc;
+    public KillerGame kg;
     /**
      * Creates new form KillerRoom
      */
@@ -33,8 +33,29 @@ public class KillerRoom extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         
         this.setContentPane(kpp);
+        //jTextFieldSecret.requestFocus(); 
     }
 
+    public void setFeedBackConnectionLeft(Boolean aux){
+        if (aux == true) {
+            kpp.setFeedbackConnetionLeft(true);
+            kpc.setFeedbackConnetionLeft2(true);
+        } else {
+            kpp.setFeedbackConnetionLeft(false);
+            kpc.setFeedbackConnetionLeft2(false);
+        }
+    }
+    
+    public void setFeedBackConnectionRight(Boolean aux){
+        if (aux == true) {
+            kpp.setFeedbackConnetionRight(true);
+            kpc.setFeedbackConnetionRight2(true);
+        } else {
+            kpp.setFeedbackConnetionRight(false);
+            kpc.setFeedbackConnetionRight2(false);
+        }
+    }
+    
     public void setKillerPanelPrincipal() {
         this.setContentPane(kpp);
     }
@@ -66,6 +87,8 @@ public class KillerRoom extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTextFieldSecret = new javax.swing.JTextField();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
@@ -73,11 +96,17 @@ public class KillerRoom extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(152, 152, 152)
+                .addComponent(jTextFieldSecret, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(179, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(100, 100, 100)
+                .addComponent(jTextFieldSecret, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(180, Short.MAX_VALUE))
         );
 
         pack();
@@ -119,5 +148,6 @@ public class KillerRoom extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField jTextFieldSecret;
     // End of variables declaration//GEN-END:variables
 }
