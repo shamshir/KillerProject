@@ -77,9 +77,11 @@ public class KillerRules {
      * @param ship
      * @param asteroid
      */
-    public static void collisionShipWithAsteroid(KillerGame game, KillerShip ship, Asteroid asteroid) {
+    public static void collisionShipWithAsteroid(KillerShip ship, Asteroid asteroid) {
 
-        KillerRules.substractHealthShip(ship, 0); // Remplazar 0 por metodo de fisica que calcula el daño
+        double[] damages = ship.getPhysicsShip().collisionXAsteroid(asteroid);
+        KillerRules.substractHealthShip(ship, damages[0] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthAlive(asteroid, damages[1] * DAMAGE_BY_COLLISION);
 
     }
 
@@ -89,10 +91,6 @@ public class KillerRules {
      * @param ship
      */
     public static void collisionShipWithBlackHole(KillerGame game, KillerShip ship) {
-
-        // Math random de -1 a 1
-        // Si da < 0 hacer un game.sendobjecttoprev con la nave
-        // Si da >= 0 hacer un game.sendobjecttonext con la nave
 
         if (Math.random() < 0.5) {
             game.sendObjectToPrev(ship);
@@ -136,32 +134,35 @@ public class KillerRules {
 
     public static void collisionShipWithPlaneta(KillerGame game, KillerShip ship, Planeta planeta) {
 
-        // Se calcula el rebote de la nave con Physics
-        // Se calcula el daño que recibe la nave con Physiscs
-        // Se llama al metodo restar vida de nave de Killerrules
+        double[] damages = ship.getPhysicsShip().collisionXPlanet(planeta);
+        KillerRules.substractHealthShip(ship, damages[0] * DAMAGE_BY_COLLISION);
+        
     }
 
     public static void collisionShipWithPowerUp(KillerGame game, KillerShip ship, PowerUp powerUp) {
 
-        // Se comprueba si el powerup tiene envoltorio o no
-        // True
-        // Se calcula el daño que recibe la nave con Physiscs
-        // Se llama al metodo restar vida de nave de Killerrules
-        // False
-        // Se elimina el powerup de la array de killargame
-        // Se entrega el bufo a la nave
+        if (!powerUp.isWrappered()) {
+            game.removeObject(powerUp);
+
+            if (powerUp.getType() == PowerUp.Power.DAMAGE) {
+                // Enviar al mando que la nave tiene el power up
+            }
+            
+            if (powerUp.getType() == PowerUp.Power.HEALTH) {
+                // Enviar al mando que la nave tiene el power up
+            }
+
+        } else {
+            // Se calcula el daño que recibe la nave con Physiscs
+            // Se llama al metodo restar vida de nave de Killerrules
+        }
+        
     }
 
     public static void collisionShipWithShip(KillerShip ship, KillerShip ship2) {
-
-        // Se calcula el daño que reciben las naves con Physiscs
-        // Se llama al metodo restar vida de nave de Killerrules para cada nave
-
         double[] damages = ship.getPhysicsShip().collisionXShip(ship2);
-
         KillerRules.substractHealthShip(ship, ((int) damages[0] * KillerRules.DAMAGE_BY_COLLISION ));
         KillerRules.substractHealthShip(ship2, ((int) damages[1] * KillerRules.DAMAGE_BY_COLLISION ));
-
     }
 
     /**
@@ -169,12 +170,12 @@ public class KillerRules {
      * @param shoot
      * @param ship
      */
-    public static void collisionShipWithShoot(KillerShip ship, Shoot shoot) {
+    public static void collisionShipWithShoot(KillerGame game, KillerShip ship, Shoot shoot) {
 
         if (KillerRules.substractHealthShip(ship, shoot.getDamage())) {
 
-            // Se pide el mando a la nave que disparo ese disparo
-            // Se envia al mando un mensaje de score
+            game.getPadByIp(shoot.getId());
+
         }
 
         // Remove shot from the array
@@ -331,6 +332,7 @@ public class KillerRules {
     // ***************************************************************************************************** //
     // *************************** [           Auxiliar Methods          ] ********************************* //
     // ***************************************************************************************************** //
+
     /**
      * @author Alvaro
      * @param game
@@ -349,7 +351,6 @@ public class KillerRules {
         // Set die status to KillerShip
         if (ship.getHealth() <= 0) {
             ship.changeState(Alive.State.DEAD);
-            // Sacar nave de la array
             // Enviar al mando que la nave ha muerto
             dead = true;
         }
@@ -377,8 +378,6 @@ public class KillerRules {
         // Set die status to KillerShip
         if (alive.getHealth() <= 0) {
             alive.changeState(Alive.State.DEAD);
-            // Sacar alive de la array
-            // Enviar al mando que la nave ha muerto
             dead = true;
         }
 
