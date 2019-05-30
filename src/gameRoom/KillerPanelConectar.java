@@ -9,6 +9,7 @@ import game.KillerGame;
 import java.awt.Color;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import sound.KillerSound;
 
 
 
@@ -233,6 +234,7 @@ public class KillerPanelConectar extends javax.swing.JPanel {
 
     private void jButtonConectarIzqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarIzqActionPerformed
         // CONECTAR IZQUIERDA
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         ipIzq = jTextFieldIpIzq.getText();
         portIzq = Integer.parseInt(jTextFieldPortIzq.getText());
         kg.setPortPrev(portIzq);
@@ -242,11 +244,13 @@ public class KillerPanelConectar extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButtonConectarDerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarDerActionPerformed
         // CONECTAR  DERACHA
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         ipDer = jTextFieldIpDer.getText();
         portDer = Integer.parseInt(jTextFieldPortDer.getText());
         kg.setPortNext(portDer);

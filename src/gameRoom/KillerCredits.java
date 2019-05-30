@@ -1,5 +1,6 @@
 package gameRoom;
 
+import game.KillerGame;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,6 +34,8 @@ public class KillerCredits extends JPanel {
     private double textY;
     
     static JFrame frame; 
+    
+
     
     public KillerCredits() {
         setBackground(Color.BLACK);
@@ -117,7 +121,7 @@ public class KillerCredits extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("win");
             frame.dispose();
-               
+            KillerPanelPrincipal.menuRadio();
             }
         }); 
         t.start(); 

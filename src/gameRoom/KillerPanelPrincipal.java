@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Timer;
 import javax.swing.JOptionPane;
+import sound.KillerRadio;
+import sound.KillerSound;
 
 /**
  *
@@ -19,9 +21,10 @@ import javax.swing.JOptionPane;
 public class KillerPanelPrincipal extends javax.swing.JPanel {
     //Variable Killer Game
     private KillerRoom kr;
-    private KillerGame kg;
+    static KillerGame kg;
+    private KillerSound ks;
     
-    private boolean s = true;
+    static boolean s = true;
     
     int[] sequence = {38, 38, 40, 40, 37, 39, 37, 39, 66, 65};
     int currentButton = 0;
@@ -34,9 +37,10 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
      */
     public KillerPanelPrincipal(KillerRoom kr) {
         this.kr = kr;
-        initComponents();
         kg = kr.getKg();
+        initComponents();
         jButtonJugar.setEnabled(false);
+        
 
     }
     
@@ -76,16 +80,19 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     }
     if(currentButton == sequence.length) {
         currentButton = 0;
-        System.out.println("SHHHHHHHHHHHHHHHH");
+        System.out.println("CHEAT MODE ON");
     }
 }
     
     public void setButtonPlay(Boolean aux){
-        if (aux == true) {
-            jButtonJugar.setEnabled(true);
-        } else {
-            jButtonJugar.setEnabled(false);
+        jButtonJugar.setEnabled(aux);
+    }
+    
+    public static void menuRadio(){
+        if (s == true) {
+          kg.changeMusic(KillerRadio.ClipType.MENU);  
         }
+        
     }
 
     /**
@@ -222,38 +229,50 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
         // SALIR
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         System.exit(0);
     }//GEN-LAST:event_jButtonSalirActionPerformed
 
     private void jButtonAjustesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjustesActionPerformed
         // AJUSTES
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelAjustes();
     }//GEN-LAST:event_jButtonAjustesActionPerformed
 
     private void jButtonConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarActionPerformed
         // CONECTAR
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelConectar();
     }//GEN-LAST:event_jButtonConectarActionPerformed
 
     private void jButtonJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJugarActionPerformed
         // JUGAR
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         kg.sendStart();
     }//GEN-LAST:event_jButtonJugarActionPerformed
 
     private void jLabelCopyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCopyMouseClicked
         // CREDITOS KILLER GAME
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
+        if(s == true){
+           kg.changeMusic(KillerRadio.ClipType.ENDING); 
+        }
+        
         String[]args = null;
         KillerCredits.main(args);
     }//GEN-LAST:event_jLabelCopyMouseClicked
 
     private void jLabelSoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelSoundMouseClicked
         // CAMBIAR ESTADO DE SONIDO DEL MENU
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         if(s == true){
             jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/noSound.png")));
             s = false;
+            kg.stopMusic();
         }else{
             jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sound.png")));
             s = true;
+            kg.changeMusic(KillerRadio.ClipType.MENU);
         }
     }//GEN-LAST:event_jLabelSoundMouseClicked
 

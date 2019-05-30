@@ -6,6 +6,7 @@
 package gameRoom;
 
 import game.KillerGame;
+import sound.KillerRadio;
 
 /**
  *
@@ -33,6 +34,7 @@ public class KillerRoom extends javax.swing.JFrame {
         this.setLocationRelativeTo(null); 
         this.setContentPane(kpp);
         KillerPanelPrincipal.jTextFieldSecret.requestFocus(); 
+        kg.changeMusic(KillerRadio.ClipType.MENU);
     }
 
     public void setFeedBackConnectionLeft(Boolean aux){
@@ -57,6 +59,7 @@ public class KillerRoom extends javax.swing.JFrame {
     
     public void setKillerPanelPrincipal() {
         this.setContentPane(kpp);
+
     }
 
     public void setKillerPanelConectar() {
@@ -80,6 +83,10 @@ public class KillerRoom extends javax.swing.JFrame {
     public KillerRoom getKillerRoom(){
         return this;
     }
+    
+    public void setButtonPlay(Boolean aux){
+        kpp.setButtonPlay(aux);
+     }
     
     /**
      * This method is called from within the constructor to initialize the form.
