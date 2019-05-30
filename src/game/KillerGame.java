@@ -11,6 +11,7 @@ import sound.*;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.net.Socket;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -104,12 +105,20 @@ public class KillerGame extends JFrame implements KeyListener {
      */
     public void keyPressed(KeyEvent e) {
        
-        if(ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             this.exitCounter++;
             if (exitCounter > 1) {
                 System.exit(0);
             }
         }
+
+    }
+    
+    public void keyReleased(KeyEvent e) {
+
+    }
+    
+    public void keyTyped(KeyEvent e) {
 
     }
 
@@ -159,7 +168,7 @@ public class KillerGame extends JFrame implements KeyListener {
         // Collision with Asteroid
         if (object instanceof Asteroid && ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxC(ship, (Asteroid) object )) {
-                KillerRules.collisionShipWithAsteroid(ship, (Asteroid) (object));
+                KillerRules.collisionShipWithAsteroid(this, ship, (Asteroid) (object));
             }
         }
 
@@ -180,14 +189,14 @@ public class KillerGame extends JFrame implements KeyListener {
         // Collision with Pacman
         if (object instanceof Pacman && ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxC(ship, (Pacman) object )) {
-                KillerRules.collisionShipWithPacman(ship, (Pacman) (object));
+                KillerRules.collisionShipWithPacman(this, ship, (Pacman) (object));
             }
         }
 
         // Collision with Planeta
         if (object instanceof Planeta && ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxC(ship, (Pacman) object )) {
-                KillerRules.collisionShipWithPlaneta(ship, (Planeta) (object));
+                KillerRules.collisionShipWithPlaneta(this, ship, (Planeta) (object));
             }
         }
 
@@ -201,7 +210,7 @@ public class KillerGame extends JFrame implements KeyListener {
         // Collision with Ship
         if (object instanceof KillerShip && !ship.equals((KillerShip) object)) {
             if (CollidePhysics.collisionTxT(ship, (KillerShip) object)) {
-                KillerRules.collisionShipWithShip(ship, (KillerShip) (object));
+                KillerRules.collisionShipWithShip(this, ship, (KillerShip) (object));
             }
         }
 
@@ -280,7 +289,7 @@ public class KillerGame extends JFrame implements KeyListener {
         // Collision with Ship
         if (object instanceof KillerShip) {
             if (CollidePhysics.collisionTxC((KillerShip) object, shoot)) {
-                KillerRules.collisionShipWithShoot((KillerShip) (object), shoot);
+                KillerRules.collisionShipWithShoot(this, (KillerShip) (object), shoot);
             }
         }
 
@@ -957,8 +966,8 @@ public class KillerGame extends JFrame implements KeyListener {
         this.windowNumber = windowNumber;
     }
 
-    public void resetexitCounter() {
-        this.exitcounter = 0;
+    public void resetExitCounter() {
+        this.exitCounter = 0;
     }
 
     // ***************************************************************************************************** //
@@ -980,9 +989,9 @@ public class KillerGame extends JFrame implements KeyListener {
      * @param ship
      */
     public void removeShip(KillerShip ship) {
-        this.objects.remove(this.getShipByIP(pad.getId()));
-        this.ships.remove(pad.getId());
-        this.pads.get(ship.getId()).closeSockect();
+        this.objects.remove(this.getShipByIP(ship.getId()));
+        this.ships.remove(ship.getId());
+        //this.pads.get(ship.getId()).closeSocket();
     }
 
     /**

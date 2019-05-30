@@ -33,7 +33,6 @@ public class KillerRules {
     // ***************************************************************************************************** //
     // *************************** [            Collision Alive          ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
      * @author Alvaro
      * @param game
@@ -68,29 +67,29 @@ public class KillerRules {
             KillerRules.sendAliveToNext(game, alive);
         }
         if (wall.getType() == Wall.Limit.LEFT) {
-            KillerRules.sendAliveToNext(game, alive);
+            KillerRules.sendAliveToPrev(game, alive);
         }
     }
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Ship           ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
      * @author Alvaro
      * @param game
      * @param ship
      * @param asteroid
      */
-    public static void collisionShipWithAsteroid(KillerShip ship, Asteroid asteroid) {
+    public static void collisionShipWithAsteroid(KillerGame game, KillerShip ship, Asteroid asteroid) {
         double[] damages = ship.getPhysicsShip().collisionXAsteroid(asteroid);
-        KillerRules.substractHealthShip(ship, damages[0] * DAMAGE_BY_COLLISION);
-        KillerRules.substractHealthAlive(asteroid, damages[1] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthShip(game, ship, (int) damages[0] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthAlive(asteroid, (int) damages[1] * DAMAGE_BY_COLLISION);
     }
 
     /**
-     * Por ahora no es utilizado. Ya que se usa collisionWithAlive().
-     * En caso de querer que esta colision haga algo diferente se debe tocar aqui.
+     * Por ahora no es utilizado. Ya que se usa collisionWithAlive(). En caso de
+     * querer que esta colision haga algo diferente se debe tocar aqui.
+     *
      * @author Alvaro
      * @param game
      * @param ship
@@ -120,12 +119,13 @@ public class KillerRules {
 
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
         ship.changeState(Alive.State.DEAD);
+        ship.getGame().removeObject(ship);
         pacman.setSize(ship.getHealth());
     }
 
     public static void collisionShipWithPlaneta(KillerGame game, KillerShip ship, Planeta planeta) {
         double[] damages = ship.getPhysicsShip().collisionXPlanet(planeta);
-        KillerRules.substractHealthShip(ship, damages[0] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthShip(game, ship, (int) damages[0] * DAMAGE_BY_COLLISION);
     }
 
     public static void collisionShipWithPowerUp(KillerGame game, KillerShip ship, PowerUp powerUp) {
@@ -144,10 +144,10 @@ public class KillerRules {
         }
     }
 
-    public static void collisionShipWithShip(KillerShip ship, KillerShip ship2) {
+    public static void collisionShipWithShip(KillerGame game, KillerShip ship, KillerShip ship2) {
         double[] damages = ship.getPhysicsShip().collisionXShip(ship2);
-        KillerRules.substractHealthShip(ship, ((int) damages[0] * KillerRules.DAMAGE_BY_COLLISION ));
-        KillerRules.substractHealthShip(ship2, ((int) damages[1] * KillerRules.DAMAGE_BY_COLLISION ));
+        KillerRules.substractHealthShip(game, ship, ((int) damages[0] * KillerRules.DAMAGE_BY_COLLISION));
+        KillerRules.substractHealthShip(game, ship2, ((int) damages[1] * KillerRules.DAMAGE_BY_COLLISION));
     }
 
     /**
@@ -156,22 +156,25 @@ public class KillerRules {
      * @param ship
      */
     public static void collisionShipWithShoot(KillerGame game, KillerShip ship, Shoot shoot) {
-        if (KillerRules.substractHealthShip(ship, shoot.getDamage())) {
-            game.getNextModule().sendInfoMessageToPad("pad_kill", shoot.getId());
+        if (!ship.getId().equalsIgnoreCase(shoot.getId())) {
+            if (KillerRules.substractHealthShip(game, ship, shoot.getDamage())) {
+                game.getNextModule().sendInfoMessageToPad("pad_kill", shoot.getId());
+            }
+            // Remove shot from the array
+            shoot.setState(Alive.State.DEAD);
+            shoot.getGame().removeObject(shoot);
         }
-        // Remove shot from the array
-        shoot.setState(Alive.State.DEAD);
     }
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Shoot          ] ********************************* //
     // ***************************************************************************************************** //
-
     public static void collisionShootWithAsteroid(KillerGame game, Shoot shot, Asteroid asteroid) {
         // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
         KillerRules.substractHealthAlive(asteroid, shot.getDamage());
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
+        shot.getGame().removeObject(shot);
     }
 
     /**
@@ -181,6 +184,7 @@ public class KillerRules {
     public static void collisionShootWithBlackHole(Shoot shot) {
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
+        shot.getGame().removeObject(shot);
     }
 
     public static void collisionShootWithNebulosa(Shoot shot) {
@@ -193,11 +197,13 @@ public class KillerRules {
         pacman.setDy(shot.getDy());
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
+        shot.getGame().removeObject(shot);
     }
 
     public static void collisionShootWithPlaneta(KillerGame game, Shoot shot, Planeta planeta) {
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
+        shot.getGame().removeObject(shot);
     }
 
     public static void collisionShootWithPowerUp(KillerGame game, Shoot shot, PowerUp powerUp) {
@@ -205,11 +211,12 @@ public class KillerRules {
             powerUp.quitarVida(shot.getDamage());
             if (powerUp.getHealth() < 0) {
                 powerUp.unwrapper();
-                powerUp.setsetWrappered(false);
+                powerUp.setWrappered(false);
                 powerUp.setAvailable(true);
             }
             // Remove shot from the array
             shot.setState(Alive.State.DEAD);
+            shot.getGame().removeObject(shot);
         }
     }
 
@@ -221,7 +228,9 @@ public class KillerRules {
     public static void collisionShootWithShoot(KillerGame game, Shoot shoot, Shoot shooot) {
         // Remove shots from the array
         shoot.setState(Alive.State.DEAD);
+        shoot.getGame().removeObject(shoot);
         shooot.setState(Alive.State.DEAD);
+        shooot.getGame().removeObject(shooot);
     }
 
     /**
@@ -231,6 +240,7 @@ public class KillerRules {
     public static void collisionShootWithWall(Shoot shot) {
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
+        shot.getGame().removeObject(shot);
     }
 
     // ***************************************************************************************************** //
@@ -238,19 +248,20 @@ public class KillerRules {
     // ***************************************************************************************************** //
     static void collisionAsteroidWithAsteroid(KillerGame aThis, Asteroid asteroid, Asteroid geodude) {
         double[] damages = asteroid.getPhysicsAsteroid().collisionXAsteroid(geodude);
-        KillerRules.substractHealthAlive(asteroid, damages[0] * DAMAGE_BY_COLLISION);
-        KillerRules.substractHealthAlive(geodude, damages[1] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthAlive(asteroid, (int) damages[0] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthAlive(geodude, (int) damages[1] * DAMAGE_BY_COLLISION);
     }
 
     /**
-     * Por ahora no es utilizado. Ya que se usa collisionWithAlive().
-     * En caso de querer que esta colision haga algo diferente se debe tocar aqui.
+     * Por ahora no es utilizado. Ya que se usa collisionWithAlive(). En caso de
+     * querer que esta colision haga algo diferente se debe tocar aqui.
+     *
      * @author Alvaro
      * @param asteroid
      * @param ship
      */
     static void collisionAsteroidWithBlackHole(KillerGame game, Asteroid asteroid) {
-        KillerRules.collisionAliveWithBlackHole(game, alive);
+        KillerRules.collisionAliveWithBlackHole(game, (Alive) asteroid);
     }
 
     static void collisionAsteroidWithNebulosa(Asteroid asteroid) {
@@ -258,18 +269,19 @@ public class KillerRules {
     }
 
     static void collisionAsteroidWithPacman(KillerGame aThis, Asteroid asteroid, Pacman pacman) {
-        if (Asteroid.getImgHeight() < pacman.getImgHeight()) {
+        if (asteroid.getImgHeight() < pacman.getImgHeight()) {
             asteroid.changeState(Alive.State.DEAD);
-            pacman.setSize(ship.getHealth());
-        } else () {
+            asteroid.getGame().removeObject(asteroid);
+            pacman.setSize(asteroid.getHealth());
+        } else {
             pacman.setDx(asteroid.getDx());
             pacman.setDy(asteroid.getDy());
         }
     }
 
     static void collisionAsteroidWithPlaneta(Asteroid asteroid, Planeta planeta) {
-        double[] damages = asteroid.getPhysicsAsteorid().collisionXPlaneta(planeta);
-        KillerRules.substractHealthAlive(asteroid, damages[0] * DAMAGE_BY_COLLISION);
+        double[] damages = asteroid.getPhysicsAsteroid().collisionXPlanet(planeta);
+        KillerRules.substractHealthAlive(asteroid, (int) damages[0] * DAMAGE_BY_COLLISION);
     }
 
     static void collisionAsteroidWithPowerUp(KillerGame aThis, Asteroid asteroid, PowerUp powerUp) {
@@ -279,10 +291,10 @@ public class KillerRules {
     // ***************************************************************************************************** //
     // *************************** [          Collision Pacman           ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
-     * Por ahora no es utilizado. Ya que se usa collisionWithAlive().
-     * En caso de querer que esta colision haga algo diferente se debe tocar aqui.
+     * Por ahora no es utilizado. Ya que se usa collisionWithAlive(). En caso de
+     * querer que esta colision haga algo diferente se debe tocar aqui.
+     *
      * @author Alvaro
      * @param asteroid
      * @param ship
@@ -299,12 +311,16 @@ public class KillerRules {
         if (pacman.getHealth() > pacwoman.getHealth()) {
             pacman.setSize(pacwoman.getHealth());
             pacwoman.changeState(Alive.State.DEAD);
+            pacwoman.getGame().removeObject(pacwoman);
         } else if (pacman.getHealth() < pacwoman.getHealth()) {
             pacwoman.setSize(pacwoman.getHealth());
             pacman.changeState(Alive.State.DEAD);
+            pacman.getGame().removeObject(pacman);
         } else {
             pacman.changeState(Alive.State.DEAD);
+            pacman.getGame().removeObject(pacman);
             pacwoman.changeState(Alive.State.DEAD);
+            pacwoman.getGame().removeObject(pacwoman);
         }
     }
 
@@ -312,7 +328,7 @@ public class KillerRules {
         // Aplicar fisicas de rebote
     }
 
-    static void collisionPacmanWithPowerUp(KillerGame aThis, Pacman pacman, PowerUp powerUp) {
+    static void collisionPacmanWithPowerUp(KillerGame game, Pacman pacman, PowerUp powerUp) {
         // Remove Power up from the array
         game.removeObject(powerUp);
         // Increment Pacman Health on PACMAN_INCREMENT
@@ -322,17 +338,17 @@ public class KillerRules {
     // ***************************************************************************************************** //
     // *************************** [           Auxiliar Methods          ] ********************************* //
     // ***************************************************************************************************** //
-
     /**
      * @author Alvaro
      * @param game
      * @param alive
      */
     public static void sendAliveToPrev(KillerGame game, Alive alive) {
-        // Send alive to the prev module
-        game.sendObjectToPrev(alive);
         // Delete from the array
         alive.setState(Alive.State.DEAD);
+        game.removeObject(alive);
+        // Send alive to the prev module
+        game.sendObjectToPrev(alive);
     }
 
     /**
@@ -341,10 +357,11 @@ public class KillerRules {
      * @param alive
      */
     public static void sendAliveToNext(KillerGame game, Alive alive) {
-        // Send alive to the next module
-        game.sendObjectToNext(alive);
         // Delete from the array
         alive.setState(Alive.State.DEAD);
+        game.removeObject(alive);
+        // Send alive to the next module
+        game.sendObjectToNext(alive);
     }
 
     /**
@@ -363,6 +380,7 @@ public class KillerRules {
             // alive.changeState(Alive.State.DYING);
             // alive.onDying();
             alive.changeState(Alive.State.DEAD);
+            alive.getGame().removeObject(alive);
             dead = true;
         }
         // Return live status
@@ -375,11 +393,11 @@ public class KillerRules {
      * @param damage
      * @return True if Ship state becomes dead and False if it still alive.
      */
-    private static boolean substractHealthShip(KillerShip ship, int damage) {
+    private static boolean substractHealthShip(KillerGame game, KillerShip ship, int damage) {
         // Dead status
         boolean dead = false;
-        if (KillerRules.substractHealthAlive()) {
-            game.getNextModule().sendInfoMessageToPad("pad_dead", shoot.getId());
+        if (KillerRules.substractHealthAlive(ship, damage)) {
+            game.getNextModule().sendInfoMessageToPad("pad_dead", ship.getId());
             dead = true;
         }
         // Return live status

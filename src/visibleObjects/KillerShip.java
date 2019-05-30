@@ -168,7 +168,7 @@ public class KillerShip extends Controlled {
             }
         }
 
-        this.game.removeObject(this);
+        //this.game.removeShip(this);
     }
 
     /**
