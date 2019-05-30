@@ -37,7 +37,7 @@ public class KillerClient implements Runnable {
             } else {
                 this.sendStatusRequest();
             }
-            if(this.visualHandler.isRight()){
+            if (this.visualHandler.isRight()) {
                 this.checkSyncTimeOut(i);
             }
             try {

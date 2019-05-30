@@ -147,8 +147,8 @@ public class ObjectResponse {
         return damage;
     }
 
-    public Color getColor() {
-        return Color.decode(color);
+   public String getColor() {
+        return color;
     }
 
     public int getImgHeight() {

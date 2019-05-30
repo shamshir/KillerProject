@@ -48,9 +48,9 @@ public class KillerPad extends ReceptionHandler implements Runnable {
         }
         System.out.println("Killerpad -> PAD-Disconnected con id: " + this.id);
         if (this.getKillergame().getStatus() == KillerGame.Status.GAME) {
-                this.getKillergame().getNextModule().sendDecement();
+            this.getKillergame().getNextModule().sendDecement();
         }
-        this.getKillergame().removePad(this);        
+        this.getKillergame().removePad(this);
     }
 
     private void listeningMessages() {
@@ -61,7 +61,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
                 done = !this.processLine(this.readLine());
             } catch (Exception ex) {
                 System.out.println("KillerPad -> listeningMessages: " + ex.getMessage());
-                done = true;
+                done = true;                
             }
         }
         this.setSocket(null);
@@ -77,7 +77,6 @@ public class KillerPad extends ReceptionHandler implements Runnable {
         }
         if (STATUS_REQUEST.equalsIgnoreCase(line)) {
             this.sendLine(STATUS_REQUEST);
-            System.out.println("KillerPad -> OK");
         } else {
             this.processMessage(Message.readMessage(line));
         }
@@ -101,14 +100,22 @@ public class KillerPad extends ReceptionHandler implements Runnable {
             kg.getNextModule().sendMessage(message);
         }
     }
-    
+
     public void closeSocket() {
         try {
-                this.sendLine(DISCONNECTION_COMMAND);
-                this.disconnected=true;
-                this.getSocket().close();
+            this.sendLine(DISCONNECTION_COMMAND);
+            this.disconnected = true;
+            this.getSocket().close();
         } catch (Exception ex) {
             System.out.println("KillerPad -> ya cerrado");
+        }
+    }
+
+    @Override
+    public void sendMessage(final Message message) {
+        super.sendMessage(message);
+        if (message.getCommand().equalsIgnoreCase("pad_dead")) {
+            this.closeSocket();
         }
     }
 }

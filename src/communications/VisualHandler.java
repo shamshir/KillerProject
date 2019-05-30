@@ -1,6 +1,7 @@
 package communications;
 
 import game.KillerGame;
+import java.awt.Color;
 import java.net.Socket;
 import visibleObjects.Alive;
 
@@ -23,7 +24,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String START_GAME = "start";
     private static final String QUIT_GAME = "quit";
     private static final String PAD_COMMAND = "pad(.*)";
-    private static final String DAMAGE_COMMAND = "pad_damage";
+    private static final String HEALTH_COMMAND = "pad_health";
+    private static final String DEAD_COMMAND = "pad_dead";
+    private static final String KILL_COMMAND = "pad_kill";
     private static final String ACTION_COMMAND = "action";
     private static final String DECREMENT_PADS_NUM = "decrementPadsNum";
     private static final String WIN_COMMAND = "win";
@@ -239,7 +242,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
             this.getKillergame().setPadsNum(0);
-            this.sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
+            this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
                     .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
                     .build());
         } else {
@@ -250,7 +253,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private void processQuitGame(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
-            this.sendMessage(message);
+            this.getKillergame().getNextModule().sendMessage(message);
+            System.exit(0);
             //TODO this.getKillergame().quitGame();
         }
     }
@@ -268,8 +272,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         this.processInfoMessageToPad(Message.buildInfoMessageToPad(command, padIp));
     }
 
-    public void sendInfoDamageMessageToPad(final String padIp, final int damage) {
-        this.processInfoMessageToPad(Message.buildDamageMessageToPad(DAMAGE_COMMAND, padIp, damage));
+    public void sendInfoHealthMessageToPad(final String padIp, final int health) {
+        this.processInfoMessageToPad(Message.buildHealthMessageToPad(HEALTH_COMMAND, padIp, health));
     }
 
     private void processSyncRequest(final String senderId, final int quantity) {
@@ -319,7 +323,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getRx(), object.getRy(),
                 object.getId(), object.getUser(),
                 object.getType(), object.getHealth(),
-                object.getDamage(), object.getColor());
+                object.getDamage(), Color.decode(object.getColor()));
     }
 
     private void createShoot(ObjectResponse object) {
@@ -361,7 +365,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             this.getKillergame().decrementPadsNum();
         }
         if (!this.isMessageMine(message.getSenderId())) {
-            this.sendMessage(message);
+            this.getKillergame().getNextModule().sendMessage(message);
         }
     }
 
@@ -372,7 +376,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                     .withReceiverId(pad.getId())
                     .build());
         } else if (!this.isMessageMine(message.getSenderId())) {
-            this.sendMessage(message);
+            this.getKillergame().getNextModule().sendMessage(message);
         }
     }
 }
