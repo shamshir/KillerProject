@@ -195,27 +195,27 @@ public class KillerGame extends JFrame implements KeyListener {
 
         // Collision with Planeta
         if (object instanceof Planeta && ship.getState() == Alive.State.ALIVE) {
-            if (CollidePhysics.collisionTxC(ship, (Pacman) object )) {
+            if (CollidePhysics.collisionTxC(ship, (Planeta) object )) {
                 KillerRules.collisionShipWithPlaneta(this, ship, (Planeta) (object));
             }
         }
 
         // Collision with PowerUp
-        if (object instanceof PowerUp) {
+        if (object instanceof PowerUp && ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxC(ship, (PowerUp) object )) {
                 KillerRules.collisionShipWithPowerUp(this, ship, (PowerUp) (object));
             }
         }
 
         // Collision with Ship
-        if (object instanceof KillerShip && !ship.equals((KillerShip) object)) {
+        if (object instanceof KillerShip && !ship.equals((KillerShip) object )&& ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxT(ship, (KillerShip) object)) {
                 KillerRules.collisionShipWithShip(this, ship, (KillerShip) (object));
             }
         }
 
         // Collision with Shot
-        if (object instanceof Shoot) {
+        if (object instanceof Shoot && ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxC(ship, (Shoot) object )) {
                 KillerRules.collisionShipWithShoot(this, ship, (Shoot) (object));
             }
@@ -465,6 +465,8 @@ public class KillerGame extends JFrame implements KeyListener {
 
         // Add walls
         this.addWalls();
+        
+        this.addObjects();
 
         // Start threads
         this.startThreads();
