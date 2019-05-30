@@ -141,7 +141,7 @@ public class KillerGame extends JFrame {
         // Collision with Asteroid
         if (object instanceof Asteroid && ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxC(ship, (Asteroid) object )) {
-                KillerRules.collisionShipWithAsteroid(this, ship, (Asteroid) (object));
+                KillerRules.collisionShipWithAsteroid(ship, (Asteroid) (object));
             }
         }
 
@@ -162,14 +162,14 @@ public class KillerGame extends JFrame {
         // Collision with Pacman
         if (object instanceof Pacman && ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxC(ship, (Pacman) object )) {
-                KillerRules.collisionShipWithPacman(this, ship, (Pacman) (object));
+                KillerRules.collisionShipWithPacman(ship, (Pacman) (object));
             }
         }
 
         // Collision with Planeta
         if (object instanceof Planeta && ship.getState() == Alive.State.ALIVE) {
             if (CollidePhysics.collisionTxC(ship, (Pacman) object )) {
-                KillerRules.collisionShipWithPlaneta(this, ship, (Planeta) (object));
+                KillerRules.collisionShipWithPlaneta(ship, (Planeta) (object));
             }
         }
 
@@ -190,7 +190,7 @@ public class KillerGame extends JFrame {
         // Collision with Shot
         if (object instanceof Shoot) {
             if (CollidePhysics.collisionTxC(ship, (Shoot) object )) {
-                KillerRules.collisionShipWithShoot(ship, (Shoot) (object));
+                KillerRules.collisionShipWithShoot(this, ship, (Shoot) (object));
             }
         }
 
@@ -220,7 +220,7 @@ public class KillerGame extends JFrame {
         // Collision with BlackHole
         if (object instanceof BlackHole) {
             if (CollidePhysics.collisionCxC(shoot, (BlackHole) object )) {
-                KillerRules.collisionShootWithBlackHole(this, shoot, (BlackHole) (object));
+                KillerRules.collisionShootWithBlackHole(shoot);
             }
         }
 
@@ -269,7 +269,7 @@ public class KillerGame extends JFrame {
         // Collision with Wall
         if (object instanceof Wall) {
             if (CollidePhysics.collisionObjxWall(shoot, (Wall) object)) {
-                KillerRules.collisionShootWithWall(this, shoot, (Wall) (object));
+                KillerRules.collisionShootWithWall(shoot);
             }
         }
 
@@ -292,7 +292,7 @@ public class KillerGame extends JFrame {
         // Collision with BlackHole
         if (object instanceof BlackHole) {
             if (CollidePhysics.collisionCxC(asteroid, (BlackHole) object)) {
-                KillerRules.collisionAsteroidWithBlackHole(this, asteroid, (BlackHole) (object));
+                KillerRules.collisionAsteroidWithBlackHole(this, asteroid);
             }
         }
 
@@ -313,7 +313,7 @@ public class KillerGame extends JFrame {
         // Collision with Planeta
         if (object instanceof Planeta) {
             if (CollidePhysics.collisionCxC(asteroid, (Planeta) object)) {
-                KillerRules.collisionAsteroidWithPlaneta(asteroid);
+                KillerRules.collisionAsteroidWithPlaneta(asteroid, (Planeta) object);
             }
         }
 
@@ -364,7 +364,7 @@ public class KillerGame extends JFrame {
         // Collision with BlackHole
         if (object instanceof BlackHole) {
             if (CollidePhysics.collisionCxC(pacman, (BlackHole) object)) {
-                KillerRules.collisionPacmanWithBlackHole(pacman);
+                KillerRules.collisionPacmanWithBlackHole(this, pacman);
             }
         }
 
@@ -952,6 +952,16 @@ public class KillerGame extends JFrame {
         this.objects.remove(this.getShipByIP(pad.getId()));
         this.ships.remove(pad.getId());
     }
+    
+    /**
+     * @author Alvaro
+     * @param ship
+     */
+    public void removeShip(KillerShip ship) {
+        this.objects.remove(this.getShipByIP(pad.getId()));
+        this.ships.remove(pad.getId());
+        this.pads.get(ship.getId()).closeSockect();
+    }
 
     /**
      * @author Christian
@@ -968,10 +978,8 @@ public class KillerGame extends JFrame {
     // *************************** [             Main Activity           ] ********************************* //
     // ***************************************************************************************************** //
     public static void main(String[] args) {
-
         // New KillerGame
         KillerGame game = new KillerGame();
-
     }
 
 }
