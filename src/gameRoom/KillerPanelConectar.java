@@ -9,37 +9,49 @@ import game.KillerGame;
 import java.awt.Color;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import sound.KillerSound;
-
-
+import visibleObjects.KillerShip;
 
 /**
  *
  * @author Yeray
  */
 public class KillerPanelConectar extends javax.swing.JPanel {
+
     //Variables conexión
-     private String ipIzq;
-     private String ipDer;
-     private int portIzq;
-     private int portDer;
-     
-     //Variable Killer Game
+
+    private String ipIzq;
+    private String ipDer;
+    private int portIzq;
+    private int portDer;
+
+    //Variable Killer Game
     private KillerRoom kr;
     private KillerGame kg;
-     
-     
+        //getKillerShips()  para la lista
+
     /**
      * Creates new form NewJPanelConectar
      */
     public KillerPanelConectar(KillerRoom kr) {
         this.kr = kr;
         initComponents();
-        kg =kr.getKg();
+        kg = kr.getKg();
         setTextData();
+
     }
-    
-    public void setTextData(){
+
+    public void updateUsers(Hashtable<String, KillerShip> players) {
+        Enumeration<KillerShip> enumeration = players.elements();
+        System.out.println("Jugadores conectados:");
+        while (enumeration.hasMoreElements()) {
+            System.out.println(enumeration.nextElement().getUser());
+        }
+    }
+
+    public void setTextData() {
         try {
             jTextFieldIpIzq.setText(Inet4Address.getLocalHost().getHostAddress());
             jTextFieldIpDer.setText(Inet4Address.getLocalHost().getHostAddress());
@@ -47,34 +59,34 @@ public class KillerPanelConectar extends javax.swing.JPanel {
             jTextFieldPortDer.setText("8000");
         } catch (Exception e) {
         }
-        
+
     }
-    
-    public KillerPanelConectar getKillerPanelConectar(){
+
+    public KillerPanelConectar getKillerPanelConectar() {
         return this;
     }
-    
-    public void setFeedbackConnetionLeft2(Boolean aux){
-        if(aux == true){
-         jLabelConFeedackL.setForeground(Color.GREEN);
-         jLabelConFeedackL.setText("CONECTADO");
-         jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
-    }else{
-         jLabelConFeedackL.setForeground(Color.RED);
-         jLabelConFeedackL.setText("DESCONECTADO");
-         jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
+
+    public void setFeedbackConnetionLeft2(Boolean aux) {
+        if (aux == true) {
+            jLabelConFeedackL.setForeground(Color.GREEN);
+            jLabelConFeedackL.setText("CONECTADO");
+            jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
+        } else {
+            jLabelConFeedackL.setForeground(Color.RED);
+            jLabelConFeedackL.setText("DESCONECTADO");
+            jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
         }
     }
-    
-    public void setFeedbackConnetionRight2(Boolean aux){
-        if(aux == true){
-         jLabelConFeedackR.setForeground(Color.GREEN);
-         jLabelConFeedackR.setText("CONECTADO");
-         jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
-    }else{
-         jLabelConFeedackR.setForeground(Color.RED);
-         jLabelConFeedackR.setText("DESCONECTADO");
-         jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
+
+    public void setFeedbackConnetionRight2(Boolean aux) {
+        if (aux == true) {
+            jLabelConFeedackR.setForeground(Color.GREEN);
+            jLabelConFeedackR.setText("CONECTADO");
+            jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
+        } else {
+            jLabelConFeedackR.setForeground(Color.RED);
+            jLabelConFeedackR.setText("DESCONECTADO");
+            jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
         }
     }
 
@@ -239,7 +251,7 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         portIzq = Integer.parseInt(jTextFieldPortIzq.getText());
         kg.setPortPrev(portIzq);
         kg.setIpPrev(ipIzq);
-        
+
     }//GEN-LAST:event_jButtonConectarIzqActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

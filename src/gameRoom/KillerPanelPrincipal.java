@@ -6,6 +6,7 @@
 package gameRoom;
 
 import game.KillerGame;
+import static gameRoom.KillerCredits.frame;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,20 +20,21 @@ import sound.KillerSound;
  * @author Yeray
  */
 public class KillerPanelPrincipal extends javax.swing.JPanel {
+
     //Variable Killer Game
+
     private KillerRoom kr;
     static KillerGame kg;
     private KillerSound ks;
-    
+
     static boolean s = true;
-    
+
     int[] sequence = {38, 38, 40, 40, 37, 39, 37, 39, 66, 65};
     int currentButton = 0;
-    
-    //getKillerShips()  para la lista
-    
+
     /**
      * Creates new form KillerPanelPrincipal
+     *
      * @param kg
      */
     public KillerPanelPrincipal(KillerRoom kr) {
@@ -40,59 +42,58 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         kg = kr.getKg();
         initComponents();
         jButtonJugar.setEnabled(false);
-        
+    }
 
-    }
-    
-    public void setFeedbackConnetionLeft(Boolean aux){
-        if(aux == true){
-         jLabelConFeedackL.setForeground(Color.GREEN);
-         jLabelConFeedackL.setText("CONECTADO");
-         jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
-    }else{
-         jLabelConFeedackL.setForeground(Color.RED);
-         jLabelConFeedackL.setText("DESCONECTADO");
-         jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
+    public void setFeedbackConnetionLeft(Boolean aux) {
+        if (aux == true) {
+            jLabelConFeedackL.setForeground(Color.GREEN);
+            jLabelConFeedackL.setText("CONECTADO");
+            jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
+        } else {
+            jLabelConFeedackL.setForeground(Color.RED);
+            jLabelConFeedackL.setText("DESCONECTADO");
+            jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
         }
     }
-    
-    public void setFeedbackConnetionRight(Boolean aux){
-        if(aux == true){
-         jLabelConFeedackR.setForeground(Color.GREEN);
-         jLabelConFeedackR.setText("CONECTADO");
-         jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
-    }else{
-         jLabelConFeedackR.setForeground(Color.RED);
-         jLabelConFeedackR.setText("DESCONECTADO");
-         jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
+
+    public void setFeedbackConnetionRight(Boolean aux) {
+        if (aux == true) {
+            jLabelConFeedackR.setForeground(Color.GREEN);
+            jLabelConFeedackR.setText("CONECTADO");
+            jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
+        } else {
+            jLabelConFeedackR.setForeground(Color.RED);
+            jLabelConFeedackR.setText("DESCONECTADO");
+            jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
         }
     }
-    
-    public KillerPanelPrincipal getKillerPanelPrincipal(){
+
+    public KillerPanelPrincipal getKillerPanelPrincipal() {
         return this;
     }
-    
+
     public void checkEvent(int keyP) {
-    if (keyP == sequence[currentButton]) {
-        currentButton ++ ;
-    }else{
-        currentButton = 0;
+        if (keyP == sequence[currentButton]) {
+            currentButton++;
+        } else {
+            currentButton = 0;
+        }
+        if (currentButton == sequence.length) {
+            currentButton = 0;
+            System.out.println("CHEAT MODE ON");
+            KillerCode kc = new KillerCode();
+            kc.setVisible(true);
+        }
     }
-    if(currentButton == sequence.length) {
-        currentButton = 0;
-        System.out.println("CHEAT MODE ON");
-    }
-}
-    
-    public void setButtonPlay(Boolean aux){
+
+    public void setButtonPlay(Boolean aux) {
         jButtonJugar.setEnabled(aux);
     }
-    
-    public static void menuRadio(){
+
+    public static void menuRadio() {
         if (s == true) {
-          kg.changeMusic(KillerRadio.ClipType.MENU);  
+            kg.changeMusic(KillerRadio.ClipType.MENU);
         }
-        
     }
 
     /**
@@ -254,22 +255,22 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     private void jLabelCopyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCopyMouseClicked
         // CREDITOS KILLER GAME
         kg.startSound(KillerSound.ClipType.PC_CLICK);
-        if(s == true){
-           kg.changeMusic(KillerRadio.ClipType.ENDING); 
+        if (s == true) {
+            kg.changeMusic(KillerRadio.ClipType.ENDING);
         }
-        
-        String[]args = null;
+
+        String[] args = null;
         KillerCredits.main(args);
     }//GEN-LAST:event_jLabelCopyMouseClicked
 
     private void jLabelSoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelSoundMouseClicked
         // CAMBIAR ESTADO DE SONIDO DEL MENU
         kg.startSound(KillerSound.ClipType.PC_CLICK);
-        if(s == true){
+        if (s == true) {
             jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/noSound.png")));
             s = false;
             kg.stopMusic();
-        }else{
+        } else {
             jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sound.png")));
             s = true;
             kg.changeMusic(KillerRadio.ClipType.MENU);
@@ -279,7 +280,8 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     private void jButtonJugarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonJugarMouseClicked
         // Shhhhh...
         if (evt.getClickCount() == 50) {
-        JOptionPane.showMessageDialog(this,"¿Crees que te vamos a dar un logro por esto?","Pesado",JOptionPane.WARNING_MESSAGE);       
+            kg.startSound(KillerSound.ClipType.SECRET);
+            JOptionPane.showMessageDialog(this, "¿Crees que te vamos a dar un logro por esto?", "Esto no es un logro", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jButtonJugarMouseClicked
 

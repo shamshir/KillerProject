@@ -6,7 +6,9 @@
 package gameRoom;
 
 import game.KillerGame;
+import java.util.Hashtable;
 import sound.KillerRadio;
+import visibleObjects.KillerShip;
 
 /**
  *
@@ -27,6 +29,10 @@ public class KillerRoom extends javax.swing.JFrame {
         kpa = new KillerPanelAjustes(this);
         kpc = new KillerPanelConectar(this);
         initConf();
+    }
+    
+    public void updateUsers(Hashtable<String, KillerShip> players){
+        kpc.updateUsers(players);
     }
     
     public void initConf(){
@@ -59,7 +65,7 @@ public class KillerRoom extends javax.swing.JFrame {
     
     public void setKillerPanelPrincipal() {
         this.setContentPane(kpp);
-
+        KillerPanelPrincipal.jTextFieldSecret.requestFocus();
     }
 
     public void setKillerPanelConectar() {
