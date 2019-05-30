@@ -220,7 +220,7 @@ public class KillerGame extends JFrame {
         // Collision with BlackHole
         if (object instanceof BlackHole) {
             if (CollidePhysics.collisionCxC(shoot, (BlackHole) object )) {
-                KillerRules.collisionShootWithBlackHole(this, shoot, (BlackHole) (object));
+                KillerRules.collisionShootWithBlackHole(shoot);
             }
         }
 
@@ -269,7 +269,7 @@ public class KillerGame extends JFrame {
         // Collision with Wall
         if (object instanceof Wall) {
             if (CollidePhysics.collisionObjxWall(shoot, (Wall) object)) {
-                KillerRules.collisionShootWithWall(this, shoot, (Wall) (object));
+                KillerRules.collisionShootWithWall(shoot);
             }
         }
 
@@ -292,7 +292,7 @@ public class KillerGame extends JFrame {
         // Collision with BlackHole
         if (object instanceof BlackHole) {
             if (CollidePhysics.collisionCxC(asteroid, (BlackHole) object)) {
-                KillerRules.collisionAsteroidWithBlackHole(this, asteroid, (BlackHole) (object));
+                KillerRules.collisionAsteroidWithBlackHole(this, asteroid);
             }
         }
 
@@ -313,7 +313,7 @@ public class KillerGame extends JFrame {
         // Collision with Planeta
         if (object instanceof Planeta) {
             if (CollidePhysics.collisionCxC(asteroid, (Planeta) object)) {
-                KillerRules.collisionAsteroidWithPlaneta(asteroid);
+                KillerRules.collisionAsteroidWithPlaneta(asteroid, (Planeta) object);
             }
         }
 
@@ -364,7 +364,7 @@ public class KillerGame extends JFrame {
         // Collision with BlackHole
         if (object instanceof BlackHole) {
             if (CollidePhysics.collisionCxC(pacman, (BlackHole) object)) {
-                KillerRules.collisionPacmanWithBlackHole(pacman);
+                KillerRules.collisionPacmanWithBlackHole(this, pacman);
             }
         }
 

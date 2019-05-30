@@ -33,6 +33,22 @@ public class KillerRules {
     // ***************************************************************************************************** //
 
     /**
+     * @author Alvaro
+     * @param game
+     * @param alive
+     * @param wall
+     */
+    static void collisionAliveWithBlackHole(KillerGame game, Alive alive) {
+        if (Math.random() < 0.5) {
+            game.sendObjectToPrev(alive);
+            alive.setState(Alive.State.DEAD);
+        } else {
+            game.sendObjectToNext(alive);
+            alive.setState(Alive.State.DEAD);
+        }
+    }
+
+    /**
      * @author Christian
      * @param game
      * @param alive
@@ -86,19 +102,15 @@ public class KillerRules {
     }
 
     /**
+     * Por ahora no es utilizado. Ya que se usa collisionWithAlive().
+     * En caso de querer que esta colision haga algo diferente se debe tocar aqui.
      * @author Alvaro
      * @param game
      * @param ship
      */
     public static void collisionShipWithBlackHole(KillerGame game, KillerShip ship) {
 
-        if (Math.random() < 0.5) {
-            game.sendObjectToPrev(ship);
-            ship.setState(Alive.State.DEAD);
-        } else {
-            game.sendObjectToNext(ship);
-            ship.setState(Alive.State.DEAD);
-        }
+        KillerRules.collisionAliveWithBlackHole(game, ship);
 
     }
 
@@ -128,7 +140,7 @@ public class KillerRules {
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
 
         ship.changeState(Alive.State.DEAD);
-        pacman.setSize(KillerRules.PACMAN_INCREMENT);
+        pacman.setSize(ship.getHealth());
 
     }
 
@@ -142,7 +154,9 @@ public class KillerRules {
     public static void collisionShipWithPowerUp(KillerGame game, KillerShip ship, PowerUp powerUp) {
 
         if (!powerUp.isWrappered()) {
+
             game.removeObject(powerUp);
+            powerUp.setAvailable(false);
 
             if (powerUp.getType() == PowerUp.Power.DAMAGE) {
                 // Enviar al mando que la nave tiene el power up
@@ -174,7 +188,7 @@ public class KillerRules {
 
         if (KillerRules.substractHealthShip(ship, shoot.getDamage())) {
 
-            game.getPadByIp(shoot.getId());
+            game.getPadByIP(shoot.getId()).sendInfoMessageToPad();
 
         }
 
@@ -197,7 +211,11 @@ public class KillerRules {
 
     }
 
-    public static void collisionShootWithBlackHole(KillerGame game, Shoot shot, BlackHole blackhole) {
+    /**
+     * @author Christian
+     * @param shot
+     */
+    public static void collisionShootWithBlackHole(Shoot shot) {
 
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
@@ -207,13 +225,15 @@ public class KillerRules {
     public static void collisionShootWithNebulosa(Shoot shot) {
 
         // Por ahora no pasa nada, aunque se podria implementar que los disparos fuesen mas lento igual que las naves
+
     }
 
     public static void collisionShootWithPacman(KillerGame game, Shoot shot, Pacman pacman) {
 
-        // Restar vida al pacman en PACMAN_DECREMENT
-        // Hacer pacman mas pequeño / Si maria implementa que la vida y el tamaño son el mismo atributo solo restar vida
-        // Hacer que el pacman cambie de direccion
+        KillerRules.substractHealthAlive(pacman, shot.getDamage());
+        pacman.setDx(shot.getDx());
+        pacman.setDy(shot.getDy());
+
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
 
@@ -228,21 +248,21 @@ public class KillerRules {
 
     public static void collisionShootWithPowerUp(KillerGame game, Shoot shot, PowerUp powerUp) {
 
-        // Se comprueba si el powerup tiene envoltorio
-        // True
-        // Restar vida al envoltorio del powerup
-        // Remove shot from the array
-        shot.setState(Alive.State.DEAD);
+        if (powerUp.isWrappered()) {
 
-        // False
+            powerUp.quitarVida(shot.getDamage());
+            if (powerUp.getHealth() < 0) {
+                powerUp.unwrapper();
+                powerUp.setsetWrappered(false);
+                powerUp.setAvailable(true);
+            }
+
+            // Remove shot from the array
+            shot.setState(Alive.State.DEAD);
+
+        }
+
     }
-
-    public static void collisionShootWithWall(KillerGame game, Shoot shot, Wall wall) {
-        // Remove shot from the array
-        shot.setState(Alive.State.DEAD);
-    }
-
-    // crear aqui un shot with wall y pegar lo mismo que en alive with wall pero sin enviar, solo matando
 
     /**
      * @author Christian
@@ -255,78 +275,121 @@ public class KillerRules {
         shooot.setState(Alive.State.DEAD);
     }
 
+    /**
+     * @author Christian
+     * @param shoot
+     */
+    public static void collisionShootWithWall(Shoot shot) {
+        // Remove shot from the array
+        shot.setState(Alive.State.DEAD);
+    }
+
     // ***************************************************************************************************** //
     // *************************** [          Collision Asteroid         ] ********************************* //
     // ***************************************************************************************************** //
-    static void collisionAsteroidWithAsteroid(KillerGame aThis, Asteroid asteroid, Asteroid asteroid0) {
+    static void collisionAsteroidWithAsteroid(KillerGame aThis, Asteroid asteroid, Asteroid geodude) {
 
-        // Quitar vida a los asteroides / Posible metodo substract health to alive de killer rules
-        // Aplicar metodo de Physics para el rebote
+        double[] damages = asteroid.getPhysicsAsteroid().collisionXAsteroid(geodude);
+        KillerRules.substractHealthAlive(asteroid, damages[0] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthAlive(geodude, damages[1] * DAMAGE_BY_COLLISION);
+
     }
 
-    static void collisionAsteroidWithBlackHole(KillerGame aThis, Asteroid asteroid, BlackHole blackHole) {
+    /**
+     * Por ahora no es utilizado. Ya que se usa collisionWithAlive().
+     * En caso de querer que esta colision haga algo diferente se debe tocar aqui.
+     * @author Alvaro
+     * @param asteroid
+     * @param ship
+     */
+    static void collisionAsteroidWithBlackHole(KillerGame game, Asteroid asteroid) {
 
-        // Por ahora nada
+        KillerRules.collisionAliveWithBlackHole(game, alive);
+
     }
 
     static void collisionAsteroidWithNebulosa(Asteroid asteroid) {
 
         // Por ahora nada
+
     }
 
     static void collisionAsteroidWithPacman(KillerGame aThis, Asteroid asteroid, Pacman pacman) {
 
         // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
         // Aplicar metodo de Physics para el rebote
+
+        // O
+
+        asteroid.changeState(Alive.State.DEAD);
+        pacman.setSize(ship.getHealth());
+
     }
 
-    static void collisionAsteroidWithPlaneta(Asteroid asteroid) {
+    static void collisionAsteroidWithPlaneta(Asteroid asteroid, Planeta planeta) {
 
-        // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
-        // Aplicar metodo de Physics para el rebote
+        double[] damages = asteroid.getPhysicsAsteorid().collisionXPlaneta(planeta);
+        KillerRules.substractHealthAlive(asteroid, damages[0] * DAMAGE_BY_COLLISION);
+
     }
 
     static void collisionAsteroidWithPowerUp(KillerGame aThis, Asteroid asteroid, PowerUp powerUp) {
 
         // Por ahora nada
+
     }
 
     // ***************************************************************************************************** //
     // *************************** [          Collision Pacman           ] ********************************* //
     // ***************************************************************************************************** //
-    static void collisionPacmanWithBlackHole(Pacman pacman) {
 
-        // Math random de -1 a 1
-        // Si da < 0 hacer un game.sendobjecttoprev con el pacman
-        // Si da >= 0 hacer un game.sendobjecttonext con el pacman
+    /**
+     * Por ahora no es utilizado. Ya que se usa collisionWithAlive().
+     * En caso de querer que esta colision haga algo diferente se debe tocar aqui.
+     * @author Alvaro
+     * @param asteroid
+     * @param ship
+     */
+    static void collisionPacmanWithBlackHole(KillerGame game, Pacman pacman) {
+
+        KillerRules.collisionAliveWithBlackHole(game, pacman);
+
     }
 
     static void collisionPacmanWithNebulosa(Pacman pacman) {
 
         // Por ahora nada
+
     }
 
     static void collisionPacmanWithPacman(KillerGame aThis, Pacman pacman, Pacman pacwoman) {
 
-        // Si pacman.health > pacwomen.health
-        // Elimnar a pacwoman
-        // Sumar a pacman la vida de pacwoman
-        // Si pacwoman.health > pacman.health
-        // Elimnar a pacman
-        // Sumar a pacwoman la vida de pacman
-        // Si pacman.health == pacwoman.health
-        // Eliminar ambos
+        if (pacman.getHealth() > pacwoman.getHealth()) {
+            pacman.setSize(pacwoman.getHealth());
+            pacwoman.changeState(Alive.State.DEAD);
+        } else if (pacman.getHealth() < pacwoman.getHealth()) {
+            pacwoman.setSize(pacwoman.getHealth());
+            pacman.changeState(Alive.State.DEAD);
+        } else {
+            pacman.changeState(Alive.State.DEAD);
+            pacwoman.changeState(Alive.State.DEAD);
+        }
+
     }
 
     static void collisionPacmanWithPlaneta(Pacman pacman) {
 
         // Aplicar fisicas de rebote
+
     }
 
     static void collisionPacmanWithPowerUp(KillerGame aThis, Pacman pacman, PowerUp powerUp) {
 
         // Eliminar powerup de la array
-        // Aumentar la vida de pacman en PACMAN_INCREMENT x 3
+        game.removeObject(powerUp);
+        // Aumentar la vida de pacman en PACMAN_INCREMENT
+        pacman.setHealth(KillerRules.PACMAN_INCREMENT);
+
     }
 
     // ***************************************************************************************************** //
@@ -351,7 +414,7 @@ public class KillerRules {
         // Set die status to KillerShip
         if (ship.getHealth() <= 0) {
             ship.changeState(Alive.State.DEAD);
-            // Enviar al mando que la nave ha muerto
+            ship.getGame().getPadByIP(ship.getId()).sendDamageMessageToPad();
             dead = true;
         }
 
