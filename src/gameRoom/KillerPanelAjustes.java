@@ -6,6 +6,7 @@
 package gameRoom;
 
 import game.KillerGame;
+import sound.KillerSound;
 
 
 
@@ -78,6 +79,7 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
 

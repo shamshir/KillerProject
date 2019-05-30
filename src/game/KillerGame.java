@@ -10,6 +10,7 @@ import sound.*;
 // Other imports
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
 import java.net.Socket;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -89,6 +90,11 @@ public class KillerGame extends JFrame {
         // Show room
         this.newRoom();
 
+    }
+    
+     
+    public void keyPressed(KeyEvent e) {
+       
     }
 
     // ***************************************************************************************************** //
