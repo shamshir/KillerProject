@@ -36,7 +36,8 @@ public class KillerSound implements Runnable {
         WASTED_DIE,
         SOUL_DIE,
         TELEPORT,
-        POWER_UP
+        POWER_UP,
+        SECRET
     }
 
     private Hashtable<ClipType, String> clipNames = new Hashtable<ClipType, String>();
@@ -56,7 +57,7 @@ public class KillerSound implements Runnable {
         clipNames.put(ClipType.SOUL_DIE, "you_die.wav");
         clipNames.put(ClipType.TELEPORT, "teleport.wav");
         clipNames.put(ClipType.POWER_UP, "power_up.wav");
-
+        clipNames.put(ClipType.SECRET, "secretSound.wav");
     }
 
     public Clip createSound(KillerSound.ClipType clipType) {
