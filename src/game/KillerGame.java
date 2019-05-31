@@ -41,6 +41,8 @@ public class KillerGame extends JFrame {
     private boolean soundEffects = true;
     private boolean pacmanActive = true;
     public static boolean exit = false;
+    public static final int VIEWER_WIDTH = 1920;
+    public static final int VIEWER_HEIGHT = 1080;
 
     // Object list
     private ArrayList<VisibleObject> objects = new ArrayList<>();
@@ -509,7 +511,7 @@ public class KillerGame extends JFrame {
      */
     public void addObjects() {
 
-        /*/ Añadir Objetos de Prueba
+        /*/ A�adir Objetos de Prueba
         this.objects.add(new Planeta(this, 300, 400, 100, 100));
         this.objects.add(new Nebulosa(this, 400, 150, 120, 90));
         this.objects.add(new BlackHole(this, 350, 500, 80, 80));
@@ -519,8 +521,6 @@ public class KillerGame extends JFrame {
         Pacman p = new Pacman(this, 100, 450);
         this.objects.add(p);
         /*/
-        
-        this.objects.add(new Nebulosa(this, 400, 400, 500, 500));
         
     }
 
@@ -554,7 +554,7 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void sendObjectToPrev(Alive object) {
-        System.out.println("Envio");
+        System.out.println("ENVIO " + object);
         this.prevModule.sendObject(object);
     }
 
@@ -562,6 +562,7 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void sendObjectToNext(Alive object) {
+        System.out.println("ENVIO " + object);
         this.nextModule.sendObject(object);
     }
 
@@ -594,12 +595,12 @@ public class KillerGame extends JFrame {
      */
     private void showWindow() {
         // this.setSize(1120, 630);
-        this.setSize(1500, 800);
+        this.setSize(KillerGame.VIEWER_WIDTH, KillerGame.VIEWER_HEIGHT);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new GridLayout());
         this.setResizable(false);
-        //this.setUndecorated(true);
+        this.setUndecorated(true);
         this.setVisible(true);
     }
 
@@ -707,7 +708,7 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void newShip(String ip, Color color, String user, KillerShip.ShipType type) {
-        KillerShip ship = new KillerShip(this, 150, 150, ip, user, type, color);
+        KillerShip ship = new KillerShip(this, KillerGame.VIEWER_WIDTH / 2, KillerGame.VIEWER_HEIGHT / 2, ip, user, type, color);
         this.ships.put(ip, ship);
         this.objects.add(ship);
     }
@@ -781,14 +782,15 @@ public class KillerGame extends JFrame {
      * @param health
      */
     public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage, Color color) {
-        System.out.println("Recibo");
+        
         KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage, color);
         int correctX = 1;
         if (dx < 0) {
             correctX = this.viewer.getWidth() - ship.getImgWidth() - 1;
         }
+        System.out.println("RECIBO " + ship);
         ship.setX(correctX);
-        this.ships.remove(ship.getId());
+        //this.removeShip(this.getShipByIP(ship.getId()));
         this.ships.put(ip, ship);
         this.objects.add(ship);
         new Thread(ship).start();
@@ -833,6 +835,7 @@ public class KillerGame extends JFrame {
         if (vx < 0) {
             correctX = this.viewer.getWidth() - asteroid.getImgWidth() - 1;
         }
+        asteroid.setX(correctX);
         this.objects.add(asteroid);
         new Thread(asteroid).start();
     }
@@ -854,6 +857,7 @@ public class KillerGame extends JFrame {
         if (vx < 0) {
             correctX = this.viewer.getWidth() - pacman.getImgWidth() - 1;
         }
+        pacman.setX(correctX);
         this.objects.add(pacman);
         new Thread(pacman).start();
     }
@@ -1047,11 +1051,12 @@ public class KillerGame extends JFrame {
      * @param ship
      */
     public void removeShip(KillerShip ship) {
-        this.objects.remove(this.getShipByIP(ship.getId()));
+        this.objects.remove(ship);
         if (this.getShipByIP(ship.getId()).equals(ship)) {
+            System.out.println("BORRO " + ship);
             this.ships.remove(ship.getId());
         }
-        //this.pads.get(ship.getId()).closeSocket();
+        
     }
 
     /**
@@ -1061,7 +1066,7 @@ public class KillerGame extends JFrame {
     public void removeObject(VisibleObject object) {
         this.objects.remove(object);
         if (object instanceof KillerShip) {
-            this.ships.remove(((KillerShip) object).getId());
+            this.removeShip((KillerShip) object);
         }
     }
 
@@ -1090,5 +1095,5 @@ public class KillerGame extends JFrame {
         }
 
     }
-
+    
 }
