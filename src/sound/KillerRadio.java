@@ -20,9 +20,7 @@ public class KillerRadio implements Runnable {
         BATTLE, 
         MENU, 
         ENDING,
-        PACMAN_DIE, 
-        PACMAN_MOVE, 
-        PACMAN_EAT
+        PACMAN_MOVE
     }
     private Hashtable<ClipType, String> clipNames = new Hashtable<ClipType, String>();
 
@@ -30,9 +28,7 @@ public class KillerRadio implements Runnable {
         clipNames.put(ClipType.BATTLE, "battle.wav");
         clipNames.put(ClipType.MENU, "menu.wav");
         clipNames.put(ClipType.ENDING, "ending.wav");
-        clipNames.put(ClipType.PACMAN_DIE, "pacman_die.wav");
         clipNames.put(ClipType.PACMAN_MOVE, "pacman_move.wav");
-        clipNames.put(ClipType.PACMAN_EAT, "pacman_eat.wav");
     }
 
     public void setClip(ClipType ct) {
