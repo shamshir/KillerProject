@@ -32,7 +32,7 @@ public class ObjectResponse {
     private String user;
     private int health;
     private int damage;
-    //private String color;
+    private String color;
     private int imgHeight;
 
     private static final String EMPTY_STRING = "";
@@ -147,8 +147,8 @@ public class ObjectResponse {
         return damage;
     }
 
-   public Color getColor() {
-        return Color.BLACK;
+   public String getColor() {
+        return color;
     }
 
     public int getImgHeight() {

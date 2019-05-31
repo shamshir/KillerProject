@@ -15,7 +15,7 @@ public class Message {
     private KillerAction action;
     private ObjectResponse objectResponse;
     private ConnectionResponse connectionResponse;
-    private int damage;
+    private int health;
     private int serversQuantity;
     private String configRoom;
 
@@ -32,7 +32,7 @@ public class Message {
         this.action = builder.action;
         this.objectResponse = builder.objectResponse;
         this.connectionResponse = builder.connectionResponse;
-        this.damage = builder.damage;
+        this.health = builder.health;
         this.serversQuantity = builder.serversQuantity;
         this.configRoom = builder.configRoom;
     }
@@ -65,8 +65,8 @@ public class Message {
         return relay;
     }
 
-    public int getDamage() {
-        return damage;
+    public int getHealth() {
+        return health;
     }
 
     public String getConfigRoom() {
@@ -108,10 +108,10 @@ public class Message {
                 .build();
     }
     
-    public static Message buildDamageMessageToPad(final String command, final String padIp, final int damage){
+    public static Message buildHealthMessageToPad(final String command, final String padIp, final int health){
         return Message.Builder.builder(command, KillerServer.getId())
                 .withReceiverId(padIp)
-                .withDamage(damage)
+                .withHealth(health)
                 .build();
     }
 
@@ -124,7 +124,7 @@ public class Message {
         private KillerAction action;
         private ObjectResponse objectResponse;
         private ConnectionResponse connectionResponse;
-        private int damage;
+        private int health;
         private int serversQuantity;
         private String configRoom;
 
@@ -162,8 +162,8 @@ public class Message {
             return this;
         }
 
-        public Builder withDamage(final int damage) {
-            this.damage = damage;
+        public Builder withHealth(final int health) {
+            this.health = health;
             return this;
         }
 
