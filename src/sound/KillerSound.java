@@ -59,7 +59,7 @@ public class KillerSound implements Runnable {
         clipNames.put(ClipType.TELEPORT, "teleport.wav");
         clipNames.put(ClipType.POWER_UP, "power_up.wav");
         clipNames.put(ClipType.SECRET, "secretSound.wav");
-        clipNames.put(ClipType.SECRET, "hitMarker.wav");
+        clipNames.put(ClipType.COLLISION, "hitMarker.wav");
     }
 
     public Clip createSound(KillerSound.ClipType clipType) {
