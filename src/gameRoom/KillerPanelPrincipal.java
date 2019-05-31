@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gameRoom;
 
 import game.KillerGame;
@@ -21,14 +16,17 @@ import sound.KillerSound;
  */
 public class KillerPanelPrincipal extends javax.swing.JPanel {
 
-    //Variable Killer Game
-
+    //Variables Killer
     private KillerRoom kr;
     static KillerGame kg;
     private KillerSound ks;
 
+    //Variables booleanas que controlan el sonido, música y aparición de Pacman
     static boolean s = true;
+    private boolean m = true;
+    private boolean p = true;
 
+    //Variables para controlar eventos
     int[] sequence = {38, 38, 40, 40, 37, 39, 37, 39, 66, 65};
     int currentButton = 0;
 
@@ -44,6 +42,11 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         jButtonJugar.setEnabled(false);
     }
 
+    /**
+     * Cambia el texto e imagen que dice si esta conectado ese lado 
+     * izquierdo de la pantalla
+     * @param aux 
+     */
     public void setFeedbackConnetionLeft(Boolean aux) {
         if (aux == true) {
             jLabelConFeedackL.setForeground(Color.GREEN);
@@ -56,6 +59,11 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Cambia el texto e imagen que dice si esta conectado ese lado
+     * derecho de la pantalla
+     * @param aux 
+     */
     public void setFeedbackConnetionRight(Boolean aux) {
         if (aux == true) {
             jLabelConFeedackR.setForeground(Color.GREEN);
@@ -68,10 +76,12 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         }
     }
 
-    public KillerPanelPrincipal getKillerPanelPrincipal() {
-        return this;
-    }
-
+    /**
+     * Recibe el código del boton pulsado y con un enumerado y un contador
+     * compara los datos recibidos y si llegan los códigos correctos en 
+     * orden correcto crea un objeto KillerCode
+     * @param keyP 
+     */
     public void checkEvent(int keyP) {
         if (keyP == sequence[currentButton]) {
             currentButton++;
@@ -86,16 +96,33 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Recibe una booleana y settea el botón jugar en función de esta
+     * @param aux 
+     */
     public void setButtonPlay(Boolean aux) {
         jButtonJugar.setEnabled(aux);
     }
 
+    /**
+     * Método preparado para que al cerrar o volver de los créditos
+     * vuelva a sonar la música del menú. Pero si el jugador seleccionó
+     * que no quiere música esta no vuelve a sonar
+     */
     public static void menuRadio() {
         if (s == true) {
             kg.changeMusic(KillerRadio.ClipType.MENU);
         }
     }
-
+    
+    /**
+     * Getter de la clase
+     * @return 
+     */
+    public KillerPanelPrincipal getKillerPanelPrincipal() {
+        return this;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -114,6 +141,8 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         jLabelConFeedackL = new javax.swing.JLabel();
         jLabelConFeedackR = new javax.swing.JLabel();
         jLabelSound = new javax.swing.JLabel();
+        jLabelMusic = new javax.swing.JLabel();
+        jLabelPacman = new javax.swing.JLabel();
         jLabelFondo = new javax.swing.JLabel();
         jTextFieldSecret = new javax.swing.JTextField();
 
@@ -216,6 +245,22 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         });
         add(jLabelSound, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 490, -1, -1));
 
+        jLabelMusic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/musicTrue.png"))); // NOI18N
+        jLabelMusic.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelMusicMouseClicked(evt);
+            }
+        });
+        add(jLabelMusic, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 490, -1, -1));
+
+        jLabelPacman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/pacman.png"))); // NOI18N
+        jLabelPacman.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelPacmanMouseClicked(evt);
+            }
+        });
+        add(jLabelPacman, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 490, -1, -1));
+
         jLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/stars.gif"))); // NOI18N
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
@@ -228,55 +273,89 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         add(jTextFieldSecret, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 20, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Evento de botón salir.
+     * Cierra el programa
+     * @param evt 
+     */
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
         // SALIR
         kg.startSound(KillerSound.ClipType.PC_CLICK);
         System.exit(0);
     }//GEN-LAST:event_jButtonSalirActionPerformed
 
+    /**
+     * Evento del botón ajustes.
+     * Desaparecera en breve
+     * @param evt 
+     */
     private void jButtonAjustesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjustesActionPerformed
         // AJUSTES
         kg.startSound(KillerSound.ClipType.PC_CLICK);
-        kr.setKillerPanelAjustes();
+        kr.setKillerPanelWinner();
     }//GEN-LAST:event_jButtonAjustesActionPerformed
 
+    /**
+     * Evento del botón conectar
+     * Pone en la ventana el KillerPanelConectar
+     * @param evt 
+     */
     private void jButtonConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarActionPerformed
         // CONECTAR
         kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelConectar();
     }//GEN-LAST:event_jButtonConectarActionPerformed
 
+    /**
+     * Evento del botón Jugar
+     * Llama al método sendStart() de la clase KillerGame
+     * @param evt 
+     */
     private void jButtonJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonJugarActionPerformed
         // JUGAR
         kg.startSound(KillerSound.ClipType.PC_CLICK);
         kg.sendStart();
     }//GEN-LAST:event_jButtonJugarActionPerformed
 
+    /**
+     * Evento del jLabel Copyright
+     * Al pulsarlo muestra los créditos
+     * @param evt 
+     */
     private void jLabelCopyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCopyMouseClicked
         // CREDITOS KILLER GAME
         kg.startSound(KillerSound.ClipType.PC_CLICK);
         if (s == true) {
             kg.changeMusic(KillerRadio.ClipType.ENDING);
         }
-
         String[] args = null;
         KillerCredits.main(args);
     }//GEN-LAST:event_jLabelCopyMouseClicked
 
+    /**
+     * Evento del icono de sonidos
+     * Cambia el estado de la booleana dedicada a los sonidos
+     * @param evt 
+     */
     private void jLabelSoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelSoundMouseClicked
-        // CAMBIAR ESTADO DE SONIDO DEL MENU
+        // CAMBIAR ESTADO DE SONIDOS DEL JUEGO
         kg.startSound(KillerSound.ClipType.PC_CLICK);
         if (s == true) {
             jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/noSound.png")));
             s = false;
-            kg.stopMusic();
+            kg.setSoundEffects(false);
         } else {
             jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sound.png")));
             s = true;
-            kg.changeMusic(KillerRadio.ClipType.MENU);
+            kg.setSoundEffects(true);
         }
     }//GEN-LAST:event_jLabelSoundMouseClicked
 
+    /**
+     * Evento de botón jugar
+     * Easter Egg
+     * @param evt 
+     */
     private void jButtonJugarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonJugarMouseClicked
         // Shhhhh...
         if (evt.getClickCount() == 50) {
@@ -285,10 +364,55 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButtonJugarMouseClicked
 
+    /**
+     * Evento de jTextField
+     * Easter Egg
+     * @param evt 
+     */
     private void jTextFieldSecretKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSecretKeyPressed
         // TODO add your handling code here:
         checkEvent(evt.getKeyCode());
     }//GEN-LAST:event_jTextFieldSecretKeyPressed
+
+    /**
+     * Evento del icono de sonidos
+     * Cambia el estado de la booleana dedicada a la música del juego
+     * @param evt 
+     */
+    private void jLabelMusicMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelMusicMouseClicked
+        // CAMBIAR ESTADO DE MUSICA DEL MENU Y PARTIDA
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
+        if (m == true) {
+            jLabelMusic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/musicFalse.png")));
+            m = false;
+            kg.stopMusic();
+            kg.setSoundMusic(false);
+        } else {
+            jLabelMusic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/musicTrue.png")));
+            m = true;
+            kg.changeMusic(KillerRadio.ClipType.MENU);
+            kg.setSoundMusic(true);
+        }
+    }//GEN-LAST:event_jLabelMusicMouseClicked
+
+    /**
+     * Evento del icono de sonidos
+     * Cambia el estado de la booleana dedicada a la aparición de Pacman
+     * @param evt 
+     */
+    private void jLabelPacmanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelPacmanMouseClicked
+        // ACTIVAR Y DESACTIVAR PACMAN
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
+        if (p == true) {
+            jLabelPacman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/pacmanR.png")));
+            p = false;
+            kg.setPacmanExistence(false);
+        } else {
+            jLabelPacman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/pacman.png")));
+            p = true;
+            kg.setPacmanExistence(true);
+        }
+    }//GEN-LAST:event_jLabelPacmanMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -300,6 +424,8 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
     private javax.swing.JLabel jLabelConFeedackR;
     private javax.swing.JLabel jLabelCopy;
     private javax.swing.JLabel jLabelFondo;
+    private javax.swing.JLabel jLabelMusic;
+    private javax.swing.JLabel jLabelPacman;
     private javax.swing.JLabel jLabelSound;
     private javax.swing.JLabel jLabelTitulo;
     static javax.swing.JTextField jTextFieldSecret;

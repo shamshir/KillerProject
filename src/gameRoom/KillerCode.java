@@ -1,26 +1,36 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gameRoom;
 
 /**
  *
- * @author usuario
+ * @author Yeray
  */
 public class KillerCode extends javax.swing.JFrame {
+    
+    //variables para eventos
     int[] sequence = {27};
     int currentButton = 0;
+    
     /**
      * Creates new form KillerCode
      */
     public KillerCode() {
         initComponents();
+        initConf();
+    }
+    
+    /**
+     * Settea configuración extra
+     */
+    private void initConf(){
         this.setLocationRelativeTo(null);
         this.setSize(720, 718);
     }
-
+    
+    /**
+     * Recibe el codigo de la tecla pulsada y si la secuencia es la que define
+     * int[] sequence ocurre el resultado
+     * @param keyP 
+     */
     public void checkEvent(int keyP) {
     if (keyP == sequence[currentButton]) {
         currentButton ++ ;
@@ -63,6 +73,11 @@ public class KillerCode extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Recibe el evento de tecla pulsada extrae el código de la tecla 
+     * y lo envia al método checkEvent()
+     * @param evt 
+     */
     private void jTextFieldExitKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldExitKeyPressed
         // TODO add your handling code here:
         checkEvent(evt.getKeyCode());
