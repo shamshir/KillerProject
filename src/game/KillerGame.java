@@ -40,6 +40,7 @@ public class KillerGame extends JFrame {
     private boolean soundMusic = true;
     private boolean soundEffects = true;
     private boolean pacmanActive = true;
+    public static boolean exit = false;
 
     // Object list
     private ArrayList<VisibleObject> objects = new ArrayList<>();
@@ -85,7 +86,8 @@ public class KillerGame extends JFrame {
 
         // Open communications
         this.generateComunnications();
-
+        
+        // Add key listener
         addKeyEventListener();
 
         // Set game status
@@ -110,27 +112,31 @@ public class KillerGame extends JFrame {
      * @author Christian & Alvaro
      */
     private void addKeyEventListener() {
+        
         // Key listener
         KeyEventDispatcher keyEventDispatcher = new KeyEventDispatcher() {
-
+            
             // Attributes
             private int exitCounter = 0;
+            KillerGame game;
 
             @Override
             public boolean dispatchKeyEvent(final KeyEvent e) {
-                if (e.getID() == 400) {
+                if (e.getKeyCode() == 27) {
                     exitCounter++;
                 } else {
                     exitCounter = 0;
                 }
                 if (exitCounter > 1) {
-                    System.exit(0);
+                    KillerGame.exit();
                 }
                 return false;
             }
+            
         };
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
+        
     }
 
     /**
@@ -513,6 +519,9 @@ public class KillerGame extends JFrame {
         Pacman p = new Pacman(this, 100, 450);
         this.objects.add(p);
         /*/
+        
+        this.objects.add(new Nebulosa(this, 400, 400, 500, 500));
+        
     }
 
     // ***************************************************************************************************** //
@@ -545,6 +554,7 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void sendObjectToPrev(Alive object) {
+        System.out.println("Envio");
         this.prevModule.sendObject(object);
     }
 
@@ -771,12 +781,14 @@ public class KillerGame extends JFrame {
      * @param health
      */
     public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage, Color color) {
+        System.out.println("Recibo");
         KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage, color);
         int correctX = 1;
         if (dx < 0) {
             correctX = this.viewer.getWidth() - ship.getImgWidth() - 1;
         }
         ship.setX(correctX);
+        this.ships.remove(ship.getId());
         this.ships.put(ip, ship);
         this.objects.add(ship);
         new Thread(ship).start();
@@ -1012,6 +1024,10 @@ public class KillerGame extends JFrame {
     public boolean getPacmanExistence() {
         return pacmanActive;
     }
+    
+    public static void exit() {
+        KillerGame.exit = true;
+    }
 
     // ***************************************************************************************************** //
     // *************************** [            Methods Remove           ] ********************************* //
@@ -1032,7 +1048,9 @@ public class KillerGame extends JFrame {
      */
     public void removeShip(KillerShip ship) {
         this.objects.remove(this.getShipByIP(ship.getId()));
-        this.ships.remove(ship.getId());
+        if (this.getShipByIP(ship.getId()).equals(ship)) {
+            this.ships.remove(ship.getId());
+        }
         //this.pads.get(ship.getId()).closeSocket();
     }
 
@@ -1054,6 +1072,22 @@ public class KillerGame extends JFrame {
 
         // New KillerGame
         KillerGame game = new KillerGame();
+        
+        while (true) {
+            
+            try {
+                Thread.sleep(0);
+            } catch (Exception e) {
+
+            }
+            
+            if (KillerGame.exit) {
+                System.out.println("Exit");
+                game.getNextModule().sendMessage(Message.Builder.builder("quit",KillerServer.getId()).build());
+                System.exit(0);
+            }
+            
+        }
 
     }
 

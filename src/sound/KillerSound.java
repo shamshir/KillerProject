@@ -87,6 +87,7 @@ public class KillerSound implements Runnable {
     public void stopSound(Clip clip) {
         this.clips.remove(clip);
         clip.stop();
+        clip.close();
     }
 
     @Override
@@ -105,7 +106,7 @@ public class KillerSound implements Runnable {
                     if (!clip.isActive()) {
                         clip.setFramePosition(0);
                         clip.start();
-                        this.clips.remove(clip);
+                        this.stopSound(clip);
                     }
                 } catch (Exception e) {
                     //System.out.println("algo");

@@ -65,7 +65,6 @@ public class KillerRules {
      * @author Alvaro
      * @param game
      * @param alive
-     * @param wall
      */
     static void collisionAliveWithBlackHole(KillerGame game, Alive alive) {
         if (Math.random() < 0.5) {
