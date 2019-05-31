@@ -6,37 +6,66 @@
 package gameRoom;
 
 import game.KillerGame;
+import java.util.Hashtable;
+import sound.KillerRadio;
+import visibleObjects.KillerShip;
 
 /**
  *
  * @author Yeray
  */
 public class KillerRoom extends javax.swing.JFrame {
-    private KillerPanelPrincipal kpp;
-    private KillerPanelAjustes kpa;
-    private KillerPanelConectar kpc;
-    private KillerGame kg;
+    public KillerPanelPrincipal kpp;
+    public KillerPanelAjustes kpa;
+    public KillerPanelConectar kpc;
+    public KillerGame kg;
     /**
      * Creates new form KillerRoom
      */
     public KillerRoom(KillerGame kg) {
         this.kg = kg;
         initComponents();
-        
         kpp = new KillerPanelPrincipal(this);
-        
         kpa = new KillerPanelAjustes(this);
-       
         kpc = new KillerPanelConectar(this);
-        
+        initConf();
+    }
+    
+    public void updateUsers(Hashtable<String, KillerShip> players){
+        kpc.updateUsers(players);
+    }
+    
+    public void initConf(){
         this.setSize(525, 525);
-        this.setLocationRelativeTo(null);
-        
+        this.setLocationRelativeTo(null); 
         this.setContentPane(kpp);
+        KillerPanelPrincipal.jTextFieldSecret.requestFocus(); 
+        kg.changeMusic(KillerRadio.ClipType.MENU);
     }
 
+    public void setFeedBackConnectionLeft(Boolean aux){
+        if (aux == true) {
+            kpp.setFeedbackConnetionLeft(true);
+            kpc.setFeedbackConnetionLeft2(true);
+        } else {
+            kpp.setFeedbackConnetionLeft(false);
+            kpc.setFeedbackConnetionLeft2(false);
+        }
+    }
+    
+    public void setFeedBackConnectionRight(Boolean aux){
+        if (aux == true) {
+            kpp.setFeedbackConnetionRight(true);
+            kpc.setFeedbackConnetionRight2(true);
+        } else {
+            kpp.setFeedbackConnetionRight(false);
+            kpc.setFeedbackConnetionRight2(false);
+        }
+    }
+    
     public void setKillerPanelPrincipal() {
         this.setContentPane(kpp);
+        KillerPanelPrincipal.jTextFieldSecret.requestFocus();
     }
 
     public void setKillerPanelConectar() {
@@ -56,6 +85,14 @@ public class KillerRoom extends javax.swing.JFrame {
     public KillerPanelPrincipal getKPP() {
         return this.kpp;
     }
+    
+    public KillerRoom getKillerRoom(){
+        return this;
+    }
+    
+    public void setButtonPlay(Boolean aux){
+        kpp.setButtonPlay(aux);
+     }
     
     /**
      * This method is called from within the constructor to initialize the form.

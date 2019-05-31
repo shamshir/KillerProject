@@ -16,7 +16,7 @@ import visibleObjects.VisibleObject;
 public class FireEffect extends KillerImage {
 
     private final int NUM_CHANNELS = 4;
-    private final int MIN_INTENSITY = 20;
+    private final int DEFAULT_MIN_INTENSITY = 20;
     private final double COOLING = 5.6;
 
     private int[] sparks;
@@ -146,7 +146,7 @@ public class FireEffect extends KillerImage {
             if (this.sparks[pos] > 1) {
                 intensity = (int) (Math.random() * 255);
 
-                if (intensity > this.MIN_INTENSITY) {
+                if (intensity > this.DEFAULT_MIN_INTENSITY) {
                     this.heatMap[0][pos] = 255;
                 } else {
                     this.heatMap[0][pos] = 0;
@@ -159,28 +159,31 @@ public class FireEffect extends KillerImage {
 
         double dX = Math.abs(((Alive) this.visibleObject).getDx());
         double dY = Math.abs(((Alive) this.visibleObject).getDy());
-        double d;
+        double d = dX > dY ? dX : dY; // ojo revisar
 
-        if (dX > dY) {
-            d = dX;
-        } else {
-            d = dY;
-        }
+        int intensity;
+        double minIntensity, currIntensity;
 
-        int intensity, currIntensity;
-
-        currIntensity = (int) (d * 90);
-
-        if (currIntensity < 0) {
-            System.out.println((d * 120) + " ----------------- \n");
-        }
-        
-      
+//        currIntensity = (int) (d * 90);
+//        if (currIntensity < 0) {
+//            System.out.println((d * 120) + " ----------------- \n");
+//      
+//        }
+//        if (d > 128) {
+//            minIntensity = this.DEFAULT_MIN_INTENSITY - 2;
+//        } else if (d > 10){
+//            minIntensity = this.DEFAULT_MIN_INTENSITY + 5;
+//        } else {
+//            minIntensity = 256;
+//        }
+        minIntensity = d > 0 ? this.DEFAULT_MIN_INTENSITY : 512;
 
         for (int pos = 0; pos < this.sparks.length; pos++) {
             if (this.sparks[pos] > 1) {
 
-                if (currIntensity > this.MIN_INTENSITY) {
+                intensity = (int) (Math.random() * 255);
+
+                if (intensity > minIntensity) {
 //                    System.out.println("FE: intensidad > min");
                     this.heatMap[0][pos] = 255;
                 } else {
@@ -188,6 +191,7 @@ public class FireEffect extends KillerImage {
                 }
             }
         }
+
     }
 
     // run method

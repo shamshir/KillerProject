@@ -6,36 +6,88 @@
 package gameRoom;
 
 import game.KillerGame;
-
-
+import java.awt.Color;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import sound.KillerSound;
+import visibleObjects.KillerShip;
 
 /**
  *
  * @author Yeray
  */
 public class KillerPanelConectar extends javax.swing.JPanel {
+
     //Variables conexión
-     private String ipIzq;
-     private String ipDer;
-     private int portIzq;
-     private int portDer;
-     
-     //Variable Killer Game
+
+    private String ipIzq;
+    private String ipDer;
+    private int portIzq;
+    private int portDer;
+
+    //Variable Killer Game
     private KillerRoom kr;
     private KillerGame kg;
-     
-     
+        //getKillerShips()  para la lista
+
     /**
      * Creates new form NewJPanelConectar
      */
     public KillerPanelConectar(KillerRoom kr) {
         this.kr = kr;
-        kg = kr.getKg();
         initComponents();
+        kg = kr.getKg();
+        setTextData();
+
     }
-    
-    public KillerPanelConectar getKillerPanelConectar(){
+
+    public void updateUsers(Hashtable<String, KillerShip> players) {
+        Enumeration<KillerShip> enumeration = players.elements();
+        System.out.println("Jugadores conectados:");
+        while (enumeration.hasMoreElements()) {
+            System.out.println(enumeration.nextElement().getUser());
+        }
+    }
+
+    public void setTextData() {
+        try {
+            jTextFieldIpIzq.setText(Inet4Address.getLocalHost().getHostAddress());
+            jTextFieldIpDer.setText(Inet4Address.getLocalHost().getHostAddress());
+            jTextFieldPortIzq.setText("8000");
+            jTextFieldPortDer.setText("8000");
+        } catch (Exception e) {
+        }
+
+    }
+
+    public KillerPanelConectar getKillerPanelConectar() {
         return this;
+    }
+
+    public void setFeedbackConnetionLeft2(Boolean aux) {
+        if (aux == true) {
+            jLabelConFeedackL.setForeground(Color.GREEN);
+            jLabelConFeedackL.setText("CONECTADO");
+            jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
+        } else {
+            jLabelConFeedackL.setForeground(Color.RED);
+            jLabelConFeedackL.setText("DESCONECTADO");
+            jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
+        }
+    }
+
+    public void setFeedbackConnetionRight2(Boolean aux) {
+        if (aux == true) {
+            jLabelConFeedackR.setForeground(Color.GREEN);
+            jLabelConFeedackR.setText("CONECTADO");
+            jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/connected.png")));
+        } else {
+            jLabelConFeedackR.setForeground(Color.RED);
+            jLabelConFeedackR.setText("DESCONECTADO");
+            jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
+        }
     }
 
     /**
@@ -50,7 +102,7 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jLabelTitulo = new javax.swing.JLabel();
         jLabelCopy = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jButtonConectarIzq = new javax.swing.JButton();
         jLabelIpIzq = new javax.swing.JLabel();
         jLabelPortIzq = new javax.swing.JLabel();
         jTextFieldIpIzq = new javax.swing.JTextField();
@@ -60,6 +112,8 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jTextFieldPortDer = new javax.swing.JTextField();
         jTextFieldPortIzq = new javax.swing.JTextField();
         jButtonConectarDer = new javax.swing.JButton();
+        jLabelConFeedackR = new javax.swing.JLabel();
+        jLabelConFeedackL = new javax.swing.JLabel();
         jLabelFondo = new javax.swing.JLabel();
 
         setMaximumSize(new java.awt.Dimension(525, 525));
@@ -76,89 +130,139 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jLabelCopy.setText("KillerTeam ®");
         add(jLabelCopy, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 510, -1, -1));
 
-        jButton1.setText("VOLVER");
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Volver.png"))); // NOI18N
+        jButton1.setBorderPainted(false);
+        jButton1.setContentAreaFilled(false);
         jButton1.setPreferredSize(new java.awt.Dimension(100, 30));
+        jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/VolverOscuro.png"))); // NOI18N
+        jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/VolverBrillante.png"))); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 370, -1, -1));
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 430, 130, -1));
 
-        jButton2.setText("conectar Izquierda");
-        jButton2.setPreferredSize(new java.awt.Dimension(100, 30));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jButtonConectarIzq.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/conectarIz.png"))); // NOI18N
+        jButtonConectarIzq.setBorderPainted(false);
+        jButtonConectarIzq.setContentAreaFilled(false);
+        jButtonConectarIzq.setMaximumSize(new java.awt.Dimension(170, 30));
+        jButtonConectarIzq.setMinimumSize(new java.awt.Dimension(170, 30));
+        jButtonConectarIzq.setPreferredSize(new java.awt.Dimension(140, 50));
+        jButtonConectarIzq.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/conectarIzOscuro.png"))); // NOI18N
+        jButtonConectarIzq.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/conectarIzBrillante.png"))); // NOI18N
+        jButtonConectarIzq.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jButtonConectarIzqActionPerformed(evt);
             }
         });
-        add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 130, 20));
+        add(jButtonConectarIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 330, -1, -1));
 
         jLabelIpIzq.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabelIpIzq.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelIpIzq.setForeground(new java.awt.Color(255, 204, 0));
         jLabelIpIzq.setText("IP izquierda");
-        add(jLabelIpIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
+        add(jLabelIpIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, -1, -1));
 
         jLabelPortIzq.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabelPortIzq.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelPortIzq.setForeground(new java.awt.Color(255, 204, 0));
         jLabelPortIzq.setText("Puerto izquierda");
-        add(jLabelPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, -1, -1));
+        add(jLabelPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, -1, -1));
 
+        jTextFieldIpIzq.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldIpIzq.setForeground(new java.awt.Color(255, 255, 255));
         jTextFieldIpIzq.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextFieldIpIzq.setBorder(null);
+        jTextFieldIpIzq.setToolTipText("");
+        jTextFieldIpIzq.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jTextFieldIpIzq.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jTextFieldIpIzq.setOpaque(false);
         jTextFieldIpIzq.setPreferredSize(new java.awt.Dimension(90, 20));
-        add(jTextFieldIpIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
+        add(jTextFieldIpIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, -1));
 
         jLabel1IpDer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1IpDer.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1IpDer.setForeground(new java.awt.Color(255, 204, 0));
         jLabel1IpDer.setText("IP derecha");
-        add(jLabel1IpDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 170, -1, -1));
+        add(jLabel1IpDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 220, -1, -1));
 
+        jTextFieldIpDer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldIpDer.setForeground(new java.awt.Color(255, 255, 255));
         jTextFieldIpDer.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldIpDer.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jTextFieldIpDer.setOpaque(false);
         jTextFieldIpDer.setPreferredSize(new java.awt.Dimension(90, 20));
-        add(jTextFieldIpDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 190, -1, -1));
+        add(jTextFieldIpDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 240, -1, -1));
 
         jLabel1PortDer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1PortDer.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1PortDer.setForeground(new java.awt.Color(255, 204, 0));
         jLabel1PortDer.setText("Puerto derecha");
-        add(jLabel1PortDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 230, -1, -1));
+        add(jLabel1PortDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 280, -1, -1));
 
+        jTextFieldPortDer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldPortDer.setForeground(new java.awt.Color(255, 255, 255));
         jTextFieldPortDer.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldPortDer.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jTextFieldPortDer.setOpaque(false);
         jTextFieldPortDer.setPreferredSize(new java.awt.Dimension(40, 20));
-        add(jTextFieldPortDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 250, -1, -1));
+        add(jTextFieldPortDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 300, -1, -1));
 
+        jTextFieldPortIzq.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jTextFieldPortIzq.setForeground(new java.awt.Color(255, 255, 255));
         jTextFieldPortIzq.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldPortIzq.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jTextFieldPortIzq.setOpaque(false);
         jTextFieldPortIzq.setPreferredSize(new java.awt.Dimension(40, 20));
-        add(jTextFieldPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, -1, -1));
+        add(jTextFieldPortIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, -1, -1));
 
-        jButtonConectarDer.setText("Conectar Derecha");
+        jButtonConectarDer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/conectarDer.png"))); // NOI18N
+        jButtonConectarDer.setBorderPainted(false);
+        jButtonConectarDer.setContentAreaFilled(false);
+        jButtonConectarDer.setMaximumSize(new java.awt.Dimension(170, 30));
+        jButtonConectarDer.setMinimumSize(new java.awt.Dimension(170, 30));
+        jButtonConectarDer.setPreferredSize(new java.awt.Dimension(140, 50));
+        jButtonConectarDer.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/conectarIDerOscuro.png"))); // NOI18N
+        jButtonConectarDer.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/conectarIDerBrillante.png"))); // NOI18N
         jButtonConectarDer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonConectarDerActionPerformed(evt);
             }
         });
-        add(jButtonConectarDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 290, -1, -1));
+        add(jButtonConectarDer, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 330, 140, 50));
+
+        jLabelConFeedackR.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabelConFeedackR.setForeground(new java.awt.Color(255, 0, 0));
+        jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png"))); // NOI18N
+        jLabelConFeedackR.setText("DESCONECTADO");
+        jLabelConFeedackR.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        add(jLabelConFeedackR, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 160, -1, -1));
+
+        jLabelConFeedackL.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabelConFeedackL.setForeground(new java.awt.Color(255, 0, 0));
+        jLabelConFeedackL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png"))); // NOI18N
+        jLabelConFeedackL.setText("DESCONECTADO");
+        add(jLabelConFeedackL, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
 
         jLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/stars.gif"))); // NOI18N
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // CONECTAR EN PANEL CONECTAR
+    private void jButtonConectarIzqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarIzqActionPerformed
+        // CONECTAR IZQUIERDA
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         ipIzq = jTextFieldIpIzq.getText();
         portIzq = Integer.parseInt(jTextFieldPortIzq.getText());
         kg.setPortPrev(portIzq);
         kg.setIpPrev(ipIzq);
-        
-    }//GEN-LAST:event_jButton2ActionPerformed
+
+    }//GEN-LAST:event_jButtonConectarIzqActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButtonConectarDerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarDerActionPerformed
+        // CONECTAR  DERACHA
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         ipDer = jTextFieldIpDer.getText();
         portDer = Integer.parseInt(jTextFieldPortDer.getText());
         kg.setPortNext(portDer);
@@ -168,10 +272,12 @@ public class KillerPanelConectar extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButtonConectarDer;
+    private javax.swing.JButton jButtonConectarIzq;
     private javax.swing.JLabel jLabel1IpDer;
     private javax.swing.JLabel jLabel1PortDer;
+    private javax.swing.JLabel jLabelConFeedackL;
+    private javax.swing.JLabel jLabelConFeedackR;
     private javax.swing.JLabel jLabelCopy;
     private javax.swing.JLabel jLabelFondo;
     private javax.swing.JLabel jLabelIpIzq;

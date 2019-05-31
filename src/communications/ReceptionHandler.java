@@ -72,20 +72,12 @@ public class ReceptionHandler {
         try {
             this.in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             this.out = new PrintWriter(sock.getOutputStream(), true);
-            //this.sock.setSoTimeout(3500);
+            this.sock.setSoTimeout(3500);
         } catch (Exception ex) {
             System.out.println("ReceptionHandler -> ERROR setsocket");
             return false;
         }
         this.destinationIp = socket.getInetAddress().getHostAddress();
         return true;
-    }
-
-    private void closeSocket() {
-        try {
-            this.sock.close();
-        } catch (Exception ex) {
-            System.out.println("ReceptionHandler -> error al cerrar socket (ReceptionHandler: closeSocket)");
-        }
     }
 }
