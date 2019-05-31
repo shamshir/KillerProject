@@ -8,27 +8,55 @@ import visibleObjects.*;
 public class KillerRules {
 
     // ***************************************************************************************************** //
-    // *************************** [          Statistics Ships           ] ********************************* //
+    // *************************** [          Statistics Values          ] ********************************* //
     // ***************************************************************************************************** //
+    
+    // Octane
     public static final int OCTANE_HEALTH = 100;
     public static final int OCTANE_DAMAGE = 20;
     public static final int OCTANE_MAX_SPEED = 4;
     public static final int OCTANE_MAX_SPEED_NEBULOSA = 3;
+    
+    // Batmobile
     public static final int BATMOBILE_HEALTH = 75;
     public static final int BATMOBILE_DAMAGE = 30;
     public static final int BATMOBILE_MAX_SPEED = 5;
     public static final int BATMOBILE_MAX_SPEED_NEBULOSA = 3;
+    
+    // Marauder
     public static final int MARAUDER_HEALTH = 150;
     public static final int MARAUDER_DAMAGE = 10;
     public static final int MARAUDER_MAX_SPEED = 3;
     public static final int MARAUDER_MAX_SPEED_NEBULOSA = 3;
+    
+    // Pacman
     public static final int PACMAN_INITIAL_HEALTH = 10;
     public static final int PACMAN_INCREMENT = 10;
     public static final int PACMAN_DECREMENT = 1;
+    
     public static final int DAMAGE_BY_COLLISION = 100;
     public static final int MAX_SPEED_INCREMENT = 3;
     public static final int POWER_UP_HEALTH_INCREMENT = 30;
     public static final int POWER_UP_DAMAGE_INCREMENT = 15;
+    
+    // Asteroids
+    public static final double MIN_ASTEROIDS = 3;
+    public static final double MAX_ASTEROIDS = 6;
+    // Nebulosas
+    public static final double MIN_NEBULOSAS = 0.8;
+    public static final double MAX_NEBULOSAS = 2.3;
+    // Planets
+    public static final double MIN_PLANETS = 0.7;
+    public static final double MAX_PLANETS = 2.3;
+    // BlackHoles
+    public static final double MIN_BLACKHOLES= 0;
+    public static final double MAX_BLACKHOLES = 1.5;
+    // Pacmans
+    public static final double MIN_PACMANS = 0;
+    public static final double MAX_PACMANS = 1.5;
+    // PowerUps
+    public static final double MIN_POWERUPS = 0.8;
+    public static final double MAX_POWERUPS = 2.1;
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Alive          ] ********************************* //
