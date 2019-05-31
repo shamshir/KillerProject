@@ -65,7 +65,7 @@ public class ObjectResponse {
         this.type = builder.type;
         this.health = builder.health;
         this.damage = builder.damage;
-        this.color = builder.color;
+        //this.color = builder.color;
         this.imgHeight = builder.imgHeight;        
         this.m = builder.m;
         this.a = builder.a;

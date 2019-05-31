@@ -6,6 +6,7 @@
 package gameRoom;
 
 import game.KillerGame;
+import sound.KillerSound;
 
 
 
@@ -23,8 +24,8 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
      */
     public KillerPanelAjustes(KillerRoom kr) {
         this.kr = kr;
-        kg = kr.getKg();
         initComponents();
+        kg = kr.getKg();
     }
     
     public KillerPanelAjustes getKillerPanelAjustes(){
@@ -59,14 +60,18 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
         jLabelCopy.setText("KillerTeam ®");
         add(jLabelCopy, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 510, -1, -1));
 
-        jButton1.setText("VOLVER");
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Volver.png"))); // NOI18N
+        jButton1.setBorderPainted(false);
+        jButton1.setContentAreaFilled(false);
         jButton1.setPreferredSize(new java.awt.Dimension(100, 30));
+        jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/VolverOscuro.png"))); // NOI18N
+        jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/VolverBrillante.png"))); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 370, -1, -1));
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 430, 130, -1));
 
         jLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/stars.gif"))); // NOI18N
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -74,6 +79,7 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
 
