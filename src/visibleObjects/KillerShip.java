@@ -168,7 +168,7 @@ public class KillerShip extends Controlled {
             }
         }
 
-        this.game.removeObject(this);
+        //this.game.removeShip(this);
     }
 
     /**
@@ -306,7 +306,6 @@ public class KillerShip extends Controlled {
             default:
                 break;
         }
-        
     }
     
     private void configureSpeed() {
@@ -373,7 +372,7 @@ public class KillerShip extends Controlled {
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(Color.white);
-        g2d.drawString(this.user, (int) x, (int) y - 10);
+        g2d.drawString(this.user + " " + this.health, (int) x, (int) y - 10);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 

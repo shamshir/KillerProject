@@ -29,7 +29,7 @@ public abstract class Automata extends Alive {
             }
         }
 
-        this.game.removeObject(this);
+        //this.game.removeObject(this);
     }
 
     // ********************************************************
