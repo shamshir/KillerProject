@@ -63,6 +63,7 @@ public class KillerRadio implements Runnable {
     public void stopSound() {
         try {
             this.clip.stop();
+            this.clip.close();
         } catch (Exception e) {
         }
     }
