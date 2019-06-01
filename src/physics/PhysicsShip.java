@@ -363,19 +363,14 @@ public class PhysicsShip {
         double mom1 = (pNorm1 * (this.m - alivem) + 2 * alivem * pNorm2) / (this.m + alivem);
         double mom2 = (pNorm2 * (alivem - this.m) + 2 * this.m * pNorm1) / (this.m + alivem);
 
-        double var1 = 0;
+        double var1 = 1;
         double var2 = 0;
         double maxship = 1.5;
 
-        if (aliveradius < HEIGHT / 2) {
-            var1 = 0.6;
-            var2 = 1;
-        } else {
-            maxship = 4;
-            var1 = 1;
-            var2 = 0.2;
 
-        }
+        //    maxship = 4;
+            var1 = 1;
+
 
         double vx1 = tangentX * pTan1 + normalX * mom1 * var1;
         double vy1 = tangentY * pTan1 + normalY * mom1 * var1;

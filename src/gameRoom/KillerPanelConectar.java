@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gameRoom;
 
 import game.KillerGame;
@@ -21,7 +16,6 @@ import visibleObjects.KillerShip;
 public class KillerPanelConectar extends javax.swing.JPanel {
 
     //Variables conexión
-
     private String ipIzq;
     private String ipDer;
     private int portIzq;
@@ -30,7 +24,9 @@ public class KillerPanelConectar extends javax.swing.JPanel {
     //Variable Killer Game
     private KillerRoom kr;
     private KillerGame kg;
-        //getKillerShips()  para la lista
+    
+    //Strings
+    private String player;
 
     /**
      * Creates new form NewJPanelConectar
@@ -43,14 +39,32 @@ public class KillerPanelConectar extends javax.swing.JPanel {
 
     }
 
+    /**
+     * Método llamado por KillerGame Recibe la lista de jugadores y la imprime
+     *
+     * @param players
+     */
     public void updateUsers(Hashtable<String, KillerShip> players) {
         Enumeration<KillerShip> enumeration = players.elements();
         System.out.println("Jugadores conectados:");
         while (enumeration.hasMoreElements()) {
             System.out.println(enumeration.nextElement().getUser());
+            player = enumeration.nextElement().getUser();
+            updateJTable(player);
         }
     }
+    
+    /**
+     * Método que actualiza la jTable de jugadores conectados
+     * @param player 
+     */
+    public void updateJTable(String player){
+        
+    }
 
+    /**
+     * Método que pinta datos de conexión locales a modo de ejemplo y ayuda
+     */
     public void setTextData() {
         try {
             jTextFieldIpIzq.setText(Inet4Address.getLocalHost().getHostAddress());
@@ -59,13 +73,14 @@ public class KillerPanelConectar extends javax.swing.JPanel {
             jTextFieldPortDer.setText("8000");
         } catch (Exception e) {
         }
-
     }
 
-    public KillerPanelConectar getKillerPanelConectar() {
-        return this;
-    }
-
+    /**
+     * Cambia el texto e imagen que dice si esta conectado ese lado izquierdo de
+     * la pantalla
+     *
+     * @param aux
+     */
     public void setFeedbackConnetionLeft2(Boolean aux) {
         if (aux == true) {
             jLabelConFeedackL.setForeground(Color.GREEN);
@@ -78,6 +93,12 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Cambia el texto e imagen que dice si esta conectado ese lado derecho de
+     * la pantalla
+     *
+     * @param aux
+     */
     public void setFeedbackConnetionRight2(Boolean aux) {
         if (aux == true) {
             jLabelConFeedackR.setForeground(Color.GREEN);
@@ -88,6 +109,15 @@ public class KillerPanelConectar extends javax.swing.JPanel {
             jLabelConFeedackR.setText("DESCONECTADO");
             jLabelConFeedackR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/disconnected.png")));
         }
+    }
+
+    /**
+     * Getter de la clase
+     *
+     * @return
+     */
+    public KillerPanelConectar getKillerPanelConectar() {
+        return this;
     }
 
     /**
@@ -244,6 +274,12 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Evento del botón conectar pantalla izquierda Envia los parametros de
+     * conexión de la pantalla izquierda
+     *
+     * @param evt
+     */
     private void jButtonConectarIzqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarIzqActionPerformed
         // CONECTAR IZQUIERDA
         kg.startSound(KillerSound.ClipType.PC_CLICK);
@@ -254,12 +290,23 @@ public class KillerPanelConectar extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jButtonConectarIzqActionPerformed
 
+    /**
+     * Evento del botón volver Pone el jPanel Principal en la ventana
+     *
+     * @param evt
+     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
         kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    /**
+     * Evento del botón conectar pantalla izquierda Envia los parametros de
+     * conexión de la pantalla derecha
+     *
+     * @param evt
+     */
     private void jButtonConectarDerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConectarDerActionPerformed
         // CONECTAR  DERACHA
         kg.startSound(KillerSound.ClipType.PC_CLICK);

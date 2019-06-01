@@ -32,7 +32,7 @@ public class ObjectResponse {
     private String user;
     private int health;
     private int damage;
-    //private String color;
+    private String color;
     private int imgHeight;
 
     private static final String EMPTY_STRING = "";
@@ -65,7 +65,7 @@ public class ObjectResponse {
         this.type = builder.type;
         this.health = builder.health;
         this.damage = builder.damage;
-        //this.color = builder.color;
+        this.color = builder.color;
         this.imgHeight = builder.imgHeight;        
         this.m = builder.m;
         this.a = builder.a;
@@ -147,8 +147,8 @@ public class ObjectResponse {
         return damage;
     }
 
-   public Color getColor() {
-        return Color.BLACK;
+   public String getColor() {
+        return color;
     }
 
     public int getImgHeight() {

@@ -75,7 +75,7 @@ public class CollidePhysics {
 
         double radius = obj2.getRadius();
 
-    //     si el círculo toca uno de los vertices del triangulo.
+        //     si el círculo toca uno de los vertices del triangulo.
         double v1x = obj2.getX() - obj1.getTx();
         double v1y = obj2.getY() - obj1.getTy();
 
@@ -88,9 +88,8 @@ public class CollidePhysics {
         if (Math.sqrt(v1x * v1x + v1y * v1y) <= Math.sqrt(radius * radius)
                 || Math.sqrt(v2x * v2x + v2y * v2y) <= Math.sqrt(radius * radius)
                 || Math.sqrt(v3x * v3x + v3y * v3y) <= Math.sqrt(radius * radius)) {
-              return true;
+            return true;
         }
-
 
         //si colisiona con la recta AB (T-L)
         double c1x = obj2.getX() - obj1.getTx();
@@ -149,7 +148,7 @@ public class CollidePhysics {
         if (producto > 0) {
             double len = e3x * e3x + e3y * e3y;
             if (producto < len) {
-                if (c3sqr * len <= producto * producto) {                    
+                if (c3sqr * len <= producto * producto) {
                     return true;
 
                 }
@@ -162,21 +161,29 @@ public class CollidePhysics {
 
     public static boolean collisionObjxWall(VisibleObject obj, Wall wall) {
 
+        double extraX = 0;
+        double extraY = 0;
+
+        if (obj instanceof KillerShip) {
+            extraX = obj.getImgWidth() / 2;
+            extraY = obj.getImgHeight() / 2;
+        }
+
         if (wall.getType() == Wall.Limit.UP) {
 
-            return (obj.getY() + obj.getImgHeight() / 2 < wall.getY());
+            return (obj.getY() + extraY < wall.getY());
 
         } else if (wall.getType() == Wall.Limit.DOWN) {
 
-            return (obj.getY() + obj.getImgHeight() / 2 > wall.getY());
+            return (obj.getY() + extraX > wall.getY());
 
         } else if (wall.getType() == Wall.Limit.RIGHT) {
 
-            return (obj.getX() + obj.getImgWidth() / 2 > wall.getX());
+            return (obj.getX() + extraX > wall.getX());
 
         } else if (wall.getType() == Wall.Limit.LEFT) {
 
-            return (obj.getX() + obj.getImgHeight() / 2 < wall.getX());
+            return (obj.getX() + extraY < wall.getX());
         }
         return false;
     }

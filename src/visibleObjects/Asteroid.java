@@ -3,6 +3,7 @@ package visibleObjects;
 import game.KillerGame;
 import java.awt.Graphics2D;
 import physics.PhysicsAsteroid;
+import visualEffects.ExplosionEffect;
 
 public class Asteroid extends Automata {
     private PhysicsAsteroid physicsAsteroid;
@@ -13,18 +14,17 @@ public class Asteroid extends Automata {
      * @param x
      * @param y
      * @param imgHeight
-     * @param m
      * @param health 
      * @param maxspeed 
      */
-    public Asteroid(KillerGame game, double x, double y, int imgHeight, double m, int health, double maxspeed) {
+    public Asteroid(KillerGame game, double x, double y, int imgHeight, int health, double maxspeed) {
         super(game, x, y);
 
         this.setImage();
         this.imgHeight = imgHeight;
         this.imgWidth = imgHeight;
         this.radius = this.imgHeight / 2;
-        this.m = m;
+        this.m = Math.PI * (this.radius * this.radius);
 
         this.health = health;
         this.maxspeed = maxspeed;
@@ -82,6 +82,29 @@ public class Asteroid extends Automata {
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
+    @Override
+    public void onDying() {
+        this.kImg = new ExplosionEffect(this);
+        (new Thread(this.kImg)).start();
+    }
+
+    // Interfaz Renderizable
+    @Override
+    public void render(Graphics2D g2d) {
+
+        switch (this.state) {
+            case ALIVE:
+                g2d.drawImage(this.img, (int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, null);
+                break;
+            case DYING:
+                g2d.drawImage(this.kImg, (int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, null);
+                break;
+            default:
+                //System.out.println("Asteroid render --> SAFE or DEAD, rendering DEFAULT");
+                break;
+        }
+
+    }
     
     
     // *********************

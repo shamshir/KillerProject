@@ -37,7 +37,10 @@ public class KillerSound implements Runnable {
         SOUL_DIE,
         TELEPORT,
         POWER_UP,
-        SECRET
+        SECRET,
+        COLLISION,
+        PACMAN_EAT,
+        PACMAN_DIE
     }
 
     private Hashtable<ClipType, String> clipNames = new Hashtable<ClipType, String>();
@@ -58,6 +61,9 @@ public class KillerSound implements Runnable {
         clipNames.put(ClipType.TELEPORT, "teleport.wav");
         clipNames.put(ClipType.POWER_UP, "power_up.wav");
         clipNames.put(ClipType.SECRET, "secretSound.wav");
+        clipNames.put(ClipType.COLLISION, "hitMarker.wav");
+        clipNames.put(ClipType.PACMAN_EAT, "pacman_eat.wav");
+        clipNames.put(ClipType.PACMAN_DIE, "pacman_die.wav");
     }
 
     public Clip createSound(KillerSound.ClipType clipType) {
@@ -87,6 +93,7 @@ public class KillerSound implements Runnable {
     public void stopSound(Clip clip) {
         this.clips.remove(clip);
         clip.stop();
+        clip.close();
     }
 
     @Override
@@ -105,7 +112,7 @@ public class KillerSound implements Runnable {
                     if (!clip.isActive()) {
                         clip.setFramePosition(0);
                         clip.start();
-                        this.clips.remove(clip);
+                        this.stopSound(clip);
                     }
                 } catch (Exception e) {
                     //System.out.println("algo");
