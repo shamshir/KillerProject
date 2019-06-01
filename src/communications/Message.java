@@ -67,10 +67,6 @@ public class Message {
         return this.serversQuantity;
     }
     
-    public void setServersQuantity(final int quantity){
-        this.serversQuantity = quantity;
-    }
-    
     public GameConfiguration getGameConfiguration(){
         return this.gameConfiguration;
     }

@@ -113,6 +113,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
 
     @Override
     public void sendMessage(final Message message) {
+        System.out.println("KillerPad -> " + message.getCommand() + " sended to " + message.getReceiverId());
         super.sendMessage(message);
         if (message.getCommand().equalsIgnoreCase("pad_dead")) {
             this.closeSocket();

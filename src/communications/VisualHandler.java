@@ -31,6 +31,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String DECREMENT_PADS_NUM = "decrementPadsNum";
     private static final String WIN_COMMAND = "win";
     private static final String PAD_WIN_COMMAND = "pad_win";
+    private static final String GAME_CONFIGURATION_COMMAND = "gameConfiguration";
 
     private static final String SHOOT_TYPE = "shoot";
     private static final String SHIP_TYPE = "ship";
@@ -150,6 +151,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case WIN_COMMAND:
                 this.processWin(message);
                 break;
+            case GAME_CONFIGURATION_COMMAND:
+                processGameConfiguration(message);
+                break;
             default:
                 final String command = message.getCommand();
                 if (command != null && command.matches(PAD_COMMAND)) {
@@ -232,17 +236,16 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         super.setDestinationIp(EMPTY_STRING);
     }
 
-   // public void sendStart(final GameConfiguration gameConfiguration) {
     public void sendStart() {
-        this.getKillergame().setPadsNum(0);      
+        this.getKillergame().setPadsNum(0);
         this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId())
                 .withServersQuantity(this.getKillergame().getPadsSize())
-                .withGameConfiguration(gameConfiguration)
                 .build());
     }
 
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
+            // this.getKillergame().receiveGameConfiguration(message.getGameConfiguration());
             this.getKillergame().setPadsNum(0);
             this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
                     .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
@@ -257,7 +260,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         if (!isMessageMine(message.getSenderId())) {
             this.getKillergame().getNextModule().sendMessage(message);
             System.exit(0);
-            //TODO this.getKillergame().quitGame();
         }
     }
 
@@ -378,6 +380,19 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                     .withReceiverId(pad.getId())
                     .build());
         } else if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
+    }
+
+    private void sendGameConfiguration(final GameConfiguration gameConfiguration) {
+        this.sendMessage(Message.Builder.builder(GAME_CONFIGURATION_COMMAND, KillerServer.getId())
+                .withGameConfiguration(gameConfiguration)
+                .build());
+    }
+
+    private void processGameConfiguration(final Message message) {
+        if (!this.isMessageMine(message.getSenderId())) {
+            //this.getKillergame().receiveGameConfiguration(message.getGameConfiguration());
             this.getKillergame().getNextModule().sendMessage(message);
         }
     }
