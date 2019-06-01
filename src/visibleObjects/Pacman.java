@@ -36,7 +36,7 @@ public class Pacman extends Automata {
         this.radians = Math.random() * (Math.PI * 2); // angulo aleatorio
         this.m = Math.PI * (this.radius * this.radius);
         
-        this.maxspeed = 8;
+        this.maxspeed = 1;
 
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
@@ -72,7 +72,7 @@ public class Pacman extends Automata {
         this.vy = vy;
         this.a = a;
         
-        this.maxspeed = 8;
+        this.maxspeed = 1;
 
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
@@ -111,15 +111,19 @@ public class Pacman extends Automata {
             mouthOpened = !mouthOpened;
             this.fpsControlTime = System.currentTimeMillis();
         }
+        
+        int degrees = (int)(this.radians * 180 / Math.PI);
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (mouthOpened) {
-            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
+//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
+            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 30), 270);
         } else {
-            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
+//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
+            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 5), 330);
         }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        
+
     }
 
     // ********************************************************
