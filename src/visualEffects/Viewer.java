@@ -108,17 +108,17 @@ public class Viewer extends Canvas implements Runnable {
         Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
 //        
 //        
-//        HashMap hs = new HashMap();
+        HashMap hs = new HashMap();
 //        hs.put(RenderingHints.KEY_COLOR_RENDERING,
 //                RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-//        
+        
 //        hs.put(RenderingHints.KEY_ANTIALIASING,
 //                RenderingHints.VALUE_ANTIALIAS_ON);
-//               
+               
 //        ((Graphics2D) this.getGraphics()).setRenderingHints(hs);
 
 
-//        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         g2d.drawImage(this.backgroundImg, 0, 0, null);
 
