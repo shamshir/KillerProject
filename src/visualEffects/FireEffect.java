@@ -46,7 +46,7 @@ public class FireEffect extends KillerImage {
         this.createDefaultSparks();
 
         // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
-        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
+//        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
     }
 
 
