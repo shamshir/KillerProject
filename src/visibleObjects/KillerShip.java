@@ -186,9 +186,6 @@ public class KillerShip extends Controlled {
             case "pad_dash":
                 this.dash();
                 break;
-            case "pad_powerup":
-
-                break;
             case "pad_turbo_start":
                 this.turboStart();
                 break;
@@ -333,6 +330,24 @@ public class KillerShip extends Controlled {
     private void turboStart() {
         this.maxspeed += KillerRules.MAX_SPEED_INCREMENT;
     }
+    
+    private int getInitHealth() {
+        int initHealth = 0;
+        switch (type) {
+            case OCTANE:
+                initHealth = KillerRules.OCTANE_HEALTH;
+                break;
+            case BATMOBILE:
+                initHealth = KillerRules.BATMOBILE_HEALTH;
+                break;
+            case MARAUDER:
+                initHealth = KillerRules.MARAUDER_HEALTH;
+                break;
+            default:
+                break;
+        }
+        return initHealth;
+    }
 
     // *************************
     // *    Drawing methods    *
@@ -347,18 +362,27 @@ public class KillerShip extends Controlled {
     }
 
     private void drawUserName(Graphics2D g2d) {
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(Color.white);
-        g2d.drawString(this.user, (int) x, (int) y - 10);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.drawString(this.user, (int) x, (int) y - 36);
     }
 
     private void drawLifeBar(Graphics2D g2d) {
+        double barWidth;
+        Color c;
+        if (this.health <= this.getInitHealth()) {
+            c = this.color;
+            barWidth = (this.imgWidth * this.health) / this.getInitHealth();
+        } else {
+            c = Color.decode("#ffd700");
+            barWidth = this.imgWidth;
+        }        
+        g2d.setColor(c);
+        g2d.fillRect( (int) x, (int) y - 29, (int)barWidth, 8);
 
     }
 
     private void drawSafe(Graphics2D g2d) {
-        g2d.setColor(Color.magenta);
+        g2d.setColor(this.color);
         g2d.setStroke(new BasicStroke(2));
         g2d.drawOval((int) x - 6, (int) y - 6, this.imgWidth + 12, this.imgHeight + 12);
     }
@@ -367,6 +391,7 @@ public class KillerShip extends Controlled {
     // *                     Interfaces                       *
     // ********************************************************
     // Interfaz Destructible
+    @Override
     public void onDying() {
         this.kImg = new ExplosionEffect(this);
         (new Thread(this.kImg)).start();
@@ -386,10 +411,12 @@ public class KillerShip extends Controlled {
                 this.drawFireEffect(g2d);
                 this.drawSafe(g2d);
                 this.drawUserName(g2d);
+                this.drawLifeBar(g2d);
                 break;
             case ALIVE:
                 this.drawFireEffect(g2d);
                 this.drawUserName(g2d);
+                this.drawLifeBar(g2d);
                 break;
             case DYING:
                 g2d.drawImage(this.kImg, (int) this.x, (int) this.y, this.imgWidth, this.imgHeight, null);
