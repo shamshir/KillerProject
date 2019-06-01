@@ -1,5 +1,6 @@
 package visualEffects;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,8 @@ public class FireEffect extends KillerImage {
     private int[] sparks;
     private int[][] heatMap;
     private MyColor[] paCo;
+    private MyColor[] paCoR;
+    private MyColor[] paCoB;
 
     public FireEffect(VisibleObject vo, BufferedImage oi, int[] sourceSparks) {
         super(vo, oi, 0, 400);
@@ -46,17 +49,70 @@ public class FireEffect extends KillerImage {
         this.createDefaultSparks();
 
         // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
-        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
+//        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
     }
 
     /**
      * Setea la paleta de colores a usar
      */
+//    public void setPaCo() {
+//        this.paCo = new MyColor[256];
+//        for (int i = 0; i < 256; i++) {
+//            this.paCo[i] = new MyColor(i, i + 10 / 12, i * 2 / 3, i / 24);
+//        }
+//    }
+
     public void setPaCo() {
-        this.paCo = new MyColor[256];
-        for (int i = 0; i < 256; i++) {
-            this.paCo[i] = new MyColor(i, i + 10 / 12, i * 2 / 3, i / 24);
+
+        this.paCoR = new MyColor[256];
+        for (int i = 255; i >= 0; i--) {
+
+            if (i < 256 && i >= 230) {
+                paCoR[i] = new MyColor(255, 255, 255, 255);
+            }
+            for (int j = 255; i < 230 && i >= 220; i--, j -= 10) {
+                paCoR[i] = new MyColor(255, 255, 255, j);
+            }
+            if (i >= 210 && i < 220) {
+                paCoR[i] = new MyColor(255, Color.cyan.getBlue(), Color.cyan.getGreen(), Color.cyan.getRed());
+            }
+
+            for (int j = 255; i < 210 && i >= 200; i--, j -= 3) {
+                paCoR[i] = new MyColor(255, 255, j, 0);
+            }
+
+            if (i >= 180 && i < 200) {
+                paCoR[i] = new MyColor(255, 255, 200, 0);
+            }
+
+            for (int j = 200; i > 100 && i < 180; i--, j -= 4) {
+                paCoR[i] = new MyColor(255, 255, j, 0);
+            }
+            for (int j = 255; i <= 100 && i > 20; i--, j -= 2) {
+                paCoR[i] = new MyColor(255, j, 0, 0);
+            }
+            for (int j = 100; i <= 20 && i > 0; i--, j -= 3) {
+                paCoR[i] = new MyColor(255, j, 0, 0);
+            }
+            if (i == 0) {
+                paCoR[i] = new MyColor(255, 0, 0, 0);
+            }
         }
+
+        for (int i = 0; i < 100; i++) {
+            paCoR[i].setA((int) (i * 2.501D));
+        }
+
+        for (int i = 100; i < 256; i++) {
+            paCoR[i].setA(255);
+        }
+
+        this.paCoB = new MyColor[256];
+        for (int i = 0; i < 256; i++) {
+            this.paCoB[i] = new MyColor(i, i + 10 / 12, i * 2 / 3, i / 24);
+        }
+
+        this.paCo = this.paCoR;
     }
 
     /**
