@@ -8,27 +8,57 @@ import visibleObjects.*;
 public class KillerRules {
 
     // ***************************************************************************************************** //
-    // *************************** [          Statistics Ships           ] ********************************* //
+    // *************************** [          Statistics Values          ] ********************************* //
     // ***************************************************************************************************** //
-    public static final int OCTANE_HEALTH = 100;
+    
+    // Octane
+    public static final int OCTANE_HEALTH = 90;
     public static final int OCTANE_DAMAGE = 20;
     public static final int OCTANE_MAX_SPEED = 4;
     public static final int OCTANE_MAX_SPEED_NEBULOSA = 3;
-    public static final int BATMOBILE_HEALTH = 75;
+    
+    // Batmobile
+    public static final int BATMOBILE_HEALTH = 30;
     public static final int BATMOBILE_DAMAGE = 30;
     public static final int BATMOBILE_MAX_SPEED = 5;
     public static final int BATMOBILE_MAX_SPEED_NEBULOSA = 3;
+    
+    // Marauder
     public static final int MARAUDER_HEALTH = 150;
     public static final int MARAUDER_DAMAGE = 10;
     public static final int MARAUDER_MAX_SPEED = 3;
     public static final int MARAUDER_MAX_SPEED_NEBULOSA = 3;
+    
+    // Pacman
     public static final int PACMAN_INITIAL_HEALTH = 10;
     public static final int PACMAN_INCREMENT = 10;
     public static final int PACMAN_DECREMENT = 1;
+    
     public static final int DAMAGE_BY_COLLISION = 100;
     public static final int MAX_SPEED_INCREMENT = 3;
     public static final int POWER_UP_HEALTH_INCREMENT = 30;
     public static final int POWER_UP_DAMAGE_INCREMENT = 15;
+    
+    // Asteroids
+    public static final double MIN_ASTEROIDS = 3;
+    public static final double MAX_ASTEROIDS = 6;
+    // Nebulosas
+    public static final double MIN_NEBULOSAS = 0.8;
+    public static final double MAX_NEBULOSAS = 2.3;
+    // Planets
+    public static final double MIN_PLANETS = 0.7;
+    public static final double MAX_PLANETS = 2.3;
+    // BlackHoles
+    public static final double MIN_BLACKHOLES= 0;
+    public static final double MAX_BLACKHOLES = 1.5;
+    // Pacmans
+    public static final double MIN_PACMANS = 0;
+    public static final double MAX_PACMANS = 1.5;
+    // PowerUps
+    public static final double MIN_POWERUPS = 0.8;
+    public static final double MAX_POWERUPS = 2.1;
+    
+    public static final int SAFE_TIME = 2500;
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Alive          ] ********************************* //
@@ -37,7 +67,6 @@ public class KillerRules {
      * @author Alvaro
      * @param game
      * @param alive
-     * @param wall
      */
     static void collisionAliveWithBlackHole(KillerGame game, Alive alive) {
         if (Math.random() < 0.5) {
@@ -119,7 +148,7 @@ public class KillerRules {
 
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
         ship.changeState(Alive.State.DEAD);
-        ship.getGame().removeObject(ship);
+        //ship.getGame().removeObject(ship);
         pacman.setSize(ship.getHealth());
     }
 
@@ -162,7 +191,7 @@ public class KillerRules {
             }
             // Remove shot from the array
             shoot.setState(Alive.State.DEAD);
-            shoot.getGame().removeObject(shoot);
+            //shoot.getGame().removeObject(shoot);
         }
     }
 
@@ -174,7 +203,7 @@ public class KillerRules {
         KillerRules.substractHealthAlive(asteroid, shot.getDamage());
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        shot.getGame().removeObject(shot);
+        //shot.getGame().removeObject(shot);
     }
 
     /**
@@ -184,7 +213,7 @@ public class KillerRules {
     public static void collisionShootWithBlackHole(Shoot shot) {
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        shot.getGame().removeObject(shot);
+        //shot.getGame().removeObject(shot);
     }
 
     public static void collisionShootWithNebulosa(Shoot shot) {
@@ -197,13 +226,13 @@ public class KillerRules {
         pacman.setDy(shot.getDy());
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        shot.getGame().removeObject(shot);
+        //shot.getGame().removeObject(shot);
     }
 
     public static void collisionShootWithPlaneta(KillerGame game, Shoot shot, Planeta planeta) {
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        shot.getGame().removeObject(shot);
+        //shot.getGame().removeObject(shot);
     }
 
     public static void collisionShootWithPowerUp(KillerGame game, Shoot shot, PowerUp powerUp) {
@@ -216,7 +245,7 @@ public class KillerRules {
             }
             // Remove shot from the array
             shot.setState(Alive.State.DEAD);
-            shot.getGame().removeObject(shot);
+            //shot.getGame().removeObject(shot);
         }
     }
 
@@ -228,9 +257,9 @@ public class KillerRules {
     public static void collisionShootWithShoot(KillerGame game, Shoot shoot, Shoot shooot) {
         // Remove shots from the array
         shoot.setState(Alive.State.DEAD);
-        shoot.getGame().removeObject(shoot);
+        //shoot.getGame().removeObject(shoot);
         shooot.setState(Alive.State.DEAD);
-        shooot.getGame().removeObject(shooot);
+        //shooot.getGame().removeObject(shooot);
     }
 
     /**
@@ -240,7 +269,7 @@ public class KillerRules {
     public static void collisionShootWithWall(Shoot shot) {
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        shot.getGame().removeObject(shot);
+        //shot.getGame().removeObject(shot);
     }
 
     // ***************************************************************************************************** //
@@ -271,7 +300,7 @@ public class KillerRules {
     static void collisionAsteroidWithPacman(KillerGame aThis, Asteroid asteroid, Pacman pacman) {
         if (asteroid.getImgHeight() < pacman.getImgHeight()) {
             asteroid.changeState(Alive.State.DEAD);
-            asteroid.getGame().removeObject(asteroid);
+            //asteroid.getGame().removeObject(asteroid);
             pacman.setSize(asteroid.getHealth());
         } else {
             pacman.setDx(asteroid.getDx());
@@ -311,16 +340,16 @@ public class KillerRules {
         if (pacman.getHealth() > pacwoman.getHealth()) {
             pacman.setSize(pacwoman.getHealth());
             pacwoman.changeState(Alive.State.DEAD);
-            pacwoman.getGame().removeObject(pacwoman);
+            //pacwoman.getGame().removeObject(pacwoman);
         } else if (pacman.getHealth() < pacwoman.getHealth()) {
             pacwoman.setSize(pacwoman.getHealth());
             pacman.changeState(Alive.State.DEAD);
-            pacman.getGame().removeObject(pacman);
+            //pacman.getGame().removeObject(pacman);
         } else {
             pacman.changeState(Alive.State.DEAD);
-            pacman.getGame().removeObject(pacman);
+            //pacman.getGame().removeObject(pacman);
             pacwoman.changeState(Alive.State.DEAD);
-            pacwoman.getGame().removeObject(pacwoman);
+            //pacwoman.getGame().removeObject(pacwoman);
         }
     }
 
@@ -346,7 +375,7 @@ public class KillerRules {
     public static void sendAliveToPrev(KillerGame game, Alive alive) {
         // Delete from the array
         alive.setState(Alive.State.DEAD);
-        game.removeObject(alive);
+        //game.removeObject(alive);
         // Send alive to the prev module
         game.sendObjectToPrev(alive);
     }
@@ -359,7 +388,7 @@ public class KillerRules {
     public static void sendAliveToNext(KillerGame game, Alive alive) {
         // Delete from the array
         alive.setState(Alive.State.DEAD);
-        game.removeObject(alive);
+        // game.removeObject(alive);
         // Send alive to the next module
         game.sendObjectToNext(alive);
     }
@@ -380,7 +409,7 @@ public class KillerRules {
             // alive.changeState(Alive.State.DYING);
             // alive.onDying();
             alive.changeState(Alive.State.DEAD);
-            alive.getGame().removeObject(alive);
+            //alive.getGame().removeObject(alive);
             dead = true;
         }
         // Return live status
