@@ -654,8 +654,8 @@ public class KillerGame extends JFrame {
      * @param health
      * @param maxspeed
      */
-    public void newAsteroid(double x, double y, int imgHeight, double m, int health, double maxspeed) {
-        Asteroid asteroid = new Asteroid(this, x, y, imgHeight, m, health, maxspeed);
+    public void newAsteroid(double x, double y, int imgHeight, int health, double maxspeed) {
+        Asteroid asteroid = new Asteroid(this, x, y, imgHeight, health, maxspeed);
         this.objects.add(asteroid);
     }
 
