@@ -1,6 +1,7 @@
 package visibleObjects;
 
 import game.KillerGame;
+import sound.KillerRadio;
 
 public abstract class Automata extends Alive {
     
@@ -16,6 +17,10 @@ public abstract class Automata extends Alive {
 
     @Override
     public void run() {
+        // Sonido del Pacman
+        if (this instanceof Pacman) {
+            this.game.changeMusic(KillerRadio.ClipType.PACMAN_MOVE);
+        }        
 
         while (state != State.DEAD) {
 
