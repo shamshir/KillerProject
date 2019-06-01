@@ -20,12 +20,6 @@ public class ExplosionEffect extends KillerImage {
     public ExplosionEffect(VisibleObject vo) {
         super(vo, 300 - vo.getImgWidth(), 300 - vo.getImgHeight()); // tamaño imagen explosion
 
-        System.out.println("asteroid w: " + vo.getImgWidth());
-        System.out.println("asteroid h: " + vo.getImgHeight());
-
-        System.out.println("asteroid kimg w: " + this.getWidth());
-        System.out.println("asteroid kimg h: " + this.getHeight());
-
         this.framesList = new BufferedImage[12];
         this.frame = 0;
         this.loadImages();

@@ -39,6 +39,8 @@ public class KillerImage extends BufferedImage implements Runnable {
             this.paintUserColor();
         }
 
+        System.out.println("color ship: " + ((KillerShip) vo).getColor());
+
         this.setRenderHeight();
         this.setRenderWidth();
 
@@ -67,6 +69,8 @@ public class KillerImage extends BufferedImage implements Runnable {
             this.paintUserColor();
         }
 
+        System.out.println("color ship: " + ((KillerShip) vo).getColor());
+
         this.setRenderHeight();
         this.setRenderWidth();
     }
@@ -91,11 +95,12 @@ public class KillerImage extends BufferedImage implements Runnable {
 
         // pintar la imagen de la nave almentos una vez
         this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
-       
 
         if (vo instanceof KillerShip) {
             // cambiar imagen a la killerShip
         }
+
+        System.out.println("color ship: " + ((KillerShip) vo).getColor());
 
         this.setRenderHeight();
         this.setRenderWidth();
