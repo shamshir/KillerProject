@@ -375,9 +375,12 @@ public class KillerShip extends Controlled {
         } else {
             c = Color.decode("#ffd700");
             barWidth = this.imgWidth;
-        }        
+        }
         g2d.setColor(c);
         g2d.fillRect( (int) x, (int) y - 29, (int)barWidth, 8);
+        g2d.setColor(Color.white);
+        g2d.setStroke(new BasicStroke(1));
+        g2d.drawRect( (int) x, (int) y - 29, this.imgWidth, 8);
 
     }
 
