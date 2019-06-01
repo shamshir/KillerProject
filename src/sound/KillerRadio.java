@@ -15,6 +15,7 @@ import javax.sound.sampled.DataLine;
 public class KillerRadio implements Runnable {
 
     private Clip clip;
+    private boolean play = false;
 
     public enum ClipType {
         BATTLE, 
@@ -38,8 +39,8 @@ public class KillerRadio implements Runnable {
 
         // Changes the new Song
         this.clip = getSound(this.clipNames.get(ct));
-
         this.playSound();
+        
     }
 
     public Clip getSound(String file) {
@@ -58,12 +59,14 @@ public class KillerRadio implements Runnable {
     public void playSound() {
         this.clip.setFramePosition(0);
         this.clip.start();
+        this.play = true;
     }
 
     public void stopSound() {
         try {
             this.clip.stop();
             this.clip.close();
+            this.play = false;
         } catch (Exception e) {
         }
     }
@@ -72,9 +75,17 @@ public class KillerRadio implements Runnable {
     @Override
     public void run() {
         while (true) {
-            if (clip != null && clip.getFrameLength() == clip.getFramePosition()) {
+            
+            try {
+                Thread.sleep(0);
+            } catch (Exception e) {
+
+            }
+            
+            if (play && !clip.isActive()) {
                 playSound();
             }
+            
         }
     }
     

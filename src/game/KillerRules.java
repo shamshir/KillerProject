@@ -1,5 +1,6 @@
 package game;
 
+import sound.KillerSound;
 import visibleObjects.*;
 
 /**
@@ -147,9 +148,10 @@ public class KillerRules {
     }
 
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
-        ship.changeState(Alive.State.DEAD);
-        //ship.getGame().removeObject(ship);
+        game.removeObject(ship);
         pacman.setSize(ship.getHealth());
+        game.startSound(KillerSound.ClipType.PACMAN_EAT);
+        game.getNextModule().sendInfoMessageToPad("pad_dead", ship.getId());
     }
 
     public static void collisionShipWithPlaneta(KillerGame game, KillerShip ship, Planeta planeta) {

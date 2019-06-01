@@ -40,6 +40,7 @@ public class KillerGame extends JFrame {
     private boolean soundMusic = true;
     private boolean soundEffects = true;
     private boolean pacmanActive = true;
+    private boolean ultraPacman = false;
     public static boolean exit = false;
     public static final int VIEWER_WIDTH = 1920;
     public static final int VIEWER_HEIGHT = 1080;
@@ -81,14 +82,12 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [        KillerGame Constructors      ] ********************************* //
     // ***************************************************************************************************** //
+    
     /**
      * @author Alvaro
      */
     public KillerGame() {
 
-        // Open communications
-        this.generateComunnications();
-        
         // Add key listener
         addKeyEventListener();
 
@@ -104,20 +103,22 @@ public class KillerGame extends JFrame {
         // Show room
         this.newRoom();
 
+        // Open communications
+        this.generateComunnications();
+
     }
 
     // ***************************************************************************************************** //
     // *************************** [          KillerGame Methods         ] ********************************* //
     // ***************************************************************************************************** //
-    
     /**
      * @author Christian & Alvaro
      */
     private void addKeyEventListener() {
-        
+
         // Key listener
         KeyEventDispatcher keyEventDispatcher = new KeyEventDispatcher() {
-            
+
             // Attributes
             private int exitCounter = 0;
             KillerGame game;
@@ -134,11 +135,11 @@ public class KillerGame extends JFrame {
                 }
                 return false;
             }
-            
+
         };
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
-        
+
     }
 
     /**
@@ -511,17 +512,26 @@ public class KillerGame extends JFrame {
      */
     public void addObjects() {
 
-        /*/ A�adir Objetos de Prueba
+        /*/ Anadir Objetos de Prueba
         this.objects.add(new Planeta(this, 300, 400, 100, 100));
         this.objects.add(new Nebulosa(this, 400, 150, 120, 90));
         this.objects.add(new BlackHole(this, 350, 500, 80, 80));
         this.objects.add(new PowerUp(this, 100, 500, 70, 70, Power.HEALTH));
-        Asteroid a = new Asteroid(this, 75, 100, 40, 40, 6, 2);
-        this.objects.add(a);
-        Pacman p = new Pacman(this, 100, 450);
-        this.objects.add(p);
+        this.objects.add(new Asteroid(this, 75, 100, 40, 40, 6, 2);
+        this.objects.add(new Pacman(this, 100, 450));
         /*/
         
+        this.objects.add(new Pacman(this, 100, 450));
+        
+    }
+    
+    public void restrartGame() {
+        
+        this.objects = new ArrayList<>();
+        this.ships = new Hashtable();
+        this.pads = new Hashtable();
+        this.status = KillerGame.Status.ROOM;
+    
     }
 
     // ***************************************************************************************************** //
@@ -554,7 +564,6 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void sendObjectToPrev(Alive object) {
-        System.out.println("ENVIO " + object);
         this.prevModule.sendObject(object);
     }
 
@@ -562,7 +571,6 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void sendObjectToNext(Alive object) {
-        System.out.println("ENVIO " + object);
         this.nextModule.sendObject(object);
     }
 
@@ -630,6 +638,7 @@ public class KillerGame extends JFrame {
      */
     public void startSound(KillerSound.ClipType clip) {
         if (this.soundEffects) {
+            System.out.println("Sonido");
             this.sound.addSound(sound.createSound(clip));
         }
     }
@@ -782,15 +791,8 @@ public class KillerGame extends JFrame {
      * @param health
      */
     public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage, Color color) {
-        
         KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage, color);
-        int correctX = 1;
-        if (dx < 0) {
-            correctX = this.viewer.getWidth() - ship.getImgWidth() - 1;
-        }
-        System.out.println("RECIBO " + ship);
-        ship.setX(correctX);
-        //this.removeShip(this.getShipByIP(ship.getId()));
+        this.correctX(ship);
         this.ships.put(ip, ship);
         this.objects.add(ship);
         new Thread(ship).start();
@@ -803,6 +805,7 @@ public class KillerGame extends JFrame {
      */
     public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
         Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage, 1, Alive.State.ALIVE);
+        this.correctX(shoot);
         this.objects.add(shoot);
         new Thread(shoot).start();
     }
@@ -831,11 +834,7 @@ public class KillerGame extends JFrame {
      */
     public void reciveAsteroid(double x, double y, int imgHeight, double m, int health, double radians, double vx, double vy, double a) {
         Asteroid asteroid = new Asteroid(this, x, y, imgHeight, m, health, radians, vx, vy, a);
-        int correctX = 0;
-        if (vx < 0) {
-            correctX = this.viewer.getWidth() - asteroid.getImgWidth() - 1;
-        }
-        asteroid.setX(correctX);
+        this.correctX(asteroid);
         this.objects.add(asteroid);
         new Thread(asteroid).start();
     }
@@ -853,13 +852,21 @@ public class KillerGame extends JFrame {
      */
     public void recivePacman(double x, double y, double m, int health, double radians, double vx, double vy, double a) {
         Pacman pacman = new Pacman(this, x, y, m, health, radians, vx, vy, a);
-        int correctX = 0;
-        if (vx < 0) {
-            correctX = this.viewer.getWidth() - pacman.getImgWidth() - 1;
-        }
-        pacman.setX(correctX);
+        this.correctX(pacman);
         this.objects.add(pacman);
         new Thread(pacman).start();
+    }
+
+    /**
+     * @author Alvaro
+     * @param alive
+     */
+    private void correctX(Alive alive) {
+        int correctX = alive.getImgWidth();
+        if (alive.getX() < KillerGame.VIEWER_WIDTH / 2) {
+            correctX = KillerGame.VIEWER_WIDTH - alive.getImgWidth();
+        }
+        alive.setX(correctX);
     }
 
     /**
@@ -953,30 +960,29 @@ public class KillerGame extends JFrame {
         return null;
     }
 
-    /**
-     * @author Christian
-     */
-    public void setSoundMusic(boolean soundMusic) {
-        this.soundMusic = soundMusic;
+    public boolean getSoundMusic() {
+        return soundMusic;
     }
 
-    /**
-     * @author Christian
-     */
-    public void setSoundEffects(boolean soundEffects) {
-        this.soundEffects = soundEffects;
+    public boolean getSoundEffects() {
+        return soundEffects;
     }
 
-    /**
-     * @author Christian
-     */
-    public void setPacmanExistence(boolean pacmanActive) {
-        this.pacmanActive = pacmanActive;
+    public boolean getPacmanExistence() {
+        return pacmanActive;
     }
 
     // ***************************************************************************************************** //
     // *************************** [              Methods Set            ] ********************************* //
     // ***************************************************************************************************** //
+    public void enableUltrapacman() {
+        this.ultraPacman = true;
+    }
+
+    public static void exit() {
+        KillerGame.exit = true;
+    }
+
     public void setIpPrev(String ip) {
         this.prevModule.setDestinationIp(ip);
     }
@@ -1017,20 +1023,25 @@ public class KillerGame extends JFrame {
         this.windowNumber = windowNumber;
     }
 
-    public boolean getSoundMusic() {
-        return soundMusic;
+    /**
+     * @author Christian
+     */
+    public void setSoundMusic(boolean soundMusic) {
+        this.soundMusic = soundMusic;
     }
 
-    public boolean getSoundEffects() {
-        return soundEffects;
+    /**
+     * @author Christian
+     */
+    public void setSoundEffects(boolean soundEffects) {
+        this.soundEffects = soundEffects;
     }
 
-    public boolean getPacmanExistence() {
-        return pacmanActive;
-    }
-    
-    public static void exit() {
-        KillerGame.exit = true;
+    /**
+     * @author Christian
+     */
+    public void setPacmanExistence(boolean pacmanActive) {
+        this.pacmanActive = pacmanActive;
     }
 
     // ***************************************************************************************************** //
@@ -1051,12 +1062,12 @@ public class KillerGame extends JFrame {
      * @param ship
      */
     public void removeShip(KillerShip ship) {
-        this.objects.remove(ship);
+        //this.objects.remove(ship);
         if (this.getShipByIP(ship.getId()).equals(ship)) {
             System.out.println("BORRO " + ship);
             this.ships.remove(ship.getId());
         }
-        
+
     }
 
     /**
@@ -1077,23 +1088,23 @@ public class KillerGame extends JFrame {
 
         // New KillerGame
         KillerGame game = new KillerGame();
-        
+
         while (true) {
-            
+
             try {
                 Thread.sleep(0);
             } catch (Exception e) {
 
             }
-            
+
             if (KillerGame.exit) {
                 System.out.println("Exit");
-                game.getNextModule().sendMessage(Message.Builder.builder("quit",KillerServer.getId()).build());
+                game.getNextModule().sendMessage(Message.Builder.builder("quit", KillerServer.getId()).build());
                 System.exit(0);
             }
-            
+
         }
 
     }
-    
+
 }
