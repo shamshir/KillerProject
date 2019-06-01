@@ -1,13 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package visualEffects;
 
 import game.KillerGame;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -28,6 +22,7 @@ public class Viewer extends Canvas implements Runnable {
     private KillerGame killerGame;
 
     private final int FPS = 60;
+    private final int TOTAL_BACKGOUND_IMGS = 3;
     private double target = 1000 / FPS;
 
     private BufferedImage backgroundImg;
@@ -75,69 +70,14 @@ public class Viewer extends Canvas implements Runnable {
                 System.out.println(e);
             }
         }
-//        drawConnectionInfo(g2d);
-
     }
 
-//    public void drawConnectionInfo(Graphics2D g) {
-//
-//        double height = (int) getHeight() / 20;   
-//
-//        g.setColor(Color.white);
-//
-//        g.drawString("Local IP: " + killer.getIplocal(),
-//                (int) (getWidth() * 0.45), (int) height);
-//        g.drawString("PORT: " + killer.getSERVERPORT(),
-//                (int) (getWidth() * 0.45), (int) height + 16);
-//
-//        g.drawString("Previous - IP: " + killer.getPk().getIp(),
-//                (int) (getWidth() * 0.1), (int) height);
-//        g.drawString("PORT: " + killer.getPk().getOriginport(),
-//                (int) (getWidth() * 0.1), (int) height + 16);
-//
-//        if (killer.getPk().getSock() != null) {
-//            g.setColor(Color.green);
-//            g.drawString("CONNECTED", (int) (getWidth() * 0.1),
-//                    (int) height + 32);
-//        } else {
-//            g.setColor(Color.red);
-//            g.drawString("DISCONNECTED", (int) (getWidth() * 0.1),
-//                    (int) height + 32);
-//        }
-//
-//        g.setColor(Color.white);
-//
-//        g.drawString("Next - IP: " + killer.getNk().getIp(),
-//                (int) (getWidth() * 0.8), (int) height);
-//        g.drawString("PORT: " + killer.getNk().getOriginport(),
-//                (int) (getWidth() * 0.8), (int) height + 16);
-//
-//        if (killer.getNk().getSock() != null) {
-//            g.setColor(Color.green);
-//            g.drawString("CONNECTED", (int) (getWidth() * 0.8),
-//                    (int) height + 32);
-//        } else {
-//            g.setColor(Color.red);
-//            g.drawString("DISCONNECTED", (int) (getWidth() * 0.8),
-//                    (int) height + 32);
-//        }
-//
-//    }
     public void loadBackgroundImage() {
-        int windowNumber = 3;
-
-        // comprobar el numero de monitor del kgame
-        int TOTAL_BACKGOUND_IMGS = 3; // subir a atributo de clase??
         
-        int numBackground = (windowNumber % TOTAL_BACKGOUND_IMGS);
-
-        System.out.println("window NUber " + windowNumber);
-        System.out.println("background number: " + numBackground);
+        int numBackground = (this.killerGame.getWindowNumber() % this.TOTAL_BACKGOUND_IMGS);
 
         try {
             this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/b" + numBackground + ".jpeg"));
-//            this.backgroundImg = ImageIO.read(new File("src/b" + monitorNumber + ".jpeg"));
-//            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/b" + 1 + ".jpeg"));
         } catch (IOException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
         }
