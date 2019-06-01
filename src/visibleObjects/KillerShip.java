@@ -186,9 +186,6 @@ public class KillerShip extends Controlled {
             case "pad_dash":
                 this.dash();
                 break;
-            case "pad_powerup":
-
-                break;
             case "pad_turbo_start":
                 this.turboStart();
                 break;
@@ -367,6 +364,7 @@ public class KillerShip extends Controlled {
     // *                     Interfaces                       *
     // ********************************************************
     // Interfaz Destructible
+    @Override
     public void onDying() {
         this.kImg = new ExplosionEffect(this);
         (new Thread(this.kImg)).start();
