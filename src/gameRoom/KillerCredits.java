@@ -1,6 +1,5 @@
 package gameRoom;
 
-import game.KillerGame;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -9,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,22 +19,26 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- * 
+ *
  * @author Yeray
  */
 public class KillerCredits extends JPanel {
-    
+
+    //variables para el tamaño de la ventana
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 600;
-    
+
+    //variables para el texto de créditos
     private GradientPaint gradientPaing;
     private BufferedImage textImage;
     private double textY;
-    
-    static JFrame frame; 
-    
 
-    
+    //variable jFrame
+    static JFrame frame;
+
+    /**
+     * Constructor de KillerCredits
+     */
     public KillerCredits() {
         setBackground(Color.BLACK);
         Point2D pa = new Point2D.Double(0, 50);
@@ -50,11 +52,11 @@ public class KillerCredits extends JPanel {
             Logger.getLogger(KillerCredits.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
         }
-        
-        
-        
     }
-    
+
+    /**
+     * Start que con un timer hace update y repaint del texto de créditos
+     */
     public void start() {
         new Timer().schedule(new TimerTask() {
             @Override
@@ -64,11 +66,19 @@ public class KillerCredits extends JPanel {
             }
         }, 100, 1000 / 60);
     }
-    
+
+    /**
+     * Actualiza la posición Y del texto
+     */
     private void update() {
         textY += 0.5;
     }
-    
+
+    /**
+     * Pinta todos los componentes
+     *
+     * @param g
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -76,7 +86,12 @@ public class KillerCredits extends JPanel {
         draw3DScrollingText(g2d);
         makeDeeperTextDarker(g2d);
     }
-    
+
+    /**
+     * Pinta el texto en angulo
+     *
+     * @param g
+     */
     private void draw3DScrollingText(Graphics2D g) {
         double horizontalNarrowing = 0;
         for (int screenY = 0; screenY < 600; screenY++) {
@@ -84,18 +99,26 @@ public class KillerCredits extends JPanel {
             int textureY = (int) (Math.tan(1.39626 * (screenY / 600.0)) * -150 + textY);
             int dx1 = (int) (horizontalNarrowing - 100);
             int dx2 = (int) (SCREEN_WIDTH + 100 - horizontalNarrowing);
-            g.drawImage(textImage, dx1, 600 - screenY, dx2, 599 - screenY
-                    , 0, textureY, textImage.getWidth(), textureY + 1, this);
+            g.drawImage(textImage, dx1, 600 - screenY, dx2, 599 - screenY, 0, textureY, textImage.getWidth(), textureY + 1, this);
             horizontalNarrowing += 0.675;
         }
     }
-    
+
+    /**
+     * Hace desaparecer el texto al alejarse
+     *
+     * @param g
+     */
     private void makeDeeperTextDarker(Graphics2D g) {
         g.setPaint(gradientPaing);
         g.fillRect(0, 0, 800, 300);
         g.setPaint(Color.BLACK);
     }
-    
+
+    /**
+     * main de la clase que crea la ventana y añade el jPanel de los créditos
+     * @param args 
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -104,28 +127,25 @@ public class KillerCredits extends JPanel {
                 frame = new JFrame();
                 frame.setTitle("Killer Game Credits");
                 frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.setLocationRelativeTo(null);
                 frame.getContentPane().add(view);
                 frame.setUndecorated(true);
                 frame.setVisible(true);
                 view.start();
-                
-                
             }
         });
-        
+        //Timer que cierra los créditos sincronizado con el tiempo 
+        //que tarda el texto en dejar de verse
+        //También vuelve a poner la música de menú
         javax.swing.Timer t;
-        t = new javax.swing.Timer(70000, new ActionListener () {
+        t = new javax.swing.Timer(70000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("win");
-            frame.dispose();
-            KillerPanelPrincipal.menuRadio();
+                frame.dispose();
+                KillerPanelPrincipal.menuRadio();
             }
-        }); 
-        t.start(); 
-        
+        });
+        t.start();
     }
-    
 }
