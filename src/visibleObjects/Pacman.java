@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import sound.KillerRadio;
 import visualEffects.ExplosionEffect;
+import physics.PhysicsPacman;
 
 /**
  *
@@ -17,6 +18,7 @@ public class Pacman extends Automata {
     private long fpsControlTime;
     private boolean mouthOpened;
     private KillerRadio killerRadio;
+    private PhysicsPacman physics;
 
     /**
      * 
@@ -31,6 +33,7 @@ public class Pacman extends Automata {
         this.imgHeight = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgWidth = KillerRules.PACMAN_INITIAL_HEALTH;
         this.radius = this.imgHeight / 2;
+        this.radians = Math.random() * (Math.PI * 2); // angulo aleatorio
         this.m = Math.PI * (this.radius * this.radius);
         
         this.maxspeed = 8;
@@ -38,7 +41,7 @@ public class Pacman extends Automata {
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
         
-        // Instanciar physicsPacman
+        this.physics = new PhysicsPacman(this);
         
         this.killerRadio = new KillerRadio();
     }
@@ -74,7 +77,7 @@ public class Pacman extends Automata {
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
         
-        // Instanciar physicsPacman
+        this.physics = new PhysicsPacman(this);
         
         this.killerRadio = new KillerRadio();
     }
@@ -93,7 +96,7 @@ public class Pacman extends Automata {
     
     @Override
     protected void move() {
-//        KillerPhysics.move(this);
+        this.physics.move();
     }
 
     @Override
