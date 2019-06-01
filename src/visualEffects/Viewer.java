@@ -124,20 +124,21 @@ public class Viewer extends Canvas implements Runnable {
 //
 //    }
     public void loadBackgroundImage() {
+        int windowNumber = this.killerGame.getWindowNumber() ;
+        System.out.println("monitor NUber " + windowNumber);
+
         // comprobar el numero de monitor del kgame
-        // int TOTAL_BACKGOUND_IMGS = 2; // subir a atributo de clase??
-//        int monitorNumber = this.killerGame.getMonitorNumber() % TOTAL_BACKGOUND_IMGS;
+        int TOTAL_BACKGOUND_IMGS = 2; // subir a atributo de clase??
+        int monitorNumber = windowNumber++ % TOTAL_BACKGOUND_IMGS;
 
         try {
-            this.backgroundImg = ImageIO.read(new File("src/visualEffects/img/fondoLM.png"));
+            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/b" + monitorNumber + ".jpeg"));
 //            this.backgroundImg = ImageIO.read(new File("src/b" + monitorNumber + ".jpeg"));
 //            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/b" + 1 + ".jpeg"));
         } catch (IOException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
 
     public void updateFrame() {
         BufferStrategy bs;

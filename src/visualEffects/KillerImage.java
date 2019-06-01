@@ -1,5 +1,6 @@
 package visualEffects;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import visibleObjects.KillerShip;
 import visibleObjects.VisibleObject;
 
 /**
@@ -43,13 +45,70 @@ public class KillerImage extends BufferedImage implements Runnable {
 
     }
 
+    /**
+     * Con un solo parametro
+     *
+     * @param vo
+     */
+    public KillerImage(VisibleObject vo) {
+        super(vo.getImgWidth(), vo.getImgHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+
+        // objeto e imagen original
+        this.visibleObject = vo;
+        this.originalImage = vo.getImg();
+
+        // raster y graphics de la iamgen
+        this.raster = this.getKillerRaster(this);
+        this.graphics = (Graphics2D) this.getGraphics();
+
+        // pintar la imagen de la nave almentos una vez
+        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
+
+        if (vo instanceof KillerShip) {
+            this.paintUserColor();
+        }
+
+        this.setRenderHeight();
+        this.setRenderWidth();
+    }
+
+    /**
+     * CORREGITLO DE PLUS WITDH
+     *
+     * @param vo
+     * @param plusWidth
+     * @param plusHeigth
+     */
+    public KillerImage(VisibleObject vo, int plusWidth, int plusHeigth) {
+        super(vo.getImgWidth() + plusWidth, vo.getImgHeight() + plusHeigth, BufferedImage.TYPE_4BYTE_ABGR);
+
+        // objeto e imagen original
+        this.visibleObject = vo;
+        this.originalImage = vo.getImg();
+
+        // raster y graphics de la iamgen
+        this.raster = this.getKillerRaster(this);
+        this.graphics = (Graphics2D) this.getGraphics();
+
+        // pintar la imagen de la nave almentos una vez
+        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
+       
+
+        if (vo instanceof KillerShip) {
+            // cambiar imagen a la killerShip
+        }
+
+        this.setRenderHeight();
+        this.setRenderWidth();
+    }
+
     @Override
     public void run() {
     }
 
     public void paintUserColor() {
         int a, b, g, r;
-        
+
         // falta pillar el color del usuario
         MyColor userColor = new MyColor(255, 0, 060, 250);
 
@@ -66,22 +125,6 @@ public class KillerImage extends BufferedImage implements Runnable {
                 this.raster[pos + 3] = (byte) userColor.getR();
             }
         }
-    }
-
-    public KillerImage(VisibleObject vo) {
-        super(vo.getImg().getWidth(), vo.getImg().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-        this.visibleObject = vo;
-        this.originalImage = vo.getImg();
-        this.raster = this.getKillerRaster(this);
-        this.graphics = (Graphics2D) this.getGraphics();
-        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
-
-        if (vo instanceof VisibleObject) {
-            this.paintUserColor();
-        }
-
-        this.setRenderHeight();
-        this.setRenderWidth();
     }
 
     /**

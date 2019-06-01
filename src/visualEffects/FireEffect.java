@@ -49,6 +49,7 @@ public class FireEffect extends KillerImage {
         this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
     }
 
+
     /**
      * Setea la paleta de colores a usar
      */
