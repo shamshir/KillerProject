@@ -27,11 +27,11 @@ public class Pacman extends Automata {
     public Pacman(KillerGame game, double x, double y) {
         super(game, x, y);
         
-        this.m = 200;
         this.health = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgHeight = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgWidth = KillerRules.PACMAN_INITIAL_HEALTH;
         this.radius = this.imgHeight / 2;
+        this.m = Math.PI * (this.radius * this.radius);
         
         this.maxspeed = 8;
 
@@ -87,6 +87,8 @@ public class Pacman extends Automata {
         this.imgWidth += size;
         this.imgHeight += size;
         this.health += size;
+        this.radius = this.imgHeight / 2;
+        this.m = Math.PI * (this.radius * this.radius);
     }
     
     @Override

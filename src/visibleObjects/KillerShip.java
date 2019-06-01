@@ -60,7 +60,7 @@ public class KillerShip extends Controlled {
         this.imgHeight = 60;
         this.setImgSize();
         this.a = 0.07;
-        this.m = 100;
+        this.m = (this.imgWidth * this.imgHeight) / 2;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
         this.tiempoEnNebulosa = 0;
         
@@ -124,7 +124,7 @@ public class KillerShip extends Controlled {
 
         this.imgHeight = 60;
         this.setImgSize(); // (Ha de estar cargada la img con setImage)
-        this.m = 100;
+        this.m = (this.imgWidth * this.imgHeight) / 2;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
         this.tiempoEnNebulosa = 0;
 
