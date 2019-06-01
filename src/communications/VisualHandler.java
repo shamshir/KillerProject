@@ -232,10 +232,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         super.setDestinationIp(EMPTY_STRING);
     }
 
+   // public void sendStart(final GameConfiguration gameConfiguration) {
     public void sendStart() {
-        this.getKillergame().setPadsNum(0);
+        this.getKillergame().setPadsNum(0);      
         this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId())
                 .withServersQuantity(this.getKillergame().getPadsSize())
+                .withGameConfiguration(gameConfiguration)
                 .build());
     }
 

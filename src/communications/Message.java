@@ -11,13 +11,12 @@ public class Message {
     private String command;
     private String senderId;
     private String receiverId;
-    private Boolean relay;
     private KillerAction action;
     private ObjectResponse objectResponse;
     private ConnectionResponse connectionResponse;
+    private GameConfiguration gameConfiguration;
     private int health;
     private int serversQuantity;
-    private String configRoom;
 
     private static final String EMPTY_STRING = "";
 
@@ -28,13 +27,12 @@ public class Message {
         this.command = builder.command;
         this.senderId = builder.senderId;
         this.receiverId = builder.receiverId;
-        this.relay = builder.relay;
         this.action = builder.action;
         this.objectResponse = builder.objectResponse;
         this.connectionResponse = builder.connectionResponse;
         this.health = builder.health;
         this.serversQuantity = builder.serversQuantity;
-        this.configRoom = builder.configRoom;
+        this.gameConfiguration = builder.gameConfiguration;
     }
 
     public String getCommand() {
@@ -61,16 +59,8 @@ public class Message {
         return this.connectionResponse;
     }
 
-    public Boolean isRelay() {
-        return relay;
-    }
-
     public int getHealth() {
         return health;
-    }
-
-    public String getConfigRoom() {
-        return configRoom;
     }
     
     public int getServersQuantity(){
@@ -80,6 +70,11 @@ public class Message {
     public void setServersQuantity(final int quantity){
         this.serversQuantity = quantity;
     }
+    
+    public GameConfiguration getGameConfiguration(){
+        return this.gameConfiguration;
+    }
+
     
     public static Message readMessage(final String jsonStr) {
         try {
@@ -120,13 +115,12 @@ public class Message {
         private String command;
         private String senderId;
         private String receiverId;
-        private Boolean relay;
         private KillerAction action;
         private ObjectResponse objectResponse;
         private ConnectionResponse connectionResponse;
+        private GameConfiguration gameConfiguration;
         private int health;
         private int serversQuantity;
-        private String configRoom;
 
         public Builder(final String command, final String senderId) {
             this.command = command;
@@ -157,18 +151,13 @@ public class Message {
             return this;
         }
 
-        public Builder withRelay(final Boolean isRelay) {
-            this.relay = isRelay;
-            return this;
-        }
-
         public Builder withHealth(final int health) {
             this.health = health;
             return this;
         }
 
-        public Builder withConfigRoom(final String configRoom) {
-            this.configRoom = configRoom;
+        public Builder withGameConfiguration(final GameConfiguration gameConfiguration) {
+            this.gameConfiguration = gameConfiguration;
             return this;
         }
         
