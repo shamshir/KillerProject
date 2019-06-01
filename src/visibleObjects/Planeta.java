@@ -12,7 +12,7 @@ public class Planeta extends Static {
      * @param height
      * @param m 
      */
-    public Planeta(KillerGame game, double x, double y, int height, int m) {
+    public Planeta(KillerGame game, double x, double y, int height) {
         super(game, x, y);
 
         this.setImage();
@@ -20,7 +20,7 @@ public class Planeta extends Static {
         this.imgHeight = height;
         this.imgWidth = imgHeight;
         this.radius = this.imgHeight / 2;
-        this.m = m;
+        this.m = Math.PI * (this.radius * this.radius);
     }
 
     // ********************************************************

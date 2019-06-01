@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gameRoom;
 
 import game.KillerGame;
@@ -16,25 +11,32 @@ import visibleObjects.KillerShip;
  */
 public class KillerRoom extends javax.swing.JFrame {
     public KillerPanelPrincipal kpp;
-    public KillerPanelAjustes kpa;
+    public KillerPanelWinner kpw;
     public KillerPanelConectar kpc;
     public KillerGame kg;
+    
     /**
      * Creates new form KillerRoom
      */
     public KillerRoom(KillerGame kg) {
         this.kg = kg;
         initComponents();
-        kpp = new KillerPanelPrincipal(this);
-        kpa = new KillerPanelAjustes(this);
-        kpc = new KillerPanelConectar(this);
+        initJPanels();
         initConf();
     }
     
-    public void updateUsers(Hashtable<String, KillerShip> players){
-        kpc.updateUsers(players);
+    /**
+     * Inicia los jPanels
+     */
+    public void initJPanels(){
+        kpp = new KillerPanelPrincipal(this);
+        kpw = new KillerPanelWinner(this);
+        kpc = new KillerPanelConectar(this);
     }
     
+    /**
+     * Configuración inicial de la ventana
+     */
     public void initConf(){
         this.setSize(525, 525);
         this.setLocationRelativeTo(null); 
@@ -42,7 +44,30 @@ public class KillerRoom extends javax.swing.JFrame {
         KillerPanelPrincipal.jTextFieldSecret.requestFocus(); 
         kg.changeMusic(KillerRadio.ClipType.MENU);
     }
+    
+    /**
+     * Método para KillerGame que devuelve la lista de jugadores
+     * Para pintarla en el jPanel de Conectar
+     * @param players 
+     */
+    public void updateUsers(Hashtable<String, KillerShip> players){
+        kpc.updateUsers(players);
+    }
 
+     /**
+     * Método para habilitar el botón jugar cuando las pantallas etan listas
+     * @param aux 
+     */
+    public void setButtonPlay(Boolean aux){
+        kpp.setButtonPlay(aux);
+     }
+    
+    /**
+     * Método para cambiar los iconos de estado de conexión 
+     * de la patanlla izquierda
+     * Para facilitar el uso al resto del equipo llaman a los de los jPanels
+     * @param aux 
+     */
     public void setFeedBackConnectionLeft(Boolean aux){
         if (aux == true) {
             kpp.setFeedbackConnetionLeft(true);
@@ -53,6 +78,12 @@ public class KillerRoom extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Método para cambiar los iconos de estado de conexión 
+     * de la patanlla derecha
+     * Para facilitar el uso al resto del equipo llaman a los de los jPanels
+     * @param aux 
+     */
     public void setFeedBackConnectionRight(Boolean aux){
         if (aux == true) {
             kpp.setFeedbackConnetionRight(true);
@@ -63,36 +94,54 @@ public class KillerRoom extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Método que cambia el jPanel actual al Principal
+     */
     public void setKillerPanelPrincipal() {
         this.setContentPane(kpp);
         KillerPanelPrincipal.jTextFieldSecret.requestFocus();
     }
 
+    /**
+     * Método que cambia el jPanel actual al de Conexión
+     */
     public void setKillerPanelConectar() {
         this.setContentPane(kpc);
         kpc.updateUI();
     }
 
-    public void setKillerPanelAjustes() {
-        this.setContentPane(kpa);
-        kpa.updateUI();
+    /**
+     * Método que cambia el jPanel actual al de Ganador
+     * Pensado para ser usado cuando solo quede un jugador
+     */
+    public void setKillerPanelWinner() {
+        this.setContentPane(kpw);
+        kpw.updateUI();
     }
     
+    /**
+     * Getter del objeto KillerGame
+     * @return 
+     */
     public KillerGame getKg(){
         return this.kg;
     }
     
+    /**
+     * Getter del KillerPanelPrincipal
+     * @return 
+     */
     public KillerPanelPrincipal getKPP() {
         return this.kpp;
     }
     
+    /**
+     * Getter de la clase
+     * @return 
+     */
     public KillerRoom getKillerRoom(){
         return this;
     }
-    
-    public void setButtonPlay(Boolean aux){
-        kpp.setButtonPlay(aux);
-     }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -104,6 +153,7 @@ public class KillerRoom extends javax.swing.JFrame {
     private void initComponents() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Killer Game");
         setUndecorated(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
