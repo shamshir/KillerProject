@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import sound.KillerRadio;
+import visualEffects.ExplosionEffect;
 
 /**
  *
@@ -97,15 +98,8 @@ public class Pacman extends Automata {
     protected void setImage() {
         
     }
-
-    // ********************************************************
-    // *                     Interfaces                       *
-    // ********************************************************
     
-    // INTERFAZ Renderizable    
-    @Override
-    public void render(Graphics2D g2d) {
-        // TO DO: cambiar por img
+    private void drawPacman(Graphics2D g2d) {
         g2d.setColor(Color.YELLOW);
 
         if (System.currentTimeMillis() - this.fpsControlTime >= 500) {
@@ -115,11 +109,39 @@ public class Pacman extends Automata {
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (mouthOpened) {
-            g2d.fillArc((int) x, (int) y, this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
+            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
         } else {
-            g2d.fillArc((int) x, (int) y, this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
+            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
         }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        
+    }
+
+    // ********************************************************
+    // *                     Interfaces                       *
+    // ********************************************************
+    @Override
+    public void onDying() {
+        this.kImg = new ExplosionEffect(this);
+        (new Thread(this.kImg)).start();
+
+    }
+    
+    // INTERFAZ Renderizable    
+    @Override
+    public void render(Graphics2D g2d) {       
+
+        switch (this.state) {
+            case ALIVE:
+                this.drawPacman(g2d);
+                break;
+            case DYING:
+                g2d.drawImage(this.kImg, (int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, null);
+                break;
+            default:
+                //System.out.println("Pacman render --> SAFE or DEAD, rendering DEFAULT");
+                break;
+        }
         
     }
     

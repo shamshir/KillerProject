@@ -19,8 +19,10 @@ public abstract class Automata extends Alive {
 
         while (state != State.DEAD) {
 
-            this.move();
-            game.checkColision(this);
+            if (this.state != State.DYING) {
+                this.move();
+                game.checkColision(this);
+            }
 
             try {
                 Thread.sleep(10);
@@ -29,7 +31,7 @@ public abstract class Automata extends Alive {
             }
         }
 
-        //this.game.removeObject(this);
+        this.game.removeObject(this);
     }
 
     // ********************************************************

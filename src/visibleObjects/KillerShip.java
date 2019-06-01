@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import physics.PhysicsShip;
+import visualEffects.ExplosionEffect;
 import visualEffects.FireEffect;
 
 public class KillerShip extends Controlled {
@@ -144,12 +145,6 @@ public class KillerShip extends Controlled {
                 this.checkSafe();
             }
 
-//            if (this.tiempoEnNebulosa == 0) {
-//                this.configureSpeed();
-//            } else {
-//                this.tiempoEnNebulosa--;
-//            }
-
             // Control de la maxspeed cuando se atraviesa una nebulosa
             if (this.tiempoEnNebulosa > 0) {
                 this.tiempoEnNebulosa--;
@@ -157,9 +152,11 @@ public class KillerShip extends Controlled {
                     this.configureSpeed();
                 }
             }
-            
-            this.move();
-            game.checkColision(this);
+
+            if (this.state != State.DYING) {
+                this.move();
+                game.checkColision(this);
+            }
 
             try {
                 Thread.sleep(10);
@@ -168,7 +165,7 @@ public class KillerShip extends Controlled {
             }
         }
 
-        //this.game.removeShip(this);
+        this.game.removeShip(this);
     }
 
     /**
@@ -337,13 +334,42 @@ public class KillerShip extends Controlled {
         this.maxspeed += KillerRules.MAX_SPEED_INCREMENT;
     }
 
+    // *************************
+    // *    Drawing methods    *
+    // *************************
+    private void drawFireEffect(Graphics2D g2d) {
+        double scale = (double) this.imgWidth / (double) ((FireEffect) this.kImg).getWidth();
+        AffineTransform transform = new AffineTransform();
+        transform.translate(x, y);
+        transform.rotate(-radians, this.imgWidth / 2, this.imgHeight / 2);
+        transform.scale(scale, scale);
+        g2d.drawImage(this.kImg, transform, null);
+    }
+
+    private void drawUserName(Graphics2D g2d) {
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(Color.white);
+        g2d.drawString(this.user, (int) x, (int) y - 10);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+    }
+
+    private void drawLifeBar(Graphics2D g2d) {
+
+    }
+
+    private void drawSafe(Graphics2D g2d) {
+        g2d.setColor(Color.magenta);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.drawOval((int) x - 6, (int) y - 6, this.imgWidth + 12, this.imgHeight + 12);
+    }
+
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
     // Interfaz Destructible
-    @Override
     public void onDying() {
-
+        this.kImg = new ExplosionEffect(this);
+        (new Thread(this.kImg)).start();
     }
 
     @Override
@@ -354,26 +380,25 @@ public class KillerShip extends Controlled {
     // Interfaz Renderizable
     @Override
     public void render(Graphics2D g2d) {
-        
-        double scale = (double)this.imgWidth / (double)((FireEffect)this.kImg).getWidth();
-        AffineTransform transform = new AffineTransform();
-        transform.translate(x, y);
-        transform.rotate(-radians, this.imgWidth / 2, this.imgHeight / 2);
-        transform.scale(scale, scale);
-        
-        g2d.drawImage(this.kImg, transform, null);
-        
-        // Pintar indicador de escudo si la nave está SAFE
-        if (this.state == Alive.State.SAFE) {
-            g2d.setColor(Color.magenta);
-            g2d.setStroke(new BasicStroke(2));
-            g2d.drawOval((int) x - 6, (int) y - 6, imgWidth + 12, imgHeight + 12);
-        }
 
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setColor(Color.white);
-        g2d.drawString(this.user + " " + this.health, (int) x, (int) y - 10);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        switch (this.state) {
+            case SAFE:
+                this.drawFireEffect(g2d);
+                this.drawSafe(g2d);
+                this.drawUserName(g2d);
+                break;
+            case ALIVE:
+                this.drawFireEffect(g2d);
+                this.drawUserName(g2d);
+                break;
+            case DYING:
+                g2d.drawImage(this.kImg, (int) this.x, (int) this.y, this.imgWidth, this.imgHeight, null);
+                break;
+            default:
+                //System.out.println("KillerShip render --> DEAD, rendering DEFAULT");
+                break;
+        }
+    
     }
 
     // *********************
