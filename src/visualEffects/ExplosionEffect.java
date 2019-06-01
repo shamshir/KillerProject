@@ -18,7 +18,13 @@ public class ExplosionEffect extends KillerImage {
     private int frame;
 
     public ExplosionEffect(VisibleObject vo) {
-        super(vo, 300, 300);
+        super(vo, 300 - vo.getImgWidth(), 300 - vo.getImgHeight()); // tamaño imagen explosion
+
+        System.out.println("asteroid w: " + vo.getImgWidth());
+        System.out.println("asteroid h: " + vo.getImgHeight());
+
+        System.out.println("asteroid kimg w: " + this.getWidth());
+        System.out.println("asteroid kimg h: " + this.getHeight());
 
         this.framesList = new BufferedImage[12];
         this.frame = 0;
@@ -48,15 +54,12 @@ public class ExplosionEffect extends KillerImage {
     }
 
     private void paintFrame() {
-        
-       
 
 //        BufferedImage bImg = new BufferedImage(this.framesList[this.frame].getColorModel(),
 //                this.framesList[this.frame].getRaster(), this.framesList[this.frame].isAlphaPremultiplied(), null);
-
         this.graphics.clearRect(0, 0, this.getWidth(), this.getHeight());
         this.graphics.drawImage(this.framesList[this.frame], 0, 0, null);
-        
+
     }
 
     @Override
