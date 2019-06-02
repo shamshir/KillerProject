@@ -6,13 +6,12 @@ import game.KillerRules;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import physics.PhysicsShip;
 import visualEffects.ExplosionEffect;
 import visualEffects.FireEffect;
 
-public class KillerShip extends Controlled {
+public class KillerShip extends Alive {
     
     public enum ShipType {
         OCTANE, BATMOBILE, MARAUDER
@@ -165,7 +164,7 @@ public class KillerShip extends Controlled {
             }
         }
 
-        this.game.removeShip(this);
+        this.game.removeObject(this);
     }
 
     /**
@@ -387,7 +386,7 @@ public class KillerShip extends Controlled {
     private void drawSafe(Graphics2D g2d) {
         g2d.setColor(this.color);
         g2d.setStroke(new BasicStroke(2));
-        g2d.drawOval((int) x - 6, (int) y - 6, this.imgWidth + 12, this.imgHeight + 12);
+        g2d.drawOval((int) x - 12, (int) y - 10, this.imgWidth + 24, this.imgHeight + 24);
     }
 
     // ********************************************************
