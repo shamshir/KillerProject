@@ -42,7 +42,7 @@ public class KillerRoom extends javax.swing.JFrame {
         this.setLocationRelativeTo(null); 
         this.setContentPane(kpp);
         KillerPanelPrincipal.jTextFieldSecret.requestFocus(); 
-        kg.changeMusic(KillerRadio.ClipType.MENU);
+        kpp.setNetworkConf(true, true, true, false);
     }
     
     /**
@@ -99,6 +99,7 @@ public class KillerRoom extends javax.swing.JFrame {
      */
     public void setKillerPanelPrincipal() {
         this.setContentPane(kpp);
+        kpw.updateUI();
         KillerPanelPrincipal.jTextFieldSecret.requestFocus();
     }
 
@@ -113,10 +114,13 @@ public class KillerRoom extends javax.swing.JFrame {
     /**
      * Método que cambia el jPanel actual al de Ganador
      * Pensado para ser usado cuando solo quede un jugador
+     * @param aux
      */
-    public void setKillerPanelWinner() {
+    public void setKillerPanelWinner(String aux) {
         this.setContentPane(kpw);
         kpw.updateUI();
+        kpw.setWinner(aux);
+        
     }
     
     /**

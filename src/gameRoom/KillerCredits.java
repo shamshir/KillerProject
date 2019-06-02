@@ -4,8 +4,13 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -24,22 +29,26 @@ import javax.swing.SwingUtilities;
  */
 public class KillerCredits extends JPanel {
 
-    //variables para el tamaño de la ventana
+    //Variables para el tamaño de la ventana
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 600;
 
-    //variables para el texto de créditos
+    //Variables para el texto de créditos
     private GradientPaint gradientPaing;
     private BufferedImage textImage;
     private double textY;
 
-    //variable jFrame
+    //Variable jFrame
     static JFrame frame;
+
+    //Timer
+    static javax.swing.Timer t;
 
     /**
      * Constructor de KillerCredits
      */
     public KillerCredits() {
+        addKeyEventListener();
         setBackground(Color.BLACK);
         Point2D pa = new Point2D.Double(0, 50);
         Point2D pb = new Point2D.Double(0, 300);
@@ -116,8 +125,28 @@ public class KillerCredits extends JPanel {
     }
 
     /**
+     * Método listener para salir de los créditos con dispose y 
+     * volver al menú principal cambiando la música a la vez
+     */
+    private void addKeyEventListener() {
+        // Key listener
+        KeyEventDispatcher keyEventDispatcher = new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(final KeyEvent e) {
+                if (e.getKeyCode() == 27) {      
+                    frame.dispose();
+                    KillerPanelPrincipal.menuRadio();
+                }
+                return false;
+            }
+        };
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
+    }
+
+    /**
      * main de la clase que crea la ventana y añade el jPanel de los créditos
-     * @param args 
+     *
+     * @param args
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -132,18 +161,26 @@ public class KillerCredits extends JPanel {
                 frame.getContentPane().add(view);
                 frame.setUndecorated(true);
                 frame.setVisible(true);
+                frame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        frame.dispose();
+                        KillerPanelPrincipal.menuRadio();
+                    }
+                });
                 view.start();
             }
         });
+
         //Timer que cierra los créditos sincronizado con el tiempo 
         //que tarda el texto en dejar de verse
         //También vuelve a poner la música de menú
-        javax.swing.Timer t;
         t = new javax.swing.Timer(70000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
                 KillerPanelPrincipal.menuRadio();
+                t.stop();
             }
         });
         t.start();
