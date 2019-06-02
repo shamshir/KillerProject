@@ -14,18 +14,17 @@ public class Asteroid extends Automata {
      * @param x
      * @param y
      * @param imgHeight
-     * @param m
      * @param health 
      * @param maxspeed 
      */
-    public Asteroid(KillerGame game, double x, double y, int imgHeight, double m, int health, double maxspeed) {
+    public Asteroid(KillerGame game, double x, double y, int imgHeight, int health, double maxspeed) {
         super(game, x, y);
 
         this.setImage();
         this.imgHeight = imgHeight;
         this.imgWidth = imgHeight;
         this.radius = this.imgHeight / 2;
-        this.m = m;
+        this.m = Math.PI * (this.radius * this.radius);
 
         this.health = health;
         this.maxspeed = maxspeed;

@@ -1,5 +1,6 @@
 package visualEffects;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -8,6 +9,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import visibleObjects.Alive;
+import visibleObjects.KillerShip;
+import visibleObjects.Shoot;
 import visibleObjects.VisibleObject;
 
 /**
@@ -24,42 +28,90 @@ public class KillerImage extends BufferedImage implements Runnable {
     protected int renderWidth;
     protected int renderHeight;
 
-    public KillerImage(VisibleObject vo, BufferedImage oi, int plusWidth, int plusHeight) {
-        super(oi.getWidth() + plusWidth, oi.getHeight() + plusHeight, BufferedImage.TYPE_4BYTE_ABGR);
+    /**
+     * Con un solo parametro
+     *
+     * @param vo
+     */
+    public KillerImage(VisibleObject vo) {
+        super(vo.getImgWidth(), vo.getImgHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+
+        // objeto e imagen original
         this.visibleObject = vo;
-        this.originalImage = oi;
+        this.originalImage = vo.getImg();
+
+        // raster y graphics de la iamgen
         this.raster = this.getKillerRaster(this);
         this.graphics = (Graphics2D) this.getGraphics();
 
-        // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
-        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
+        this.graphics.drawImage(this.originalImage, 0, 0, this.getWidth(), this.getHeight(), null);
 
-        if (vo instanceof VisibleObject) {
-            this.paintUserColor();
+        // pintar la imagen almentos una vez
+        if (vo instanceof KillerShip) {
+            Color shipColor = ((KillerShip) vo).getColor();
+            this.paintObjectColor(shipColor);
+
+        } else if (vo instanceof Shoot) {
+//            Color objectColor = ((Shoot) vo).getColor();
+//            this.paintObjectColor(objectColor);
         }
 
         this.setRenderHeight();
         this.setRenderWidth();
+    }
 
+    /**
+     * CORREGITLO DE PLUS WITDH
+     *
+     * @param vo
+     * @param width
+     * @param plusHeigth
+     */
+    public KillerImage(VisibleObject vo, int width, int height) {
+        super(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+
+        // objeto e imagen original
+        this.visibleObject = vo;
+        this.originalImage = vo.getImg();
+
+        // raster y graphics de la iamgen
+        this.raster = this.getKillerRaster(this);
+        this.graphics = (Graphics2D) this.getGraphics();
+
+        // pintar la imagen de la nave almentos una vez
+        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
+
+        // pintar la imagen almentos una vez
+        if (vo instanceof KillerShip) {
+            Color shipColor = ((KillerShip) vo).getColor();
+            this.paintObjectColor(shipColor);
+
+        } else if (vo instanceof Shoot) {
+//            Color objectColor = ((Shoot) vo).getColor();
+//            this.paintObjectColor(objectColor);
+        }
+
+        this.setRenderHeight();
+        this.setRenderWidth();
     }
 
     @Override
     public void run() {
     }
 
-    public void paintUserColor() {
-        int a, b, g, r;
-        
+    public void paintObjectColor(Color c) {
+        int aRasterValue, bRastreValue, gRasterValue, rRasterValue;
+
         // falta pillar el color del usuario
-        MyColor userColor = new MyColor(255, 0, 060, 250);
+        MyColor userColor = new MyColor(255, c.getBlue(), c.getGreen(), c.getRed());
 
         for (int pos = 0; pos < this.raster.length; pos += 4) {
-            a = Byte.toUnsignedInt(this.raster[pos]);
-            b = Byte.toUnsignedInt(this.raster[pos + 1]);
-            g = Byte.toUnsignedInt(this.raster[pos + 2]);
-            r = Byte.toUnsignedInt(this.raster[pos + 3]);
+            aRasterValue = Byte.toUnsignedInt(this.raster[pos]);
+            bRastreValue = Byte.toUnsignedInt(this.raster[pos + 1]);
+            gRasterValue = Byte.toUnsignedInt(this.raster[pos + 2]);
+            rRasterValue = Byte.toUnsignedInt(this.raster[pos + 3]);
 
-            if ((a == 255) && (b == 0) && (g == 255) && (r == 0)) {
+            if ((aRasterValue == 255) && (bRastreValue == 0) && (gRasterValue == 255) && (rRasterValue == 0)) {
                 this.raster[pos] = (byte) userColor.getA();
                 this.raster[pos + 1] = (byte) userColor.getB();
                 this.raster[pos + 2] = (byte) userColor.getG();
@@ -68,20 +120,9 @@ public class KillerImage extends BufferedImage implements Runnable {
         }
     }
 
-    public KillerImage(VisibleObject vo) {
-        super(vo.getImg().getWidth(), vo.getImg().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-        this.visibleObject = vo;
-        this.originalImage = vo.getImg();
-        this.raster = this.getKillerRaster(this);
-        this.graphics = (Graphics2D) this.getGraphics();
-        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
-
-        if (vo instanceof VisibleObject) {
-            this.paintUserColor();
-        }
-
-        this.setRenderHeight();
-        this.setRenderWidth();
+    protected boolean isVisibleObjectSafeOrAlive() {
+        return (((KillerShip) this.visibleObject).getState() == Alive.State.ALIVE)
+                || (((KillerShip) this.visibleObject).getState() == Alive.State.SAFE);
     }
 
     /**
@@ -89,18 +130,8 @@ public class KillerImage extends BufferedImage implements Runnable {
      *
      * @return True si lo sigue teniendo, false si no
      */
-    protected boolean checkObjectEffect() {
-        if (this.visibleObject.getKillerImage().equals(this)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    protected void makeTransparent() {
-        for (int pos = 0; pos < raster.length; pos += 4) {
-            this.raster[pos] = (byte) 0;
-        }
+    protected boolean hasVisibleObjectThisEffect() {
+        return this.visibleObject.getKillerImage().equals(this);
     }
 
     // ***********************
@@ -127,8 +158,17 @@ public class KillerImage extends BufferedImage implements Runnable {
      *
      * @return
      */
-    private byte[] getKillerRaster(BufferedImage bi) {
+    protected byte[] getKillerRaster(BufferedImage bi) {
         return ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+    }
+
+    /**
+     * Makes this image totally transparent
+     */
+    protected void clearImage() {
+        for (int pos = 0; pos < this.raster.length; pos += 4) {
+            this.raster[pos] = 0;
+        }
     }
 
     /**

@@ -6,18 +6,17 @@ import game.KillerRules;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import physics.PhysicsShip;
 import visualEffects.ExplosionEffect;
 import visualEffects.FireEffect;
 
-public class KillerShip extends Controlled {
-    
+public class KillerShip extends Alive {
+
     public enum ShipType {
-        OCTANE, BATMOBILE, MARAUDER
+        BATMOBILE, OCTANE, MARAUDER
     }
-    
+
     private ShipType type;
     private String id;
     private String user;
@@ -45,7 +44,7 @@ public class KillerShip extends Controlled {
      * @param type
      * @param color
      */
-    public KillerShip(KillerGame game, double x, double y, String id, 
+    public KillerShip(KillerGame game, double x, double y, String id,
             String user, ShipType type, Color color) {
         super(game, x, y);
         this.id = id;
@@ -60,11 +59,11 @@ public class KillerShip extends Controlled {
         this.imgHeight = 60;
         this.setImgSize();
         this.a = 0.07;
-        this.m = 100;
+        this.m = (this.imgWidth * this.imgHeight) / 2;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
         this.tiempoEnNebulosa = 0;
-        
-        this.kImg = new FireEffect(this, this.img);
+
+        this.kImg = new FireEffect(this);
     }
 
     /**
@@ -92,8 +91,8 @@ public class KillerShip extends Controlled {
      * @param damage
      * @param color
      */
-    public KillerShip(KillerGame game, double x, double y, double radians, double dx, double dy, 
-            double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, 
+    public KillerShip(KillerGame game, double x, double y, double radians, double dx, double dy,
+            double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry,
             String id, String user, ShipType type, int health, int damage, Color color) {
         super(game, x, y);
 
@@ -115,7 +114,7 @@ public class KillerShip extends Controlled {
         this.rx = rx;
         this.ry = ry;
         this.configureSpeed();
-        
+
         //this.state = State.SAFE;
         this.state = State.ALIVE;
         this.health = health;
@@ -124,21 +123,21 @@ public class KillerShip extends Controlled {
 
         this.imgHeight = 60;
         this.setImgSize(); // (Ha de estar cargada la img con setImage)
-        this.m = 100;
+        this.m = (this.imgWidth * this.imgHeight) / 2;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
         this.tiempoEnNebulosa = 0;
 
         this.timer = System.currentTimeMillis();
-        
-        this.kImg = new FireEffect(this, this.img);
+
+        this.kImg = new FireEffect(this);
     }
 
     @Override
     public void run() {
         new Thread(this.kImg).start();
-        
+
         this.timer = System.currentTimeMillis();
-        
+
         while (state != State.DEAD) {
 
             if (state == State.SAFE) {
@@ -165,7 +164,7 @@ public class KillerShip extends Controlled {
             }
         }
 
-        this.game.removeShip(this);
+        this.game.removeObject(this);
     }
 
     /**
@@ -185,9 +184,6 @@ public class KillerShip extends Controlled {
                 break;
             case "pad_dash":
                 this.dash();
-                break;
-            case "pad_powerup":
-
                 break;
             case "pad_turbo_start":
                 this.turboStart();
@@ -224,10 +220,10 @@ public class KillerShip extends Controlled {
     @Override
     protected void setImage() {
         switch (type) {
-            case OCTANE:
+            case BATMOBILE:
                 this.loadImg("src/visibleObjects/img/fastShip.png");
                 break;
-            case BATMOBILE:
+            case OCTANE:
                 this.loadImg("src/visibleObjects/img/normalShip.png");
                 break;
             case MARAUDER:
@@ -271,14 +267,14 @@ public class KillerShip extends Controlled {
         this.configureHealth();
         this.configureSpeed();
     }
-    
+
     private void configureDamage() {
         switch (type) {
-            case OCTANE:
-                this.damage = KillerRules.OCTANE_DAMAGE;
-                break;
             case BATMOBILE:
                 this.damage = KillerRules.BATMOBILE_DAMAGE;
+                break;
+            case OCTANE:
+                this.damage = KillerRules.OCTANE_DAMAGE;
                 break;
             case MARAUDER:
                 this.damage = KillerRules.MARAUDER_DAMAGE;
@@ -286,16 +282,16 @@ public class KillerShip extends Controlled {
             default:
                 break;
         }
-        
+
     }
-    
+
     private void configureHealth() {
         switch (type) {
-            case OCTANE:
-                this.health = KillerRules.OCTANE_HEALTH;
-                break;
             case BATMOBILE:
                 this.health = KillerRules.BATMOBILE_HEALTH;
+                break;
+            case OCTANE:
+                this.health = KillerRules.OCTANE_HEALTH;
                 break;
             case MARAUDER:
                 this.health = KillerRules.MARAUDER_HEALTH;
@@ -304,14 +300,14 @@ public class KillerShip extends Controlled {
                 break;
         }
     }
-    
+
     private void configureSpeed() {
         switch (type) {
-            case OCTANE:
-                this.maxspeed = KillerRules.OCTANE_MAX_SPEED;
-                break;
             case BATMOBILE:
                 this.maxspeed = KillerRules.BATMOBILE_MAX_SPEED;
+                break;
+            case OCTANE:
+                this.maxspeed = KillerRules.OCTANE_MAX_SPEED;
                 break;
             case MARAUDER:
                 this.maxspeed = KillerRules.MARAUDER_MAX_SPEED;
@@ -319,26 +315,45 @@ public class KillerShip extends Controlled {
             default:
                 break;
         }
-        
+
     }
-    
+
     private void dash() {
         this.physicsShip.dash();
     }
-    
+
     private void turboEnd() {
         this.configureSpeed();
     }
-    
+
     private void turboStart() {
         this.maxspeed += KillerRules.MAX_SPEED_INCREMENT;
+    }
+
+    private int getInitHealth() {
+        int initHealth = 0;
+        switch (type) {
+            case BATMOBILE:
+                initHealth = KillerRules.BATMOBILE_HEALTH;
+                break;
+            case OCTANE:
+                initHealth = KillerRules.OCTANE_HEALTH;
+                break;
+            case MARAUDER:
+                initHealth = KillerRules.MARAUDER_HEALTH;
+                break;
+            default:
+                break;
+        }
+        return initHealth;
     }
 
     // *************************
     // *    Drawing methods    *
     // *************************
     private void drawFireEffect(Graphics2D g2d) {
-        double scale = (double) this.imgWidth / (double) ((FireEffect) this.kImg).getWidth();
+//        double scale = (double) this.imgWidth / (double) ((FireEffect) this.kImg).getWidth();
+        double scale = (double) this.imgWidth / (double) this.kImg.getWidth();
         AffineTransform transform = new AffineTransform();
         transform.translate(x, y);
         transform.rotate(-radians, this.imgWidth / 2, this.imgHeight / 2);
@@ -347,26 +362,39 @@ public class KillerShip extends Controlled {
     }
 
     private void drawUserName(Graphics2D g2d) {
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(Color.white);
-        g2d.drawString(this.user, (int) x, (int) y - 10);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.drawString(this.user, (int) x, (int) y - 36);
     }
 
     private void drawLifeBar(Graphics2D g2d) {
+        double barWidth;
+        Color c;
+        if (this.health <= this.getInitHealth()) {
+            c = this.color;
+            barWidth = (this.imgWidth * this.health) / this.getInitHealth();
+        } else {
+            c = Color.decode("#ffd700");
+            barWidth = this.imgWidth;
+        }
+        g2d.setColor(c);
+        g2d.fillRect((int) x, (int) y - 29, (int) barWidth, 8);
+        g2d.setColor(Color.white);
+        g2d.setStroke(new BasicStroke(1));
+        g2d.drawRect((int) x, (int) y - 29, this.imgWidth, 8);
 
     }
 
     private void drawSafe(Graphics2D g2d) {
-        g2d.setColor(Color.magenta);
+        g2d.setColor(this.color);
         g2d.setStroke(new BasicStroke(2));
-        g2d.drawOval((int) x - 6, (int) y - 6, this.imgWidth + 12, this.imgHeight + 12);
+        g2d.drawOval((int) x - 12, (int) y - 10, this.imgWidth + 24, this.imgHeight + 24);
     }
 
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
     // Interfaz Destructible
+    @Override
     public void onDying() {
         this.kImg = new ExplosionEffect(this);
         (new Thread(this.kImg)).start();
@@ -386,10 +414,12 @@ public class KillerShip extends Controlled {
                 this.drawFireEffect(g2d);
                 this.drawSafe(g2d);
                 this.drawUserName(g2d);
+                this.drawLifeBar(g2d);
                 break;
             case ALIVE:
                 this.drawFireEffect(g2d);
                 this.drawUserName(g2d);
+                this.drawLifeBar(g2d);
                 break;
             case DYING:
                 g2d.drawImage(this.kImg, (int) this.x, (int) this.y, this.imgWidth, this.imgHeight, null);
@@ -398,13 +428,12 @@ public class KillerShip extends Controlled {
                 //System.out.println("KillerShip render --> DEAD, rendering DEFAULT");
                 break;
         }
-    
+
     }
 
     // *********************
     // * Getters & Setters *
     // *********************
-
     public ShipType getType() {
         return type;
     }

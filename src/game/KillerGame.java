@@ -4,6 +4,7 @@ package game;
 import visualEffects.*;
 import visibleObjects.*;
 import communications.*;
+import comunicaciones.GameConfiguration;
 import gameRoom.*;
 import sound.*;
 
@@ -40,10 +41,15 @@ public class KillerGame extends JFrame {
     private boolean soundMusic = true;
     private boolean soundEffects = true;
     private boolean pacmanActive = true;
+    private boolean ultraPacman = false;
     public static boolean exit = false;
     public static final int VIEWER_WIDTH = 1920;
     public static final int VIEWER_HEIGHT = 1080;
-
+    
+    // Gen objects
+    private int matrizWidth[][] = new int[8][4];
+    private int matrizHeight[][] = new int[8][4];
+    
     // Object list
     private ArrayList<VisibleObject> objects = new ArrayList<>();
 
@@ -81,14 +87,12 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [        KillerGame Constructors      ] ********************************* //
     // ***************************************************************************************************** //
+    
     /**
      * @author Alvaro
      */
     public KillerGame() {
 
-        // Open communications
-        this.generateComunnications();
-        
         // Add key listener
         addKeyEventListener();
 
@@ -104,20 +108,22 @@ public class KillerGame extends JFrame {
         // Show room
         this.newRoom();
 
+        // Open communications
+        this.generateComunnications();
+
     }
 
     // ***************************************************************************************************** //
     // *************************** [          KillerGame Methods         ] ********************************* //
     // ***************************************************************************************************** //
-    
     /**
      * @author Christian & Alvaro
      */
     private void addKeyEventListener() {
-        
+
         // Key listener
         KeyEventDispatcher keyEventDispatcher = new KeyEventDispatcher() {
-            
+
             // Attributes
             private int exitCounter = 0;
             KillerGame game;
@@ -134,11 +140,11 @@ public class KillerGame extends JFrame {
                 }
                 return false;
             }
-            
+
         };
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
-        
+
     }
 
     /**
@@ -459,7 +465,7 @@ public class KillerGame extends JFrame {
         // Collision with Wall
         if (object instanceof Wall) {
             if (CollidePhysics.collisionObjxWall(pacman, (Wall) object)) {
-                KillerRules.collisionAliveWithWall(this, pacman, (Wall) (object));
+                KillerRules.collisionPacmanWithWall(this, pacman, (Wall) (object));
             }
         }
 
@@ -505,22 +511,235 @@ public class KillerGame extends JFrame {
             }
         }
     }
-
+    
+    // ***************************************************************************************************** //
+    // *************************** [             Add Methods             ] ********************************* //
+    // ***************************************************************************************************** //
+    
     /**
-     * @author Alvaro
+     * @author Christian
      */
     public void addObjects() {
 
-        /*/ A�adir Objetos de Prueba
-        this.objects.add(new Planeta(this, 300, 400, 100, 100));
-        this.objects.add(new Nebulosa(this, 400, 150, 120, 90));
-        this.objects.add(new BlackHole(this, 350, 500, 80, 80));
-        this.objects.add(new PowerUp(this, 100, 500, 70, 70, Power.HEALTH));
-        Asteroid a = new Asteroid(this, 75, 100, 40, 40, 6, 2);
-        this.objects.add(a);
-        Pacman p = new Pacman(this, 100, 450);
-        this.objects.add(p);
-        /*/
+        this.newRejillaPositions();
+        this.addPlanets(genPlanets());
+        this.addAsteroids(genAsteroids());
+        this.addNebulosas(genNebulosas());
+        this.addPacmans(genPacmans());
+        this.addBlackHoles(genBlackHoles());
+        this.addPowerUps(genPowerUps());
+
+    }
+
+    private void addPlanets(int number) {
+        for (int i = 0; i < number; i++) {
+            // Get Planet values
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            int height = values[4];
+            // New asteroid and set values
+            this.objects.add(new Planeta(this, x, y, height));
+        }
+    }
+
+    private void addAsteroids(int number) {
+        for (int i = 0; i < number; i++) {
+            // Get Asteroid values
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            int vx = values[2];
+            int vy = values[3];
+            // New asteroid and set values
+            Asteroid asteroid = new Asteroid(this, x, y, 40, 6, 2);
+            asteroid.setVx(vx);
+            asteroid.setVy(vy);
+            this.objects.add(asteroid);
+        }
+    }
+
+    private void addBlackHoles(int number) {
+        for (int i = 0; i < number; i++) {
+            // Get Black Hole values
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            // New Black Hole and set values
+            this.objects.add(new BlackHole(this, x, y, 80, 80));
+        }
+    }
+
+    private void addNebulosas(int number) {
+        for (int i = 0; i < number; i++) {
+            // Get Nebulosa values
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            // New Nebulosa
+            this.objects.add(new Nebulosa(this, x, y, 120, 90));
+        }
+    }
+
+    private void addPacmans(int number) {
+        if (this.pacmanActive) {
+            for (int i = 0; i < number; i++) {
+                // Get Pacman values
+                int[] values = selectPosition();
+                int x = values[0];
+                int y = values[1];
+                // New Pacman
+                this.objects.add(new Pacman(this, x, y));
+            }
+        }
+    }
+    /**
+     * @author Christian
+     * @param number 
+     */
+    private void addPowerUps(int number) {
+        
+        for (int i = 0; i < number; i++) {
+            
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            int powerUpType = values[5];
+            
+            if (powerUpType < 0.5) {
+                this.objects.add(new PowerUp(this, x, y, 70, 70, Power.HEALTH));
+            } else {
+                this.objects.add(new PowerUp(this, x, y, 70, 70, Power.DAMAGE));
+            }
+
+        }
+    }
+
+    /**
+     * @author Christian
+     * @return
+     */
+    public int genAsteroids() {
+        return genObjects(KillerRules.MIN_ASTEROIDS, KillerRules.MAX_ASTEROIDS);
+    }
+
+    public int genNebulosas() {
+        return genObjects(KillerRules.MIN_NEBULOSAS, KillerRules.MAX_NEBULOSAS);
+    }
+
+    public int genPlanets() {
+        return genObjects(KillerRules.MIN_PLANETS, KillerRules.MAX_PLANETS);
+    }
+
+    public int genBlackHoles() {
+        return genObjects(KillerRules.MIN_BLACKHOLES, KillerRules.MAX_BLACKHOLES);
+    }
+
+    public int genPacmans() {
+        return genObjects(KillerRules.MIN_PACMANS, KillerRules.MAX_PACMANS);
+    }
+
+    public int genPowerUps() {
+        return genObjects(KillerRules.MIN_POWERUPS, KillerRules.MAX_POWERUPS);
+    }
+
+    /**
+     * @author Christian
+     * @param minimum
+     * @param maximum
+     * @return
+     */
+    public int genObjects(double min, double max) {
+        double number = Math.random() * ((max - min) + 1) + min;
+        return (int) number;
+    }
+
+    private void newRejillaPositions() {
+
+        for (int aux = 0; aux < 4; aux++) {
+            for (int i = 0; i < 8; i++) {
+                matrizWidth[i][aux] = KillerGame.VIEWER_WIDTH * (i + 1) / 9;
+                matrizHeight[i][aux] = KillerGame.VIEWER_HEIGHT * (aux + 1) / 5;
+            }
+        }
+
+    }
+
+    public int[] selectPosition() {
+        boolean exit = true;
+        int[] nums;
+        do {
+            int n = (int) (Math.random() * (8 - 0) + 0);
+            int m = (int) (Math.random() * (4 - 0) + 0);
+            int n2 = (int) (Math.random() * (8 - 0) + 0);
+            int m2 = (int) (Math.random() * (4 - 0) + 0);
+            int vx = 0;
+            int vy = 0;
+            int powerUp = 0;
+
+            double symbolVx = Math.random();
+            double symbolVy = Math.random();
+            if (symbolVx <= 0.5) {
+                vx = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VX_ASTEROIDS) + KillerRules.MIN_VX_ASTEROIDS) * -1;
+                powerUp = 0;
+            } else {
+                vx = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VX_ASTEROIDS) + KillerRules.MIN_VX_ASTEROIDS);
+                powerUp = 1;
+            }
+            if (symbolVy > 0.5) {
+                vy = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VY_ASTEROIDS) + KillerRules.MIN_VY_ASTEROIDS) * -1;
+
+            } else {
+                vy = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VY_ASTEROIDS) + KillerRules.MIN_VY_ASTEROIDS);
+
+            }
+
+            int dim = (int) (Math.random() * (200 - 100) + 100);
+
+            nums = new int[6];
+
+            if (matrizWidth[n][m] == 0 || matrizHeight[n][m] == 0) {
+
+                exit = false;
+
+            } else {
+                nums[0] = matrizWidth[n][m];
+                nums[1] = matrizHeight[n][m];
+                nums[2] = vx;
+                nums[3] = vy;
+                nums[4] = dim;
+                nums[5] = powerUp;
+
+                matrizWidth[n][m] = 0;
+                matrizHeight[n2][m2] = 0;
+                exit = true;
+            }
+        } while (!exit);
+
+        return nums;
+    }
+    
+    
+    
+    public void restartGame() {
+        
+        this.remove(this.viewer);
+        this.viewer = null;
+        this.objects = new ArrayList<>();
+        this.ships = new Hashtable();
+        this.pads = new Hashtable();
+        this.status = KillerGame.Status.ROOM;
+        this.newRadio();
+        this.newSound();
+        this.newRoom();
+    
+    }
+    
+    public void setWinner(String name) {
+        
+        this.room.setKillerPanelWinner(name);
+        this.setVisible(false);
+        this.room.setVisible(true);
         
     }
 
@@ -554,7 +773,6 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void sendObjectToPrev(Alive object) {
-        System.out.println("ENVIO " + object);
         this.prevModule.sendObject(object);
     }
 
@@ -562,8 +780,14 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     public void sendObjectToNext(Alive object) {
-        System.out.println("ENVIO " + object);
         this.nextModule.sendObject(object);
+    }
+    
+    public void sendGameConfiguration() {
+        
+        GameConfiguration configuration = GameConfiguration.Builder.builder().soundEffects(this.soundEffects).pacmanActive(this.pacmanActive).soundsMusic(this.soundMusic).ultraPacman(this.ultraPacman).build();
+        this.nextModule.sendGameConfiguration(configuration);
+        
     }
 
     /**
@@ -576,6 +800,17 @@ public class KillerGame extends JFrame {
         }
     }
 
+    public void receiveConfiguration(GameConfiguration configuration) {
+        
+        this.soundEffects = configuration.getSoundEffects();
+        this.soundMusic = configuration.getSoundsMusic();
+        if (!soundMusic) {this.stopMusic();}
+        this.pacmanActive = configuration.getPacmanActive();
+        this.ultraPacman = configuration.getUltraPacman();
+        this.room.setNetworkConf(this.soundEffects, this.soundMusic, this.pacmanActive, this.ultraPacman);
+    
+    }
+    
     // ***************************************************************************************************** //
     // *************************** [            Window Methods           ] ********************************* //
     // ***************************************************************************************************** //
@@ -594,7 +829,6 @@ public class KillerGame extends JFrame {
      * @author Alvaro
      */
     private void showWindow() {
-        // this.setSize(1120, 630);
         this.setSize(KillerGame.VIEWER_WIDTH, KillerGame.VIEWER_HEIGHT);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -654,8 +888,8 @@ public class KillerGame extends JFrame {
      * @param health
      * @param maxspeed
      */
-    public void newAsteroid(double x, double y, int imgHeight, double m, int health, double maxspeed) {
-        Asteroid asteroid = new Asteroid(this, x, y, imgHeight, m, health, maxspeed);
+    public void newAsteroid(double x, double y, int imgHeight, int health, double maxspeed) {
+        Asteroid asteroid = new Asteroid(this, x, y, imgHeight, health, maxspeed);
         this.objects.add(asteroid);
     }
 
@@ -782,29 +1016,10 @@ public class KillerGame extends JFrame {
      * @param health
      */
     public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage, Color color) {
-        
         KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage, color);
-        int correctX = 1;
-        if (dx < 0) {
-            correctX = this.viewer.getWidth() - ship.getImgWidth() - 1;
-        }
-        System.out.println("RECIBO " + ship);
-        ship.setX(correctX);
-        //this.removeShip(this.getShipByIP(ship.getId()));
         this.ships.put(ip, ship);
         this.objects.add(ship);
         new Thread(ship).start();
-    }
-
-    /**
-     * Este metodo sirve para crear una bala cuando venga desde otra pantalla. // Este metodo no es utilizado
-     *
-     * @author Alvaro
-     */
-    public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
-        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage, 1, Alive.State.ALIVE);
-        this.objects.add(shoot);
-        new Thread(shoot).start();
     }
 
     /**
@@ -831,11 +1046,6 @@ public class KillerGame extends JFrame {
      */
     public void reciveAsteroid(double x, double y, int imgHeight, double m, int health, double radians, double vx, double vy, double a) {
         Asteroid asteroid = new Asteroid(this, x, y, imgHeight, m, health, radians, vx, vy, a);
-        int correctX = 0;
-        if (vx < 0) {
-            correctX = this.viewer.getWidth() - asteroid.getImgWidth() - 1;
-        }
-        asteroid.setX(correctX);
         this.objects.add(asteroid);
         new Thread(asteroid).start();
     }
@@ -853,11 +1063,6 @@ public class KillerGame extends JFrame {
      */
     public void recivePacman(double x, double y, double m, int health, double radians, double vx, double vy, double a) {
         Pacman pacman = new Pacman(this, x, y, m, health, radians, vx, vy, a);
-        int correctX = 0;
-        if (vx < 0) {
-            correctX = this.viewer.getWidth() - pacman.getImgWidth() - 1;
-        }
-        pacman.setX(correctX);
         this.objects.add(pacman);
         new Thread(pacman).start();
     }
@@ -953,30 +1158,33 @@ public class KillerGame extends JFrame {
         return null;
     }
 
-    /**
-     * @author Christian
-     */
-    public void setSoundMusic(boolean soundMusic) {
-        this.soundMusic = soundMusic;
+    public boolean getSoundMusic() {
+        return soundMusic;
     }
 
-    /**
-     * @author Christian
-     */
-    public void setSoundEffects(boolean soundEffects) {
-        this.soundEffects = soundEffects;
+    public boolean getSoundEffects() {
+        return soundEffects;
     }
 
-    /**
-     * @author Christian
-     */
-    public void setPacmanExistence(boolean pacmanActive) {
-        this.pacmanActive = pacmanActive;
+    public boolean getPacmanExistence() {
+        return pacmanActive;
+    }
+    
+    public boolean getUltraPacman() {
+        return this.ultraPacman;
     }
 
     // ***************************************************************************************************** //
     // *************************** [              Methods Set            ] ********************************* //
     // ***************************************************************************************************** //
+    public void enableUltrapacman() {
+        this.ultraPacman = true;
+    }
+
+    public static void exit() {
+        KillerGame.exit = true;
+    }
+
     public void setIpPrev(String ip) {
         this.prevModule.setDestinationIp(ip);
     }
@@ -1017,20 +1225,25 @@ public class KillerGame extends JFrame {
         this.windowNumber = windowNumber;
     }
 
-    public boolean getSoundMusic() {
-        return soundMusic;
+    /**
+     * @author Christian
+     */
+    public void setSoundMusic(boolean soundMusic) {
+        this.soundMusic = soundMusic;
     }
 
-    public boolean getSoundEffects() {
-        return soundEffects;
+    /**
+     * @author Christian
+     */
+    public void setSoundEffects(boolean soundEffects) {
+        this.soundEffects = soundEffects;
     }
 
-    public boolean getPacmanExistence() {
-        return pacmanActive;
-    }
-    
-    public static void exit() {
-        KillerGame.exit = true;
+    /**
+     * @author Christian
+     */
+    public void setPacmanExistence(boolean pacmanActive) {
+        this.pacmanActive = pacmanActive;
     }
 
     // ***************************************************************************************************** //
@@ -1051,12 +1264,13 @@ public class KillerGame extends JFrame {
      * @param ship
      */
     public void removeShip(KillerShip ship) {
-        this.objects.remove(ship);
-        if (this.getShipByIP(ship.getId()).equals(ship)) {
-            System.out.println("BORRO " + ship);
+        try {
+           if (this.getShipByIP(ship.getId()).equals(ship)) {
             this.ships.remove(ship.getId());
+            } 
+        } catch (Exception e) {
+            
         }
-        
     }
 
     /**
@@ -1074,26 +1288,19 @@ public class KillerGame extends JFrame {
     // *************************** [             Main Activity           ] ********************************* //
     // ***************************************************************************************************** //
     public static void main(String[] args) {
-
         // New KillerGame
         KillerGame game = new KillerGame();
-        
         while (true) {
-            
             try {
-                Thread.sleep(0);
+                Thread.sleep(200);
             } catch (Exception e) {
 
             }
-            
             if (KillerGame.exit) {
-                System.out.println("Exit");
-                game.getNextModule().sendMessage(Message.Builder.builder("quit",KillerServer.getId()).build());
+                game.getNextModule().sendMessage(Message.Builder.builder("quit", KillerServer.getId()).build());
                 System.exit(0);
             }
-            
         }
-
     }
-    
+
 }

@@ -93,7 +93,7 @@ public class PhysicsShip {
         double alivem = alive.getM();
 
         //distancia entre los dos objetos basado en sus centros
-        double distance = Math.sqrt(Math.pow(this.x - alivex, 2) + Math.pow(this.y - alivey, 2));
+        double distance = 0.00001 + (Math.sqrt(Math.pow(this.x - alivex, 2) + Math.pow(this.y - alivey, 2)));
         //distancia que habrán de separarse cada uno del otro en base al radio
         double overlap = (distance - thisradius - aliveradius) / 2;
         //desplazamiento del primer objeto en x e y utilizando el vector unitario direccional 
@@ -340,8 +340,6 @@ public class PhysicsShip {
         this.x = centerXs - WIDTH / 2;
         this.y = centerYs - HEIGHT / 2;
 
-        
-
         // alive.setX(alivex);
         // alive.setY(alivey);
         //vector normal al vector tangente a los circulos
@@ -367,10 +365,8 @@ public class PhysicsShip {
         double var2 = 0;
         double maxship = 1.5;
 
-
         //    maxship = 4;
-            var1 = 1;
-
+        var1 = 1;
 
         double vx1 = tangentX * pTan1 + normalX * mom1 * var1;
         double vy1 = tangentY * pTan1 + normalY * mom1 * var1;
