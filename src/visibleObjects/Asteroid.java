@@ -84,8 +84,10 @@ public class Asteroid extends Automata {
     // ********************************************************
     @Override
     public void onDying() {
-        this.kImg = new ExplosionEffect(this);
-        (new Thread(this.kImg)).start();
+        if (this.state == State.ALIVE) {
+            this.kImg = new ExplosionEffect(this);
+            (new Thread(this.kImg)).start();
+        }
     }
 
     // Interfaz Renderizable
