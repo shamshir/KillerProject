@@ -78,7 +78,7 @@ public class KillerPanelWinner extends javax.swing.JPanel {
                 jButtonVolverActionPerformed(evt);
             }
         });
-        add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 430, 130, -1));
+        add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 440, 130, -1));
 
         jTextFieldWinner.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
         jTextFieldWinner.setForeground(new java.awt.Color(255, 204, 0));
@@ -102,7 +102,7 @@ public class KillerPanelWinner extends javax.swing.JPanel {
         // VOLVER
         kg.startSound(KillerSound.ClipType.PC_CLICK);
         kr.setKillerPanelPrincipal();
-        //kg.resetGame();
+        kg.restartGame();
     }//GEN-LAST:event_jButtonVolverActionPerformed
 
 

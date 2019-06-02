@@ -39,6 +39,7 @@ public class KillerCode extends javax.swing.JFrame {
     }
     if(currentButton == sequence.length) {
         currentButton = 0;
+        KillerPanelPrincipal.menuRadio();
         this.dispose();
     }
     }
