@@ -172,7 +172,7 @@ public class KillerImage extends BufferedImage implements Runnable {
      *
      * @return
      */
-    private byte[] getKillerRaster(BufferedImage bi) {
+    protected byte[] getKillerRaster(BufferedImage bi) {
         return ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
     }
 

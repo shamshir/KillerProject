@@ -1,6 +1,7 @@
 package visualEffects;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import javax.imageio.ImageIO;
 import visibleObjects.Alive;
 import visibleObjects.Alive.State;
 import visibleObjects.KillerShip;
+import visibleObjects.Shoot;
 import visibleObjects.VisibleObject;
 
 /**
@@ -52,6 +54,33 @@ public class FireEffect extends KillerImage {
 
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
         this.createDefaultSparks();
+    }
+    
+    public FireEffect(VisibleObject vo, char test) {
+        super(vo);
+
+       // objeto e imagen original
+        this.visibleObject = vo;
+        this.originalImage = vo.getImg();
+
+        // raster y graphics de la iamgen
+        this.raster = this.getKillerRaster(this);
+        this.graphics = (Graphics2D) this.getGraphics();
+
+        // pintar la imagen de la nave almentos una vez
+        this.graphics.drawImage(this.originalImage, 0, 0, null);
+
+        if (vo instanceof KillerShip) {
+            this.paintUserColor(((KillerShip) vo).getColor());
+            
+        } else if (vo instanceof Shoot){
+            this.paintUserColor(Color.red);
+        }
+
+        System.out.println("color ship: " + ((KillerShip) vo).getColor());
+
+        this.setRenderHeight();
+        this.setRenderWidth();
     }
 
     /**
