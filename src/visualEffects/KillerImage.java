@@ -139,8 +139,8 @@ public class KillerImage extends BufferedImage implements Runnable {
     }
 
     protected boolean isVisibleObjectSafeOrAlive() {
-        return (((KillerShip) this.visibleObject).getState() != Alive.State.ALIVE)
-                && (((KillerShip) this.visibleObject).getState() != Alive.State.SAFE);
+        return (((KillerShip) this.visibleObject).getState() == Alive.State.ALIVE)
+                || (((KillerShip) this.visibleObject).getState() == Alive.State.SAFE);
     }
 
     /**

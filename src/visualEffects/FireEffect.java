@@ -33,14 +33,12 @@ public class FireEffect extends KillerImage {
     public FireEffect(VisibleObject vo, BufferedImage oi) {
         super(vo, oi, 0, oi.getWidth() * 2);
 
-        // setear paleta de colores para el fuego
         this.setPaCoB();
-        this.setPaCoR();
-
         this.shipPaCo = this.paCoB;
 
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
         this.createDefaultSparks();
+
     }
 
     public FireEffect(VisibleObject vo) {
@@ -55,11 +53,11 @@ public class FireEffect extends KillerImage {
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
         this.createDefaultSparks();
     }
-    
+
     public FireEffect(VisibleObject vo, char test) {
         super(vo);
 
-       // objeto e imagen original
+        // objeto e imagen original
         this.visibleObject = vo;
         this.originalImage = vo.getImg();
 
@@ -72,12 +70,7 @@ public class FireEffect extends KillerImage {
 
         if (vo instanceof KillerShip) {
             this.paintObjectColor(((KillerShip) vo).getColor());
-            
-        } else if (vo instanceof Shoot){
-            this.paintObjectColor(Color.red);
         }
-
-        System.out.println("color ship: " + ((KillerShip) vo).getColor());
 
         this.setRenderHeight();
         this.setRenderWidth();
@@ -274,8 +267,6 @@ public class FireEffect extends KillerImage {
 //        this.shipPaCo = this.paCoR;
     }
 
- 
-
     private int corregirIntensidad(int intensidad) {
         if (intensidad < 0) {
             return 0;
@@ -326,7 +317,6 @@ public class FireEffect extends KillerImage {
     private void updateFire() {
         this.updateSparks(0);
         this.updateHeatMap();
-//        this.paintTestHeatmapArea();
         this.paintFireOnImage();
 
     }
@@ -384,6 +374,8 @@ public class FireEffect extends KillerImage {
 
         while (this.hasVisibleObjectThisEffect() && this.isVisibleObjectSafeOrAlive()) {
             this.updateFire();
+            
+            System.out.println("test");
 
             try {
                 Thread.sleep(5);
