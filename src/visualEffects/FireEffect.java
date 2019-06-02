@@ -25,43 +25,31 @@ public class FireEffect extends KillerImage {
     private MyColor[] paCo;
     private MyColor[] paCoR;
     private MyColor[] paCoB;
-
-    public FireEffect(VisibleObject vo, BufferedImage oi, int[] sourceSparks) {
-        super(vo, oi, 0, 400);
-
-        // setear paleta de colores para el fuego
-        this.setPaCo();
-
-        this.sparks = sourceSparks;
-        this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
-
-        // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
-//        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
-    }
-
+    
     public FireEffect(VisibleObject vo, BufferedImage oi) {
-        super(vo, oi, 0, 400);
+        super(vo, oi, 0, oi.getWidth() * 2);
 
         // setear paleta de colores para el fuego
         this.setPaCo();
 
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
         this.createDefaultSparks();
+    }
+    
+    public FireEffect(VisibleObject vo) {
+        super(vo, vo.getImg(), 0,vo.getImg().getWidth() * 2);
 
-        // pintar imagen para tener algo que mostrar si el hilo no se ha iniciado
-//        this.getGraphics().drawImage(this.getOriginalImage(), 0, 0, null);
+        // setear paleta de colores para el fuego
+        this.setPaCo();
+
+        this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
+        this.createDefaultSparks();
     }
 
+   
     /**
-     * Setea la paleta de colores a usar
+     * Cambiar j en azul y 255 en rojo para fuego rogo en boost/dash(?)
      */
-//    public void setPaCo() {
-//        this.paCo = new MyColor[256];
-//        for (int i = 0; i < 256; i++) {
-//            this.paCo[i] = new MyColor(i, i + 10 / 12, i * 2 / 3, i / 24);
-//        }
-//    }
-
     public void setPaCo() {
 
         this.paCoR = new MyColor[256];
@@ -79,6 +67,48 @@ public class FireEffect extends KillerImage {
 
             for (int j = 255; i < 210 && i >= 200; i--, j -= 3) {
                 paCoR[i] = new MyColor(255, 255, j, 0);
+            }
+
+            if (i >= 180 && i < 200) {
+                paCoR[i] = new MyColor(255, 255, 200, 0);
+            }
+
+            for (int j = 200; i > 100 && i < 180; i--, j -= 4) {
+                paCoR[i] = new MyColor(255, 255, j, 0);
+            }
+            for (int j = 255; i <= 100 && i > 20; i--, j -= 2) {
+                paCoR[i] = new MyColor(255, j, 0, 0);
+            }
+            for (int j = 100; i <= 20 && i > 0; i--, j -= 3) {
+                paCoR[i] = new MyColor(255, j, 0, 0);
+            }
+            if (i == 0) {
+                paCoR[i] = new MyColor(255, 0, 0, 0);
+            }
+        }
+
+        for (int i = 0; i < 100; i++) {
+            paCoR[i].setA((int) (i * 2.501D));
+        }
+
+        for (int i = 100; i < 256; i++) {
+            paCoR[i].setA(255);
+        }
+        
+         for (int i = 255; i >= 0; i--) {
+
+            if (i < 256 && i >= 230) {
+                paCoR[i] = new MyColor(255, 255, 255, 255);
+            }
+            for (int j = 255; i < 230 && i >= 220; i--, j -= 10) {
+                paCoR[i] = new MyColor(255, 255, 255, j);
+            }
+            if (i >= 210 && i < 220) {
+                paCoR[i] = new MyColor(255, Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getRed());
+            }
+
+            for (int j = 255; i < 210 && i >= 200; i--, j -= 3) {
+                paCoR[i] = new MyColor(255, 0, j, 255);
             }
 
             if (i >= 180 && i < 200) {
@@ -178,8 +208,17 @@ public class FireEffect extends KillerImage {
     private void updateFire() {
         this.updateSparks(0);
         this.updateHeatMap();
+//        this.paintTestHeatmapArea();
         this.paintFireOnImage();
 
+    }
+    
+    public void paintTestHeatmapArea(){
+        for (int fil = 0; fil < this.heatMap.length; fil++) {
+            for (int col = 0; col < this.heatMap[0].length; col++) {
+                this.heatMap[fil][col] = 255;
+            }
+        }
     }
 
     private void updateHeatMap() {
@@ -196,42 +235,15 @@ public class FireEffect extends KillerImage {
         }
     }
 
-    private void updateSparks() {
-        int intensity;
-        for (int pos = 0; pos < this.sparks.length; pos++) {
-            if (this.sparks[pos] > 1) {
-                intensity = (int) (Math.random() * 255);
-
-                if (intensity > this.DEFAULT_MIN_INTENSITY) {
-                    this.heatMap[0][pos] = 255;
-                } else {
-                    this.heatMap[0][pos] = 0;
-                }
-            }
-        }
-    }
-
     private void updateSparks(int vel) {
 
         double dX = Math.abs(((Alive) this.visibleObject).getDx());
         double dY = Math.abs(((Alive) this.visibleObject).getDy());
-        double d = dX > dY ? dX : dY; // ojo revisar
+        double d = dX > dY ? dX : dY; 
 
         int intensity;
-        double minIntensity, currIntensity;
+        double minIntensity;
 
-//        currIntensity = (int) (d * 90);
-//        if (currIntensity < 0) {
-//            System.out.println((d * 120) + " ----------------- \n");
-//      
-//        }
-//        if (d > 128) {
-//            minIntensity = this.DEFAULT_MIN_INTENSITY - 2;
-//        } else if (d > 10){
-//            minIntensity = this.DEFAULT_MIN_INTENSITY + 5;
-//        } else {
-//            minIntensity = 256;
-//        }
         minIntensity = d > 0 ? this.DEFAULT_MIN_INTENSITY : 512;
 
         for (int pos = 0; pos < this.sparks.length; pos++) {
@@ -240,14 +252,12 @@ public class FireEffect extends KillerImage {
                 intensity = (int) (Math.random() * 255);
 
                 if (intensity > minIntensity) {
-//                    System.out.println("FE: intensidad > min");
                     this.heatMap[0][pos] = 255;
                 } else {
                     this.heatMap[0][pos] = 0;
                 }
             }
         }
-
     }
 
     // run method
