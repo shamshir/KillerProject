@@ -8,6 +8,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
 
     private KillerClientPad client;
     private final String id;
+    private final String user;
     private boolean disconnected = false;
     private int disconnectTime;
 
@@ -18,13 +19,19 @@ public class KillerPad extends ReceptionHandler implements Runnable {
 
     public KillerPad(final KillerGame killergame, final Socket sock, final String user, final String color) {
         super(killergame, sock);
+        this.user = user;
         this.id = sock.getInetAddress().getHostAddress();
     }
+    
 
     public String getId() {
         return this.id;
     }
 
+    public String getUser() {
+        return this.user;
+    }
+    
     @Override
     public void run() {
         while (!this.disconnected) {
@@ -48,7 +55,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
         }
         System.out.println("Killerpad -> PAD-Disconnected con id: " + this.id);
         if (this.getKillergame().getStatus() == KillerGame.Status.GAME) {
-            this.getKillergame().getNextModule().sendDecement();
+            this.getKillergame().getNextModule().sendPadDecrement();
         }
         this.getKillergame().removePad(this);
     }
@@ -113,6 +120,7 @@ public class KillerPad extends ReceptionHandler implements Runnable {
 
     @Override
     public void sendMessage(final Message message) {
+        System.out.println("KillerPad -> " + message.getCommand() + " sended to " + message.getReceiverId());
         super.sendMessage(message);
         if (message.getCommand().equalsIgnoreCase("pad_dead")) {
             this.closeSocket();

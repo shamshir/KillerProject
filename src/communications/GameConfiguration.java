@@ -1,4 +1,4 @@
-package comunicaciones;
+package communications;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

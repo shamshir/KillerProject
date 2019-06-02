@@ -165,9 +165,7 @@ public class ObjectResponse {
 
     public static ObjectResponse convertObjectToObjectResponse(final Alive object) {
         if (object instanceof KillerShip) {
-            return buildObjectResponseFromKillerShip((KillerShip) object);
-        } else if (object instanceof Shoot) {
-            return buildObjectResponseFromShoot((Shoot) object);
+            return buildObjectResponseFromKillerShip((KillerShip) object);        
         } else if (object instanceof Asteroid) {
             return buildObjectResponseFromAsteroid((Asteroid) object);
         } else if (object instanceof Pacman) {
@@ -197,18 +195,6 @@ public class ObjectResponse {
                 .id(killerShip.getId())
                 .damage(killerShip.getDamage())
                 .color(killerShip.getColor())
-                .build();
-    }
-
-    private static ObjectResponse buildObjectResponseFromShoot(final Shoot shoot) {
-        return ObjectResponse.Builder.builder(SHOOT_TYPE)
-                .x(shoot.getX())
-                .y(shoot.getY())
-                .dx(shoot.getDx())
-                .dy(shoot.getDy())
-                .radians(shoot.getRadians())
-                .id(shoot.getId())
-                .damage(shoot.getDamage())
                 .build();
     }
 
