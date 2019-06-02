@@ -14,7 +14,9 @@ public class GameConfiguration {
     }
 
     private GameConfiguration(final GameConfiguration.Builder builder) {
-        
+        sounds = builder.sounds;
+        pacmanSounds = builder.pacmanSounds;
+        music = builder.music;        
     }
 
     public boolean getSounds() {
