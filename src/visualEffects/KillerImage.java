@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import visibleObjects.Alive;
 import visibleObjects.KillerShip;
+import visibleObjects.Shoot;
 import visibleObjects.VisibleObject;
 
 /**
@@ -39,7 +40,7 @@ public class KillerImage extends BufferedImage implements Runnable {
 
         if (vo instanceof KillerShip) {
             Color shipColor = ((KillerShip) vo).getColor();
-            this.paintUserColor(shipColor);
+            this.paintObjectColor(shipColor);
         }
 
         System.out.println("color ship: " + ((KillerShip) vo).getColor());
@@ -54,7 +55,7 @@ public class KillerImage extends BufferedImage implements Runnable {
      *
      * @param vo
      */
-    public KillerImage(VisibleObject vo) {
+   public KillerImage(VisibleObject vo) {
         super(vo.getImgWidth(), vo.getImgHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 
         // objeto e imagen original
@@ -65,14 +66,17 @@ public class KillerImage extends BufferedImage implements Runnable {
         this.raster = this.getKillerRaster(this);
         this.graphics = (Graphics2D) this.getGraphics();
 
-        // pintar la imagen de la nave almentos una vez
-        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
+        this.graphics.drawImage(this.originalImage, 0, 0, this.getWidth(), this.getHeight(), null);
 
+        // pintar la imagen almentos una vez
         if (vo instanceof KillerShip) {
-            this.paintUserColor(((KillerShip) vo).getColor());
-        }
+            Color shipColor = ((KillerShip) vo).getColor();
+            this.paintObjectColor(shipColor);
 
-        System.out.println("color ship: " + ((KillerShip) vo).getColor());
+        } else if (vo instanceof Shoot) {
+//            Color objectColor = ((Shoot) vo).getColor();
+//            this.paintObjectColor(objectColor);
+        }
 
         this.setRenderHeight();
         this.setRenderWidth();
@@ -113,7 +117,7 @@ public class KillerImage extends BufferedImage implements Runnable {
     public void run() {
     }
 
-    public void paintUserColor(Color c) {
+    public void paintObjectColor(Color c) {
         int aRasterValue, bRastreValue, gRasterValue, rRasterValue;
 
         // falta pillar el color del usuario

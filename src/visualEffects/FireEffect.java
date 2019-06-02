@@ -71,10 +71,10 @@ public class FireEffect extends KillerImage {
         this.graphics.drawImage(this.originalImage, 0, 0, null);
 
         if (vo instanceof KillerShip) {
-            this.paintUserColor(((KillerShip) vo).getColor());
+            this.paintObjectColor(((KillerShip) vo).getColor());
             
         } else if (vo instanceof Shoot){
-            this.paintUserColor(Color.red);
+            this.paintObjectColor(Color.red);
         }
 
         System.out.println("color ship: " + ((KillerShip) vo).getColor());
