@@ -135,14 +135,8 @@ public class KillerImage extends BufferedImage implements Runnable {
     }
 
     protected boolean isVisibleObjectSafeOrAlive() {
-        if ((((KillerShip) this.visibleObject).getState() != Alive.State.ALIVE)
-                && (((KillerShip) this.visibleObject).getState() != Alive.State.SAFE)) {
-
-            System.out.println("MUERTO????????");
-            return true;
-        }
-
-        return false;
+        return (((KillerShip) this.visibleObject).getState() != Alive.State.ALIVE)
+                && (((KillerShip) this.visibleObject).getState() != Alive.State.SAFE);
     }
 
     /**
@@ -151,11 +145,7 @@ public class KillerImage extends BufferedImage implements Runnable {
      * @return True si lo sigue teniendo, false si no
      */
     protected boolean hasVisibleObjectThisEffect() {
-        if (this.visibleObject.getKillerImage().equals(this)) {
-            return true;
-        }
-
-        return false;
+        return this.visibleObject.getKillerImage().equals(this);
     }
 
     // ***********************
