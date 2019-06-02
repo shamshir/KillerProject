@@ -70,7 +70,8 @@ public class KillerRules {
      * @param alive
      */
     static void collisionAliveWithBlackHole(KillerGame game, Alive alive) {
-        if (Math.random() < 0.5) {
+        KillerRules.correctXandYOnCollideBlackHole(alive);
+       if (Math.random() < 0.5) {
             KillerRules.sendAliveToPrev(game, alive);
         } else {
             KillerRules.sendAliveToNext(game, alive);
@@ -94,9 +95,11 @@ public class KillerRules {
             alive.setY(0 + alive.getImgHeight() + 1);
         }
         if (wall.getType() == Wall.Limit.RIGHT) {
+            alive.setX(alive.getImgWidth());
             KillerRules.sendAliveToNext(game, alive);
         }
         if (wall.getType() == Wall.Limit.LEFT) {
+            alive.setX(KillerGame.VIEWER_WIDTH - alive.getImgWidth());
             KillerRules.sendAliveToPrev(game, alive);
         }
     }
@@ -125,6 +128,8 @@ public class KillerRules {
      * @param ship
      */
     public static void collisionShipWithBlackHole(KillerGame game, KillerShip ship) {
+        ship.setVx(0);
+        ship.setVy(0);
         KillerRules.collisionAliveWithBlackHole(game, ship);
     }
 
@@ -241,8 +246,8 @@ public class KillerRules {
         if (powerUp.isWrappered()) {
             powerUp.quitarVida(shot.getDamage());
             if (powerUp.getHealth() < 0) {
-                powerUp.unwrapper();
                 powerUp.setWrappered(false);
+                powerUp.unwrapper();
                 powerUp.setAvailable(true);
             }
             // Remove shot from the array
@@ -363,7 +368,25 @@ public class KillerRules {
         // Remove Power up from the array
         game.removeObject(powerUp);
         // Increment Pacman Health on PACMAN_INCREMENT
-        pacman.setHealth(KillerRules.PACMAN_INCREMENT);
+        pacman.setSize(KillerRules.PACMAN_INCREMENT);
+    }
+    
+    public static void collisionPacmanWithPowerUp(KillerGame game, Pacman pacman, Wall wall) {
+        
+        KillerRules.collisionAliveWithWall(game, pacman, wall);
+        
+        if (game.getUltraPacman()) {
+            
+            Pacman pacwoman = new Pacman(game, pacman.getX(), pacman.getY());
+            
+            if (pacman.getX() < KillerGame.VIEWER_WIDTH / 2) {
+                pacwoman.setX(pacwoman.getImgWidth());
+            } else {
+                pacwoman.setX(KillerGame.VIEWER_WIDTH - pacwoman.getImgWidth());
+            }
+        
+        }
+        
     }
 
     // ***************************************************************************************************** //
@@ -408,9 +431,9 @@ public class KillerRules {
         alive.quitarVida(damage);
         // Set die status to KillerShip
         if (alive.getHealth() <= 0) {
-            // alive.changeState(Alive.State.DYING);
-            // alive.onDying();
-            alive.changeState(Alive.State.DEAD);
+            alive.changeState(Alive.State.DYING);
+            alive.onDying();
+            //alive.changeState(Alive.State.DEAD);
             //alive.getGame().removeObject(alive);
             dead = true;
         }
@@ -433,6 +456,19 @@ public class KillerRules {
         }
         // Return live status
         return dead;
+    }
+        
+    /**
+     * @author Alvaro
+     * @param alive
+     */
+    private static void correctXandYOnCollideBlackHole(Alive alive) {
+        double correctX = Math.random() * (KillerGame.VIEWER_WIDTH - alive.getImgWidth())  + alive.getImgWidth();
+        double correctY = Math.random() * (KillerGame.VIEWER_WIDTH - alive.getImgHeight())  + alive.getImgHeight();
+        if (alive.getX() < KillerGame.VIEWER_WIDTH / 2) {
+            correctX = KillerGame.VIEWER_WIDTH - alive.getImgWidth();
+        }
+        alive.setX(correctX);
     }
 
 }

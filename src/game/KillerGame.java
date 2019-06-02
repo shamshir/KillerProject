@@ -525,13 +525,26 @@ public class KillerGame extends JFrame {
         
     }
     
-    public void restrartGame() {
+    public void restartGame() {
         
+        this.remove(this.viewer);
+        this.viewer = null;
         this.objects = new ArrayList<>();
         this.ships = new Hashtable();
         this.pads = new Hashtable();
         this.status = KillerGame.Status.ROOM;
+        this.newRadio();
+        this.newSound();
+        this.newRoom();
     
+    }
+    
+    public void setWinner(String name) {
+        
+        this.room.setKillerPanelWinner(name);
+        this.setVisible(false);
+        this.room.setVisible(true);
+        
     }
 
     // ***************************************************************************************************** //
@@ -573,6 +586,14 @@ public class KillerGame extends JFrame {
     public void sendObjectToNext(Alive object) {
         this.nextModule.sendObject(object);
     }
+    
+    public void sendGameConfiguration() {
+        
+        GameConfiguration configuration = new GameConfiguration();
+        GameConfiguration.Builder.builder().soundEffects(this.soundEffects).pacmanActive(this.pacmanActive).soundsMusic(this.soundMusic).ultraPacman(this.ultraPacman).build();
+        this.nextModule.sendGameConfiguration(configuration);
+        
+    }
 
     /**
      * @author Alvaro
@@ -584,6 +605,17 @@ public class KillerGame extends JFrame {
         }
     }
 
+    public void receiveConfiguration(GameConfiguration configuration) {
+        
+        this.soundEffects = configuration.getSoundEffects();
+        this.soundMusic = configuration.getSoundsMusic();
+        if (!soundMusic) {this.stopMusic();}
+        this.pacmanActive = configuration.getPacmanActive();
+        this.ultraPacman = configuration.getUltraPacman();
+        this.room.setNetworkConf(this.soundEffects, this.soundMusic, this.pacmanActive, this.ultraPacman);
+    
+    }
+    
     // ***************************************************************************************************** //
     // *************************** [            Window Methods           ] ********************************* //
     // ***************************************************************************************************** //
@@ -792,22 +824,9 @@ public class KillerGame extends JFrame {
      */
     public void reciveShip(double x, double y, double radians, double dx, double dy, double vx, double vy, double tx, double ty, double lx, double ly, double rx, double ry, String ip, String user, KillerShip.ShipType type, int health, int damage, Color color) {
         KillerShip ship = new KillerShip(this, x, y, radians, dx, dy, vx, vy, tx, ty, lx, ly, rx, ry, ip, user, type, health, damage, color);
-        this.correctX(ship);
         this.ships.put(ip, ship);
         this.objects.add(ship);
         new Thread(ship).start();
-    }
-
-    /**
-     * Este metodo sirve para crear una bala cuando venga desde otra pantalla. // Este metodo no es utilizado
-     *
-     * @author Alvaro
-     */
-    public void reciveShoot(double x, double y, double radians, double vx, double vy, String ip, int damage) {
-        Shoot shoot = new Shoot(this, x, y, radians, vx, vy, ip, damage, 1, Alive.State.ALIVE);
-        this.correctX(shoot);
-        this.objects.add(shoot);
-        new Thread(shoot).start();
     }
 
     /**
@@ -834,7 +853,6 @@ public class KillerGame extends JFrame {
      */
     public void reciveAsteroid(double x, double y, int imgHeight, double m, int health, double radians, double vx, double vy, double a) {
         Asteroid asteroid = new Asteroid(this, x, y, imgHeight, m, health, radians, vx, vy, a);
-        this.correctX(asteroid);
         this.objects.add(asteroid);
         new Thread(asteroid).start();
     }
@@ -852,21 +870,8 @@ public class KillerGame extends JFrame {
      */
     public void recivePacman(double x, double y, double m, int health, double radians, double vx, double vy, double a) {
         Pacman pacman = new Pacman(this, x, y, m, health, radians, vx, vy, a);
-        this.correctX(pacman);
         this.objects.add(pacman);
         new Thread(pacman).start();
-    }
-
-    /**
-     * @author Alvaro
-     * @param alive
-     */
-    private void correctX(Alive alive) {
-        int correctX = alive.getImgWidth();
-        if (alive.getX() < KillerGame.VIEWER_WIDTH / 2) {
-            correctX = KillerGame.VIEWER_WIDTH - alive.getImgWidth();
-        }
-        alive.setX(correctX);
     }
 
     /**
@@ -970,6 +975,10 @@ public class KillerGame extends JFrame {
 
     public boolean getPacmanExistence() {
         return pacmanActive;
+    }
+    
+    public boolean getUltraPacman() {
+        return this.ultraPacman;
     }
 
     // ***************************************************************************************************** //
@@ -1092,7 +1101,7 @@ public class KillerGame extends JFrame {
         while (true) {
 
             try {
-                Thread.sleep(0);
+                Thread.sleep(200);
             } catch (Exception e) {
 
             }
