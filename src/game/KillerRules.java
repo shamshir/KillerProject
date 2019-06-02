@@ -255,7 +255,7 @@ public class KillerRules {
 
     public static void collisionShootWithPacman(KillerGame game, Shoot shot, Pacman pacman) {
         KillerRules.substractHealthAlive(pacman, shot.getDamage());
-        pacman.getPhysics.collisionXShoot(shot);
+        pacman.getPhysics().collisionXShoot(shot);
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
         //shot.getGame().removeObject(shot);

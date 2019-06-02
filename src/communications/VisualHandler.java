@@ -393,7 +393,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
-    private void sendGameConfiguration(final GameConfiguration gameConfiguration) {
+    public void sendGameConfiguration(final GameConfiguration gameConfiguration) {
         this.sendMessage(Message.Builder.builder(GAME_CONFIGURATION_COMMAND, KillerServer.getId())
                 .withGameConfiguration(gameConfiguration)
                 .build());

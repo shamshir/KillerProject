@@ -46,6 +46,13 @@ public class KillerRoom extends javax.swing.JFrame {
     }
     
     /**
+     * Configuración de opciones externa
+     */
+    public void setNetworkConf(boolean soundEffects, boolean soundMusic, boolean pacmanActive, boolean ultraPacman) {
+        kpp.setNetworkConf(soundEffects, soundMusic, pacmanActive, ultraPacman);
+    }
+    
+    /**
      * Método para KillerGame que devuelve la lista de jugadores
      * Para pintarla en el jPanel de Conectar
      * @param players 

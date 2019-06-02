@@ -4,7 +4,6 @@ package game;
 import visualEffects.*;
 import visibleObjects.*;
 import communications.*;
-import comunicaciones.GameConfiguration;
 import gameRoom.*;
 import sound.*;
 
