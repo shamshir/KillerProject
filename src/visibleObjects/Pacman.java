@@ -131,10 +131,8 @@ public class Pacman extends Automata {
     // ********************************************************
     @Override
     public void onDying() {
-        if (this.state == State.ALIVE) {
-            this.kImg = new ExplosionEffect(this);
-            (new Thread(this.kImg)).start();
-        }
+        this.kImg = new ExplosionEffect(this);
+        (new Thread(this.kImg)).start();
 
     }
     
