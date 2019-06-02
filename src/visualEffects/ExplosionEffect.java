@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import visibleObjects.Alive;
 import visibleObjects.VisibleObject;
 
 /**
@@ -18,7 +19,7 @@ public class ExplosionEffect extends KillerImage {
     private int frame;
 
     public ExplosionEffect(VisibleObject vo) {
-        super(vo, 300 - vo.getImgWidth(), 300 - vo.getImgHeight()); // tamaño imagen explosion
+        super(vo, 300, 300); // tamaño imagen explosion
 
         this.framesList = new BufferedImage[12];
         this.frame = 0;
@@ -49,19 +50,18 @@ public class ExplosionEffect extends KillerImage {
 
     private void paintFrame() {
 
-//        BufferedImage bImg = new BufferedImage(this.framesList[this.frame].getColorModel(),
-//                this.framesList[this.frame].getRaster(), this.framesList[this.frame].isAlphaPremultiplied(), null);
-        this.graphics.clearRect(0, 0, this.getWidth(), this.getHeight());
+        this.clearImage();
         this.graphics.drawImage(this.framesList[this.frame], 0, 0, null);
 
     }
 
     @Override
     public void run() {
-        while (hasVisibleObjectThisEffect()) {
+        
+        while (this.frame < this.framesList.length) {
             paintFrame();
-            this.frame = (this.frame++) % 10;
-            System.out.println("frame: " + this.frame++);
+            this.frame++;
+            System.out.println("frame: " + this.frame);
 
             try {
                 Thread.sleep(200);
@@ -71,6 +71,6 @@ public class ExplosionEffect extends KillerImage {
         }
 
         // kill object
-//        ((Alive) this.visibleObject).changeState(Alive.State.DEAD);
+        ((Alive) this.visibleObject).changeState(Alive.State.DEAD);
     }
 }
