@@ -8,6 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import visibleObjects.Alive;
+import visibleObjects.Alive.State;
+import visibleObjects.KillerShip;
 import visibleObjects.VisibleObject;
 
 /**
@@ -22,80 +24,137 @@ public class FireEffect extends KillerImage {
 
     private int[] sparks;
     private int[][] heatMap;
-    private MyColor[] paCo;
-    private MyColor[] paCoR;
+    private MyColor[] shipPaCo;
     private MyColor[] paCoB;
-    
+    private MyColor[] paCoR;
+
     public FireEffect(VisibleObject vo, BufferedImage oi) {
         super(vo, oi, 0, oi.getWidth() * 2);
 
         // setear paleta de colores para el fuego
-        this.setPaCo();
+        this.setPaCoB();
+        this.setPaCoR();
+
+        this.shipPaCo = this.paCoB;
 
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
         this.createDefaultSparks();
     }
-    
+
     public FireEffect(VisibleObject vo) {
-        super(vo, vo.getImg(), 0,vo.getImg().getWidth() * 2);
+        super(vo, vo.getImg(), 0, vo.getImg().getWidth() * 2);
 
         // setear paleta de colores para el fuego
-        this.setPaCo();
+        this.setPaCoB();
+        this.setPaCoR();
+
+        this.shipPaCo = this.paCoB;
 
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
         this.createDefaultSparks();
     }
 
-   
     /**
      * Cambiar j en azul y 255 en rojo para fuego rogo en boost/dash(?)
      */
-    public void setPaCo() {
+    public void setPaCoB() {
 
-        this.paCoR = new MyColor[256];
+        this.paCoB = new MyColor[256];
         for (int i = 255; i >= 0; i--) {
 
             if (i < 256 && i >= 230) {
-                paCoR[i] = new MyColor(255, 255, 255, 255);
+                paCoB[i] = new MyColor(255, 255, 255, 255);
             }
             for (int j = 255; i < 230 && i >= 220; i--, j -= 10) {
-                paCoR[i] = new MyColor(255, 255, 255, j);
+                paCoB[i] = new MyColor(255, 255, 255, j);
             }
             if (i >= 210 && i < 220) {
-                paCoR[i] = new MyColor(255, Color.cyan.getBlue(), Color.cyan.getGreen(), Color.cyan.getRed());
+                paCoB[i] = new MyColor(255, Color.cyan.getBlue(), Color.cyan.getGreen(), Color.cyan.getRed());
             }
 
             for (int j = 255; i < 210 && i >= 200; i--, j -= 3) {
-                paCoR[i] = new MyColor(255, 255, j, 0);
+                paCoB[i] = new MyColor(255, 255, j, 0);
             }
 
             if (i >= 180 && i < 200) {
-                paCoR[i] = new MyColor(255, 255, 200, 0);
+                paCoB[i] = new MyColor(255, 255, 200, 0);
             }
 
             for (int j = 200; i > 100 && i < 180; i--, j -= 4) {
-                paCoR[i] = new MyColor(255, 255, j, 0);
+                paCoB[i] = new MyColor(255, 255, j, 0);
             }
             for (int j = 255; i <= 100 && i > 20; i--, j -= 2) {
-                paCoR[i] = new MyColor(255, j, 0, 0);
+                paCoB[i] = new MyColor(255, j, 0, 0);
             }
             for (int j = 100; i <= 20 && i > 0; i--, j -= 3) {
-                paCoR[i] = new MyColor(255, j, 0, 0);
+                paCoB[i] = new MyColor(255, j, 0, 0);
             }
             if (i == 0) {
-                paCoR[i] = new MyColor(255, 0, 0, 0);
+                paCoB[i] = new MyColor(255, 0, 0, 0);
             }
         }
 
         for (int i = 0; i < 100; i++) {
-            paCoR[i].setA((int) (i * 2.501D));
+            paCoB[i].setA((int) (i * 2.501D));
         }
 
         for (int i = 100; i < 256; i++) {
-            paCoR[i].setA(255);
+            paCoB[i].setA(255);
         }
-        
-         for (int i = 255; i >= 0; i--) {
+
+        for (int i = 255; i >= 0; i--) {
+
+            if (i < 256 && i >= 230) {
+                paCoB[i] = new MyColor(255, 255, 255, 255);
+            }
+            for (int j = 255; i < 230 && i >= 220; i--, j -= 10) {
+                paCoB[i] = new MyColor(255, 255, 255, j);
+            }
+            if (i >= 210 && i < 220) {
+                paCoB[i] = new MyColor(255, Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getRed());
+            }
+
+            for (int j = 255; i < 210 && i >= 200; i--, j -= 3) {
+                paCoB[i] = new MyColor(255, 0, j, 255);
+            }
+
+            if (i >= 180 && i < 200) {
+                paCoB[i] = new MyColor(255, 255, 200, 0);
+            }
+
+            for (int j = 200; i > 100 && i < 180; i--, j -= 4) {
+                paCoB[i] = new MyColor(255, 255, j, 0);
+            }
+            for (int j = 255; i <= 100 && i > 20; i--, j -= 2) {
+                paCoB[i] = new MyColor(255, j, 0, 0);
+            }
+            for (int j = 100; i <= 20 && i > 0; i--, j -= 3) {
+                paCoB[i] = new MyColor(255, j, 0, 0);
+            }
+            if (i == 0) {
+                paCoB[i] = new MyColor(255, 0, 0, 0);
+            }
+        }
+
+        for (int i = 0; i < 100; i++) {
+            paCoB[i].setA((int) (i * 2.501D));
+        }
+
+        for (int i = 100; i < 256; i++) {
+            paCoB[i].setA(255);
+        }
+
+//        this.paCoR = new MyColor[256];
+//        for (int i = 0; i < 256; i++) {
+//            this.paCoR[i] = new MyColor(i, i + 10 / 12, i * 2 / 3, i / 24);
+//        }
+//        this.shipPaCo = this.paCoB;
+    }
+
+    public void setPaCoR() {
+
+        this.paCoR = new MyColor[256];
+        for (int i = 255; i >= 0; i--) {
 
             if (i < 256 && i >= 230) {
                 paCoR[i] = new MyColor(255, 255, 255, 255);
@@ -112,20 +171,62 @@ public class FireEffect extends KillerImage {
             }
 
             if (i >= 180 && i < 200) {
-                paCoR[i] = new MyColor(255, 255, 200, 0);
+                paCoR[i] = new MyColor(255, 0, 200, 255);
             }
 
             for (int j = 200; i > 100 && i < 180; i--, j -= 4) {
-                paCoR[i] = new MyColor(255, 255, j, 0);
+                paCoR[i] = new MyColor(255, 0, j, 255);
             }
             for (int j = 255; i <= 100 && i > 20; i--, j -= 2) {
-                paCoR[i] = new MyColor(255, j, 0, 0);
+                paCoR[i] = new MyColor(255, j, 0, 255);
             }
             for (int j = 100; i <= 20 && i > 0; i--, j -= 3) {
-                paCoR[i] = new MyColor(255, j, 0, 0);
+                paCoR[i] = new MyColor(255, j, 0, 255);
             }
             if (i == 0) {
-                paCoR[i] = new MyColor(255, 0, 0, 0);
+                paCoR[i] = new MyColor(255, 0, 0, 255);
+            }
+        }
+
+        for (int i = 0; i < 100; i++) {
+            paCoR[i].setA((int) (i * 2.501D));
+        }
+
+        for (int i = 100; i < 256; i++) {
+            this.paCoR[i].setA(255);
+        }
+
+        for (int i = 255; i >= 0; i--) {
+
+            if (i < 256 && i >= 230) {
+                this.paCoR[i] = new MyColor(255, 255, 255, 255);
+            }
+            for (int j = 255; i < 230 && i >= 220; i--, j -= 10) {
+                this.paCoR[i] = new MyColor(255, 255, 255, j);
+            }
+            if (i >= 210 && i < 220) {
+                this.paCoR[i] = new MyColor(255, Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getRed());
+            }
+
+            for (int j = 255; i < 210 && i >= 200; i--, j -= 3) {
+                this.paCoR[i] = new MyColor(255, 0, j, 255);
+            }
+
+            if (i >= 180 && i < 200) {
+                this.paCoR[i] = new MyColor(255, 255, 200, 0);
+            }
+
+            for (int j = 200; i > 100 && i < 180; i--, j -= 4) {
+                this.paCoR[i] = new MyColor(255, 255, j, 255);
+            }
+            for (int j = 255; i <= 100 && i > 20; i--, j -= 2) {
+                paCoR[i] = new MyColor(255, j, 0, 255);
+            }
+            for (int j = 100; i <= 20 && i > 0; i--, j -= 3) {
+                paCoR[i] = new MyColor(255, j, 0, 255);
+            }
+            if (i == 0) {
+                paCoR[i] = new MyColor(255, 0, 0, 255);
             }
         }
 
@@ -137,26 +238,14 @@ public class FireEffect extends KillerImage {
             paCoR[i].setA(255);
         }
 
-        this.paCoB = new MyColor[256];
-        for (int i = 0; i < 256; i++) {
-            this.paCoB[i] = new MyColor(i, i + 10 / 12, i * 2 / 3, i / 24);
-        }
-
-        this.paCo = this.paCoR;
+//        this.paCoR = new MyColor[256];
+//        for (int i = 0; i < 256; i++) {
+//            this.paCoR[i] = new MyColor(i, i + 10 / 12, i * 2 / 3, i / 24);
+//        }
+//        this.shipPaCo = this.paCoR;
     }
 
-    /**
-     * Mira si el objeto padre sigue teniendo dicho efecto
-     *
-     * @return True si lo sigue teniendo, false si no
-     */
-    protected boolean checkObjectEffect() {
-        if (this.visibleObject.getKillerImage().equals(this)) {
-            return true;
-        }
-
-        return false;
-    }
+ 
 
     private int corregirIntensidad(int intensidad) {
         if (intensidad < 0) {
@@ -192,10 +281,10 @@ public class FireEffect extends KillerImage {
                 heatMapPos = this.heatMap[fil][col];
                 rasterPos = (col * this.NUM_CHANNELS) + ((fil + this.originalImage.getHeight()) * this.heatMap[0].length * this.NUM_CHANNELS);
 
-                a = this.paCo[heatMapPos].getA();
-                b = this.paCo[heatMapPos].getB();
-                g = this.paCo[heatMapPos].getG();
-                r = this.paCo[heatMapPos].getR();
+                a = this.shipPaCo[heatMapPos].getA();
+                b = this.shipPaCo[heatMapPos].getB();
+                g = this.shipPaCo[heatMapPos].getG();
+                r = this.shipPaCo[heatMapPos].getR();
 
                 this.raster[rasterPos] = (byte) a;
                 this.raster[rasterPos + 1] = (byte) b;
@@ -212,8 +301,8 @@ public class FireEffect extends KillerImage {
         this.paintFireOnImage();
 
     }
-    
-    public void paintTestHeatmapArea(){
+
+    public void paintTestHeatmapArea() {
         for (int fil = 0; fil < this.heatMap.length; fil++) {
             for (int col = 0; col < this.heatMap[0].length; col++) {
                 this.heatMap[fil][col] = 255;
@@ -239,7 +328,7 @@ public class FireEffect extends KillerImage {
 
         double dX = Math.abs(((Alive) this.visibleObject).getDx());
         double dY = Math.abs(((Alive) this.visibleObject).getDy());
-        double d = dX > dY ? dX : dY; 
+        double d = dX > dY ? dX : dY;
 
         int intensity;
         double minIntensity;
@@ -264,7 +353,7 @@ public class FireEffect extends KillerImage {
     @Override
     public void run() {
 
-        while (this.checkObjectEffect()) {
+        while (this.hasVisibleObjectThisEffect() && this.isVisibleObjectSafeOrAlive()) {
             this.updateFire();
 
             try {
@@ -273,6 +362,7 @@ public class FireEffect extends KillerImage {
                 Logger.getLogger(FireEffect.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
     }
 
     // getters y setters

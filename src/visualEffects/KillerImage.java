@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import visibleObjects.Alive;
 import visibleObjects.KillerShip;
 import visibleObjects.VisibleObject;
 
@@ -37,7 +38,7 @@ public class KillerImage extends BufferedImage implements Runnable {
         this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
 
         if (vo instanceof KillerShip) {
-            Color shipColor = ((KillerShip)vo).getColor();
+            Color shipColor = ((KillerShip) vo).getColor();
             this.paintUserColor(shipColor);
         }
 
@@ -70,8 +71,6 @@ public class KillerImage extends BufferedImage implements Runnable {
         if (vo instanceof KillerShip) {
             this.paintUserColor(((KillerShip) vo).getColor());
         }
-        
-        
 
         System.out.println("color ship: " + ((KillerShip) vo).getColor());
 
@@ -135,23 +134,28 @@ public class KillerImage extends BufferedImage implements Runnable {
         }
     }
 
-    /**
-     * Mira si el objeto padre sigue teniendo dicho efecto
-     *
-     * @return True si lo sigue teniendo, false si no
-     */
-    protected boolean checkObjectEffect() {
-        if (this.visibleObject.getKillerImage().equals(this)) {
+    protected boolean isVisibleObjectSafeOrAlive() {
+        if ((((KillerShip) this.visibleObject).getState() != Alive.State.ALIVE)
+                && (((KillerShip) this.visibleObject).getState() != Alive.State.SAFE)) {
+
+            System.out.println("MUERTO????????");
             return true;
         }
 
         return false;
     }
 
-    protected void makeTransparent() {
-        for (int pos = 0; pos < raster.length; pos += 4) {
-            this.raster[pos] = (byte) 0;
+    /**
+     * Mira si el objeto padre sigue teniendo dicho efecto
+     *
+     * @return True si lo sigue teniendo, false si no
+     */
+    protected boolean hasVisibleObjectThisEffect() {
+        if (this.visibleObject.getKillerImage().equals(this)) {
+            return true;
         }
+
+        return false;
     }
 
     // ***********************
