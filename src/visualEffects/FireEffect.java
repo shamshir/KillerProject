@@ -31,7 +31,7 @@ public class FireEffect extends KillerImage {
     private MyColor[] paCoR;
 
     public FireEffect(VisibleObject vo) {
-        super(vo, 0, vo.getImg().getWidth() * 2);
+        super(vo, vo.getImg().getWidth(), vo.getImg().getWidth() + 300);
 
         // setear paleta de colores para el fuego
         this.setPaCoB();

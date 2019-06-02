@@ -65,11 +65,11 @@ public class KillerImage extends BufferedImage implements Runnable {
      * CORREGITLO DE PLUS WITDH
      *
      * @param vo
-     * @param plusWidth
+     * @param width
      * @param plusHeigth
      */
-    public KillerImage(VisibleObject vo, int plusWidth, int plusHeigth) {
-        super(vo.getImg().getWidth() + plusWidth, vo.getImg().getHeight() + plusHeigth, BufferedImage.TYPE_4BYTE_ABGR);
+    public KillerImage(VisibleObject vo, int width, int height) {
+        super(width, height, BufferedImage.TYPE_4BYTE_ABGR);
 
         // objeto e imagen original
         this.visibleObject = vo;

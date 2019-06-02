@@ -19,7 +19,7 @@ public class ExplosionEffect extends KillerImage {
     private int frame;
 
     public ExplosionEffect(VisibleObject vo) {
-        super(vo, 100, 100); // tamaño imagen explosion
+        super(vo, 300, 300); // tamaño imagen explosion
 
         this.framesList = new BufferedImage[12];
         this.frame = 0;
