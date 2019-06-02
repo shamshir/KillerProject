@@ -1,4 +1,4 @@
-package communications;
+package comunicaciones;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -15,7 +15,10 @@ public class GameConfiguration {
     }
 
     private GameConfiguration(final GameConfiguration.Builder builder) {
-        
+        this.pacmanActive = builder.pacmanActive;
+        this.soundEffects = builder.soundEffects;
+        this.soundsMusic = builder.soundsMusic;
+        this.ultraPacman = builder.ultraPacman;
     }
 
     public boolean getSoundEffects() {
