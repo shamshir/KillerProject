@@ -111,7 +111,7 @@ public class KillerImage extends BufferedImage implements Runnable {
             gRasterValue = Byte.toUnsignedInt(this.raster[pos + 2]);
             rRasterValue = Byte.toUnsignedInt(this.raster[pos + 3]);
 
-            if ((aRasterValue == 255) && (bRastreValue == 0) && (gRasterValue == 255) && (rRasterValue == 0)) {
+            if ((bRastreValue == 0) && (gRasterValue == 255) && (rRasterValue == 0)) {
                 this.raster[pos] = (byte) userColor.getA();
                 this.raster[pos + 1] = (byte) userColor.getB();
                 this.raster[pos + 2] = (byte) userColor.getG();
