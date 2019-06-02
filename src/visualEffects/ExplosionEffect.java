@@ -50,7 +50,7 @@ public class ExplosionEffect extends KillerImage {
 
     private void paintFrame() {
 
-        this.graphics.clearRect(0, 0, this.getWidth(), this.getHeight());
+        this.clearImage();
         this.graphics.drawImage(this.framesList[this.frame], 0, 0, null);
 
     }

@@ -80,7 +80,7 @@ public class Viewer extends Canvas implements Runnable {
 
         try {
 //            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/b" + numBackground + ".jpeg"));
-            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/killerMoonImg+2" + numBackground
+            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/killerMoonImg" + numBackground
                     + ".jpg"));
 
         } catch (IOException ex) {

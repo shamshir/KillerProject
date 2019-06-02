@@ -28,7 +28,6 @@ public class KillerImage extends BufferedImage implements Runnable {
     protected int renderWidth;
     protected int renderHeight;
 
-
     /**
      * Con un solo parametro
      *
@@ -161,6 +160,15 @@ public class KillerImage extends BufferedImage implements Runnable {
      */
     protected byte[] getKillerRaster(BufferedImage bi) {
         return ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+    }
+
+    /**
+     * Makes this image totally transparent
+     */
+    protected void clearImage() {
+        for (int pos = 0; pos < this.raster.length; pos += 4) {
+            this.raster[pos] = 0;
+        }
     }
 
     /**
