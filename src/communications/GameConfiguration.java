@@ -14,9 +14,9 @@ public class GameConfiguration {
     }
 
     private GameConfiguration(final GameConfiguration.Builder builder) {
-        sounds = builder.sounds;
-        pacmanSounds = builder.pacmanSounds;
-        music = builder.music;        
+        this.sounds = builder.sounds;
+        this.pacmanSounds = builder.pacmanSounds;
+        this.music = builder.music;
     }
 
     public boolean getSounds() {
@@ -33,9 +33,9 @@ public class GameConfiguration {
 
     public static class Builder {
 
-    private boolean sounds;
-    private boolean pacmanSounds;
-    private boolean music;
+        private boolean sounds;
+        private boolean pacmanSounds;
+        private boolean music;
 
         public Builder() {
         }
@@ -43,22 +43,22 @@ public class GameConfiguration {
         public static Builder builder() {
             return new Builder();
         }
-        
-        public Builder sounds(final boolean sounds){
+
+        public Builder sounds(final boolean sounds) {
             this.sounds = sounds;
             return this;
         }
-        
-        public Builder music(final boolean music){
+
+        public Builder music(final boolean music) {
             this.music = music;
             return this;
         }
-        
-        public Builder pacmanSounds(final boolean pacmanSounds){
+
+        public Builder pacmanSounds(final boolean pacmanSounds) {
             this.pacmanSounds = pacmanSounds;
             return this;
         }
-        
+
         public GameConfiguration build() {
             return new GameConfiguration(this);
         }

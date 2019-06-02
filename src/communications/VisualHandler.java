@@ -32,8 +32,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String WIN_COMMAND = "win";
     private static final String PAD_WIN_COMMAND = "pad_win";
     private static final String GAME_CONFIGURATION_COMMAND = "gameConfiguration";
+    private static final String WINNER_COMMAND = "winner";
 
-    private static final String SHOOT_TYPE = "shoot";
     private static final String SHIP_TYPE = "ship";
     private static final String PACMAN_TYPE = "pacman";
     private static final String ASTEROID_TYPE = "asteroid";
@@ -146,13 +146,16 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 this.disconnect();
                 break;
             case DECREMENT_PADS_NUM:
-                this.processDecrement(message);
+                this.processPadDecrement(message);
                 break;
             case WIN_COMMAND:
                 this.processWin(message);
                 break;
             case GAME_CONFIGURATION_COMMAND:
-                processGameConfiguration(message);
+                this.processGameConfiguration(message);
+                break;
+            case WINNER_COMMAND:
+                this.processWinner(message);
                 break;
             default:
                 final String command = message.getCommand();
@@ -178,9 +181,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         switch (object.getObjectType()) {
             case SHIP_TYPE:
                 this.createShip(object);
-                break;
-            case SHOOT_TYPE:
-                this.createShoot(object);
                 break;
             case ASTEROID_TYPE:
                 this.createAsteroid(object);
@@ -330,13 +330,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getDamage(), Color.decode(object.getColor()));
     }
 
-    private void createShoot(ObjectResponse object) {
-        this.getKillergame().reciveShoot(object.getX(), object.getY(),
-                object.getRadians(), object.getDx(),
-                object.getDy(), object.getId(),
-                object.getDamage());
-    }
-
     private void createAsteroid(ObjectResponse object) {
         this.getKillergame().reciveAsteroid(object.getX(), object.getY(),
                 object.getImgHeight(), object.getM(),
@@ -360,11 +353,11 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
-    public void sendDecement() {
+    public void sendPadDecrement() {
         this.sendMessage(Message.Builder.builder(DECREMENT_PADS_NUM, KillerServer.getId()).build());
     }
 
-    private void processDecrement(final Message message) {
+    private void processPadDecrement(final Message message) {
         if (this.getKillergame().getPadsNum() > 0) {
             this.getKillergame().decrementPadsNum();
         }
@@ -379,7 +372,19 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             pad.sendMessage(Message.Builder.builder(PAD_WIN_COMMAND, KillerServer.getId())
                     .withReceiverId(pad.getId())
                     .build());
+            //anunciar ganador al resto de ordenadores
+            this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(WINNER_COMMAND, KillerServer.getId())
+                    .withReceiverId(pad.getUser())
+                    .build());
+            // show ganador
         } else if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
+    }
+    
+    private void processWinner(final Message message){
+        if (!this.isMessageMine(message.getSenderId())) {
+            //show ganador
             this.getKillergame().getNextModule().sendMessage(message);
         }
     }
