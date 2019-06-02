@@ -166,4 +166,12 @@ public class Pacman extends Automata {
     public void setKillerRadio(KillerRadio killerRadio) {
         this.killerRadio = killerRadio;
     }
+
+    public PhysicsPacman getPhysics() {
+        return physics;
+    }
+
+    public void setPhysics(PhysicsPacman physics) {
+        this.physics = physics;
+    }
 }
