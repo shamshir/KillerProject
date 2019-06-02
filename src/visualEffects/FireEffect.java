@@ -30,19 +30,8 @@ public class FireEffect extends KillerImage {
     private MyColor[] paCoB;
     private MyColor[] paCoR;
 
-    public FireEffect(VisibleObject vo, BufferedImage oi) {
-        super(vo, oi, 0, oi.getWidth() * 2);
-
-        this.setPaCoB();
-        this.shipPaCo = this.paCoB;
-
-        this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
-        this.createDefaultSparks();
-
-    }
-
     public FireEffect(VisibleObject vo) {
-        super(vo, vo.getImg(), 0, vo.getImg().getWidth() * 2);
+        super(vo, 0, vo.getImg().getWidth() * 2);
 
         // setear paleta de colores para el fuego
         this.setPaCoB();
@@ -52,28 +41,6 @@ public class FireEffect extends KillerImage {
 
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
         this.createDefaultSparks();
-    }
-
-    public FireEffect(VisibleObject vo, char test) {
-        super(vo);
-
-        // objeto e imagen original
-        this.visibleObject = vo;
-        this.originalImage = vo.getImg();
-
-        // raster y graphics de la iamgen
-        this.raster = this.getKillerRaster(this);
-        this.graphics = (Graphics2D) this.getGraphics();
-
-        // pintar la imagen de la nave almentos una vez
-        this.graphics.drawImage(this.originalImage, 0, 0, null);
-
-        if (vo instanceof KillerShip) {
-            this.paintObjectColor(((KillerShip) vo).getColor());
-        }
-
-        this.setRenderHeight();
-        this.setRenderWidth();
     }
 
     /**
@@ -373,9 +340,7 @@ public class FireEffect extends KillerImage {
     public void run() {
 
         while (this.hasVisibleObjectThisEffect() && this.isVisibleObjectSafeOrAlive()) {
-            this.updateFire();
-            
-            System.out.println("test");
+            this.updateFire();            
 
             try {
                 Thread.sleep(5);

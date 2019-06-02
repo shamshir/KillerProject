@@ -18,7 +18,7 @@ public class ExplosionEffect extends KillerImage {
     private int frame;
 
     public ExplosionEffect(VisibleObject vo) {
-        super(vo, 300 - vo.getImgWidth(), 300 - vo.getImgHeight()); // tamaño imagen explosion
+        super(vo, 100, 100); // tamaño imagen explosion
 
         this.framesList = new BufferedImage[12];
         this.frame = 0;
@@ -52,13 +52,14 @@ public class ExplosionEffect extends KillerImage {
 //        BufferedImage bImg = new BufferedImage(this.framesList[this.frame].getColorModel(),
 //                this.framesList[this.frame].getRaster(), this.framesList[this.frame].isAlphaPremultiplied(), null);
         this.graphics.clearRect(0, 0, this.getWidth(), this.getHeight());
+        this.graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
         this.graphics.drawImage(this.framesList[this.frame], 0, 0, null);
 
     }
 
     @Override
     public void run() {
-        while (hasVisibleObjectThisEffect()) {
+        while (hasVisibleObjectThisEffect() || true) {
             paintFrame();
             this.frame = (this.frame++) % 10;
             System.out.println("frame: " + this.frame++);
