@@ -249,7 +249,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
-            // this.getKillergame().receiveGameConfiguration(message.getGameConfiguration());
+            this.getKillergame().receiveConfiguration(message.getGameConfiguration());
             this.getKillergame().setPadsNum(0);
             this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
                     .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
@@ -380,7 +380,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(WINNER_COMMAND, KillerServer.getId())
                     .withReceiverId(pad.getUser())
                     .build());
-            // show ganador
+            this.getKillergame().setWinner(pad.getUser());
         } else if (!this.isMessageMine(message.getSenderId())) {
             this.getKillergame().getNextModule().sendMessage(message);
         }
@@ -388,7 +388,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     
     private void processWinner(final Message message){
         if (!this.isMessageMine(message.getSenderId())) {
-            //show ganador
+            this.getKillergame().setWinner(message.getReceiverId());
             this.getKillergame().getNextModule().sendMessage(message);
         }
     }
@@ -401,7 +401,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private void processGameConfiguration(final Message message) {
         if (!this.isMessageMine(message.getSenderId())) {
-            //this.getKillergame().receiveGameConfiguration(message.getGameConfiguration());
+            this.getKillergame().receiveConfiguration(message.getGameConfiguration());
             this.getKillergame().getNextModule().sendMessage(message);
         }
     }

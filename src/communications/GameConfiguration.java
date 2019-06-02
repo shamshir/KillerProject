@@ -5,37 +5,44 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class GameConfiguration {
 
-    private boolean sounds;
-    private boolean pacmanSounds;
-    private boolean music;
+    private boolean soundEffects;
+    private boolean pacmanActive;
+    private boolean soundsMusic;
+    private boolean ultraPacman;
 
     public GameConfiguration() {
 
     }
 
     private GameConfiguration(final GameConfiguration.Builder builder) {
-        this.sounds = builder.sounds;
-        this.pacmanSounds = builder.pacmanSounds;
-        this.music = builder.music;
+        this.pacmanActive = builder.pacmanActive;
+        this.soundEffects = builder.soundEffects;
+        this.soundsMusic = builder.soundsMusic;
+        this.ultraPacman = builder.ultraPacman;
     }
 
-    public boolean getSounds() {
-        return sounds;
+    public boolean getSoundEffects() {
+        return soundEffects;
     }
 
-    public boolean getPacmanSounds() {
-        return pacmanSounds;
+    public boolean getPacmanActive() {
+        return pacmanActive;
     }
 
-    public boolean getMusic() {
-        return music;
+    public boolean getSoundsMusic() {
+        return soundsMusic;
+    }
+    
+    public boolean getUltraPacman() {
+        return ultraPacman;
     }
 
     public static class Builder {
 
-        private boolean sounds;
-        private boolean pacmanSounds;
-        private boolean music;
+    private boolean soundEffects;
+    private boolean pacmanActive;
+    private boolean soundsMusic;
+    private boolean ultraPacman;
 
         public Builder() {
         }
@@ -43,22 +50,27 @@ public class GameConfiguration {
         public static Builder builder() {
             return new Builder();
         }
-
-        public Builder sounds(final boolean sounds) {
-            this.sounds = sounds;
+        
+        public Builder soundEffects(final boolean sounds){
+            this.soundEffects = sounds;
             return this;
         }
-
-        public Builder music(final boolean music) {
-            this.music = music;
+        
+        public Builder soundsMusic(final boolean music){
+            this.soundsMusic = music;
             return this;
         }
-
-        public Builder pacmanSounds(final boolean pacmanSounds) {
-            this.pacmanSounds = pacmanSounds;
+        
+        public Builder pacmanActive(final boolean pacmanSounds){
+            this.pacmanActive = pacmanSounds;
             return this;
         }
-
+        
+        public Builder ultraPacman(final boolean ultraPacman){
+            this.ultraPacman = ultraPacman;
+            return this;
+        }
+        
         public GameConfiguration build() {
             return new GameConfiguration(this);
         }
