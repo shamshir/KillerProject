@@ -33,6 +33,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String PAD_WIN_COMMAND = "pad_win";
     private static final String GAME_CONFIGURATION_COMMAND = "gameConfiguration";
     private static final String WINNER_COMMAND = "winner";
+    private static final String RESET_KILLERGAME_COMMAND = "reset";
 
     private static final String SHIP_TYPE = "ship";
     private static final String PACMAN_TYPE = "pacman";
@@ -156,6 +157,9 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 break;
             case WINNER_COMMAND:
                 this.processWinner(message);
+                break;
+            case RESET_KILLERGAME_COMMAND:
+                this.processReset(message);
                 break;
             default:
                 final String command = message.getCommand();
@@ -398,6 +402,18 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private void processGameConfiguration(final Message message) {
         if (!this.isMessageMine(message.getSenderId())) {
             //this.getKillergame().receiveGameConfiguration(message.getGameConfiguration());
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
+    }
+    
+    private void sendReset(){
+        this.sendMessage(Message.Builder.builder(RESET_KILLERGAME_COMMAND, KillerServer.getId())
+            .build());
+    }
+    
+    private void processReset(final Message message){
+        if (!this.isMessageMine(message.getSenderId())) {
+            //this.getKillergame().reset()
             this.getKillergame().getNextModule().sendMessage(message);
         }
     }
