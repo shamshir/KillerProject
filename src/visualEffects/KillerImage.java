@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import visibleObjects.Alive;
 import visibleObjects.KillerShip;
+import visibleObjects.Shoot;
 import visibleObjects.VisibleObject;
 
 /**
@@ -37,8 +39,8 @@ public class KillerImage extends BufferedImage implements Runnable {
         this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
 
         if (vo instanceof KillerShip) {
-            Color shipColor = ((KillerShip)vo).getColor();
-            this.paintUserColor(shipColor);
+            Color shipColor = ((KillerShip) vo).getColor();
+            this.paintObjectColor(shipColor);
         }
 
         System.out.println("color ship: " + ((KillerShip) vo).getColor());
@@ -53,7 +55,7 @@ public class KillerImage extends BufferedImage implements Runnable {
      *
      * @param vo
      */
-    public KillerImage(VisibleObject vo) {
+   public KillerImage(VisibleObject vo) {
         super(vo.getImgWidth(), vo.getImgHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 
         // objeto e imagen original
@@ -64,16 +66,17 @@ public class KillerImage extends BufferedImage implements Runnable {
         this.raster = this.getKillerRaster(this);
         this.graphics = (Graphics2D) this.getGraphics();
 
-        // pintar la imagen de la nave almentos una vez
-        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
+        this.graphics.drawImage(this.originalImage, 0, 0, this.getWidth(), this.getHeight(), null);
 
+        // pintar la imagen almentos una vez
         if (vo instanceof KillerShip) {
-            this.paintUserColor(((KillerShip) vo).getColor());
-        }
-        
-        
+            Color shipColor = ((KillerShip) vo).getColor();
+            this.paintObjectColor(shipColor);
 
-        System.out.println("color ship: " + ((KillerShip) vo).getColor());
+        } else if (vo instanceof Shoot) {
+//            Color objectColor = ((Shoot) vo).getColor();
+//            this.paintObjectColor(objectColor);
+        }
 
         this.setRenderHeight();
         this.setRenderWidth();
@@ -114,7 +117,7 @@ public class KillerImage extends BufferedImage implements Runnable {
     public void run() {
     }
 
-    public void paintUserColor(Color c) {
+    public void paintObjectColor(Color c) {
         int aRasterValue, bRastreValue, gRasterValue, rRasterValue;
 
         // falta pillar el color del usuario
@@ -135,23 +138,18 @@ public class KillerImage extends BufferedImage implements Runnable {
         }
     }
 
+    protected boolean isVisibleObjectSafeOrAlive() {
+        return (((KillerShip) this.visibleObject).getState() == Alive.State.ALIVE)
+                || (((KillerShip) this.visibleObject).getState() == Alive.State.SAFE);
+    }
+
     /**
      * Mira si el objeto padre sigue teniendo dicho efecto
      *
      * @return True si lo sigue teniendo, false si no
      */
-    protected boolean checkObjectEffect() {
-        if (this.visibleObject.getKillerImage().equals(this)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    protected void makeTransparent() {
-        for (int pos = 0; pos < raster.length; pos += 4) {
-            this.raster[pos] = (byte) 0;
-        }
+    protected boolean hasVisibleObjectThisEffect() {
+        return this.visibleObject.getKillerImage().equals(this);
     }
 
     // ***********************
@@ -178,7 +176,7 @@ public class KillerImage extends BufferedImage implements Runnable {
      *
      * @return
      */
-    private byte[] getKillerRaster(BufferedImage bi) {
+    protected byte[] getKillerRaster(BufferedImage bi) {
         return ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
     }
 

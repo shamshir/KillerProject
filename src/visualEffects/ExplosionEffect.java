@@ -58,7 +58,7 @@ public class ExplosionEffect extends KillerImage {
 
     @Override
     public void run() {
-        while (checkObjectEffect()) {
+        while (hasVisibleObjectThisEffect()) {
             paintFrame();
             this.frame = (this.frame++) % 10;
             System.out.println("frame: " + this.frame++);
