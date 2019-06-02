@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import sound.KillerRadio;
 import visualEffects.ExplosionEffect;
+import physics.PhysicsPacman;
 
 /**
  *
@@ -17,6 +18,7 @@ public class Pacman extends Automata {
     private long fpsControlTime;
     private boolean mouthOpened;
     private KillerRadio killerRadio;
+    private PhysicsPacman physics;
 
     /**
      * 
@@ -31,14 +33,15 @@ public class Pacman extends Automata {
         this.imgHeight = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgWidth = KillerRules.PACMAN_INITIAL_HEALTH;
         this.radius = this.imgHeight / 2;
+        this.radians = Math.random() * (Math.PI * 2); // angulo aleatorio
         this.m = Math.PI * (this.radius * this.radius);
         
-        this.maxspeed = 8;
+        this.maxspeed = 1;
 
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
         
-        // Instanciar physicsPacman
+        this.physics = new PhysicsPacman(this);
         
         this.killerRadio = new KillerRadio();
     }
@@ -69,12 +72,12 @@ public class Pacman extends Automata {
         this.vy = vy;
         this.a = a;
         
-        this.maxspeed = 8;
+        this.maxspeed = 1;
 
         mouthOpened = true;
         fpsControlTime = System.currentTimeMillis();
         
-        // Instanciar physicsPacman
+        this.physics = new PhysicsPacman(this);
         
         this.killerRadio = new KillerRadio();
     }
@@ -93,7 +96,7 @@ public class Pacman extends Automata {
     
     @Override
     protected void move() {
-//        KillerPhysics.move(this);
+        this.physics.move();
     }
 
     @Override
@@ -108,15 +111,19 @@ public class Pacman extends Automata {
             mouthOpened = !mouthOpened;
             this.fpsControlTime = System.currentTimeMillis();
         }
+        
+        int degrees = (int)(this.radians * 180 / Math.PI);
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (mouthOpened) {
-            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
+//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
+            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 30), 270);
         } else {
-            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
+//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
+            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 5), 330);
         }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        
+
     }
 
     // ********************************************************
