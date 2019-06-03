@@ -833,7 +833,11 @@ public class KillerGame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new GridLayout());
         this.setResizable(false);
-        this.setUndecorated(true);
+        try {
+            this.setUndecorated(true);
+        } catch(Exception e) {
+            
+        }
         this.setVisible(true);
     }
 
