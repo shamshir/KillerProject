@@ -19,7 +19,7 @@ public class KillerRules {
     public static final int OCTANE_MAX_SPEED_NEBULOSA = 3;
     
     // Batmobile
-    public static final int BATMOBILE_HEALTH = 30;
+    public static final int BATMOBILE_HEALTH = 40;
     public static final int BATMOBILE_DAMAGE = 30;
     public static final int BATMOBILE_MAX_SPEED = 5;
     public static final int BATMOBILE_MAX_SPEED_NEBULOSA = 3;
