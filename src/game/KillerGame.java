@@ -794,7 +794,7 @@ public class KillerGame extends JFrame {
      */
     public void sendStart() {
         if (this.status == Status.ROOM) {
-            this.nextModule.sendStart();
+            this.nextModule.sendStart(GameConfiguration.Builder.builder().soundEffects(this.soundEffects).pacmanActive(this.pacmanActive).soundsMusic(this.soundMusic).ultraPacman(this.ultraPacman).build());
             this.status = Status.GAME;
         }
     }
