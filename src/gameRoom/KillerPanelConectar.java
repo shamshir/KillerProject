@@ -1,5 +1,6 @@
 package gameRoom;
 
+import communications.KillerPad;
 import game.KillerGame;
 import java.awt.Color;
 import java.awt.Font;
@@ -51,9 +52,9 @@ public class KillerPanelConectar extends javax.swing.JPanel {
      *
      * @param players
      */
-    public void updateUsers(Hashtable<String, KillerShip> players) {
+    public void updateUsers(Hashtable<String, KillerPad> players) {
         model.setRowCount(0);
-        Enumeration<KillerShip> enumeration = players.elements();
+        Enumeration<KillerPad> enumeration = players.elements();
         while (enumeration.hasMoreElements()) {
             player = enumeration.nextElement().getUser();
             updateJTable(player);

@@ -1,5 +1,6 @@
 package gameRoom;
 
+import communications.KillerPad;
 import game.KillerGame;
 import java.util.Hashtable;
 import sound.KillerRadio;
@@ -57,7 +58,7 @@ public class KillerRoom extends javax.swing.JFrame {
      * Para pintarla en el jPanel de Conectar
      * @param players 
      */
-    public void updateUsers(Hashtable<String, KillerShip> players){
+    public void updateUsers(Hashtable<String, KillerPad> players){
         kpc.updateUsers(players);
     }
 
