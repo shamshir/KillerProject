@@ -57,12 +57,12 @@ public class KillerRules {
     public static final double MAX_PLANETS = 2.3;
     
     // BlackHoles
-    public static final double MIN_BLACKHOLES= 1;
-    public static final double MAX_BLACKHOLES = 1.5;
+    public static final double MIN_BLACKHOLES= 0;
+    public static final double MAX_BLACKHOLES = 1;
     
     // Pacmans
     public static final double MIN_PACMANS = 0;
-    public static final double MAX_PACMANS = 1.5;
+    public static final double MAX_PACMANS = 1;
     
     // PowerUps
     public static final double MIN_POWERUPS = 0.8;
