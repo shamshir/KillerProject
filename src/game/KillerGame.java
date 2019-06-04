@@ -4,7 +4,6 @@ package game;
 import visualEffects.*;
 import visibleObjects.*;
 import communications.*;
-import comunicaciones.GameConfiguration;
 import gameRoom.*;
 import sound.*;
 
@@ -723,16 +722,16 @@ public class KillerGame extends JFrame {
     
     public void restartGame() {
         
+        this.viewer.stop();
         this.remove(this.viewer);
         this.viewer = null;
         this.objects = new ArrayList<>();
         this.ships = new Hashtable();
         this.pads = new Hashtable();
         this.status = KillerGame.Status.ROOM;
-        this.newRadio();
-        this.newSound();
-        this.newRoom();
-    
+        this.stopMusic();
+        this.changeMusic(KillerRadio.ClipType.MENU);
+        this.room.setVisible(true);
     }
     
     public void setWinner(String name) {
@@ -795,7 +794,7 @@ public class KillerGame extends JFrame {
      */
     public void sendStart() {
         if (this.status == Status.ROOM) {
-            this.nextModule.sendStart();
+            this.nextModule.sendStart(GameConfiguration.Builder.builder().soundEffects(this.soundEffects).pacmanActive(this.pacmanActive).soundsMusic(this.soundMusic).ultraPacman(this.ultraPacman).build());
             this.status = Status.GAME;
         }
     }
@@ -834,7 +833,11 @@ public class KillerGame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new GridLayout());
         this.setResizable(false);
-        this.setUndecorated(true);
+        try {
+            this.setUndecorated(true);
+        } catch(Exception e) {
+            
+        }
         this.setVisible(true);
     }
 
@@ -918,6 +921,8 @@ public class KillerGame extends JFrame {
             this.pads.put(ip, pad);
             new Thread(pad).start();
             result = true;
+            System.out.println(user);
+            this.room.updateUsers(this.pads);
         }
         return result;
     }

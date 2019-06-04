@@ -19,7 +19,7 @@ public class KillerRules {
     public static final int OCTANE_MAX_SPEED_NEBULOSA = 3;
     
     // Batmobile
-    public static final int BATMOBILE_HEALTH = 30;
+    public static final int BATMOBILE_HEALTH = 40;
     public static final int BATMOBILE_DAMAGE = 30;
     public static final int BATMOBILE_MAX_SPEED = 5;
     public static final int BATMOBILE_MAX_SPEED_NEBULOSA = 3;
@@ -58,11 +58,11 @@ public class KillerRules {
     
     // BlackHoles
     public static final double MIN_BLACKHOLES= 0;
-    public static final double MAX_BLACKHOLES = 1.5;
+    public static final double MAX_BLACKHOLES = 1;
     
     // Pacmans
     public static final double MIN_PACMANS = 0;
-    public static final double MAX_PACMANS = 1.5;
+    public static final double MAX_PACMANS = 1;
     
     // PowerUps
     public static final double MIN_POWERUPS = 0.8;
@@ -255,7 +255,7 @@ public class KillerRules {
 
     public static void collisionShootWithPacman(KillerGame game, Shoot shot, Pacman pacman) {
         KillerRules.substractHealthAlive(pacman, shot.getDamage());
-        pacman.getPhysics.collisionXShoot(shot);
+        pacman.getPhysics().collisionXShoot(shot);
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
         //shot.getGame().removeObject(shot);

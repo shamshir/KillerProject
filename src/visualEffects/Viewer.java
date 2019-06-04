@@ -28,8 +28,11 @@ public class Viewer extends Canvas implements Runnable {
 
     private BufferedImage backgroundImg;
     public Graphics2D g2dBackground;
+    
+    private Boolean vivo;
 
     public Viewer(KillerGame kg) {
+        this.vivo = true;
         this.killerGame = kg;
         this.setSize(new Dimension(this.killerGame.getWidth(), this.killerGame.getHeight()));
         this.setFocusable(true);
@@ -52,7 +55,7 @@ public class Viewer extends Canvas implements Runnable {
         this.createBufferStrategy(2);
         this.loadBackgroundImage();
 
-        while (true) {
+        while (this.vivo) {
             this.updateFrame();
 
             try {
@@ -61,6 +64,10 @@ public class Viewer extends Canvas implements Runnable {
 
             }
         }
+    }
+    
+    public void stop() {
+        this.vivo = false;
     }
 
     public void drawComponents(Graphics2D g2d) {
