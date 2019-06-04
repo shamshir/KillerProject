@@ -250,7 +250,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
-            this.getKillergame().receiveConfiguration(message.getGameConfiguration());
+//            this.getKillergame().receiveConfiguration(message.getGameConfiguration());
             this.getKillergame().setPadsNum(0);
             this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
                     .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
