@@ -6,24 +6,28 @@ import physics.PhysicsAsteroid;
 import visualEffects.ExplosionEffect;
 
 public class Asteroid extends Automata {
+
     private PhysicsAsteroid physicsAsteroid;
+    private int imgFile;
 
     /**
-     * 
+     *
      * @param game
      * @param x
      * @param y
      * @param imgHeight
-     * @param health 
-     * @param maxspeed 
+     * @param health
+     * @param maxspeed
      */
     public Asteroid(KillerGame game, double x, double y, int imgHeight, int health, double maxspeed) {
         super(game, x, y);
 
+        this.setRandomFile(); // imagen aleatoria
         this.setImage();
         this.imgHeight = imgHeight;
         this.imgWidth = imgHeight;
         this.radius = this.imgHeight / 2;
+        this.radians = Math.random() * (Math.PI * 2); // angulo aleatorio
         this.m = Math.PI * (this.radius * this.radius);
 
         this.health = health;
@@ -36,6 +40,7 @@ public class Asteroid extends Automata {
 
     /**
      * Constructor para instanciar el obj si viene de otro pc
+     *
      * @param game
      * @param x
      * @param y
@@ -45,12 +50,12 @@ public class Asteroid extends Automata {
      * @param radians
      * @param vx
      * @param vy
-     * @param a 
+     * @param a
      */
-    public Asteroid(KillerGame game, double x, double y, int imgHeight, double m, int health, 
+    public Asteroid(KillerGame game, double x, double y, int imgHeight, double m, int health,
             double radians, double vx, double vy, double a) {
         super(game, x, y);
-        
+
         this.setImage();
         this.imgHeight = imgHeight;
         this.imgWidth = imgHeight;
@@ -62,12 +67,11 @@ public class Asteroid extends Automata {
         this.vy = vy;
         this.a = a;
         this.physicsAsteroid = new PhysicsAsteroid(this); // han de estar inicializadas todas las variables de fisicas
-        
+
     }
-        
-     
+
     /**
-     *  Cambiar en función de las físicas
+     * Cambiar en función de las físicas
      */
     @Override
     protected void move() {
@@ -76,7 +80,17 @@ public class Asteroid extends Automata {
 
     @Override
     protected void setImage() {
-        this.loadImg("src/visibleObjects/img/asteroid.png");
+        if (this.imgFile == 1) {
+            this.loadImg("src/visibleObjects/img/ast1.png");
+        } else if (this.imgFile == 2) {
+            this.loadImg("src/visibleObjects/img/ast2.png");
+        } else {
+            this.loadImg("src/visibleObjects/img/ast3.png");
+        }
+    }
+    
+    private void setRandomFile() {
+        this.imgFile = (int)(Math.random()* 3 + 1);
     }
 
     // ********************************************************
@@ -105,12 +119,10 @@ public class Asteroid extends Automata {
         }
 
     }
-    
-    
+
     // *********************
     // * Getters & Setters *
     // *********************
-
     public PhysicsAsteroid getPhysicsAsteroid() {
         return physicsAsteroid;
     }
