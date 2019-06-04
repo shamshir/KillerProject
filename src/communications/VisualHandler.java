@@ -95,7 +95,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             } catch (Exception ex) {
                 this.setSocket(null, this.destinationId);
                 done = true;
-            }
+                System.out.println("VisualHandler -> Error: " + ex.getMessage());
+            }                
         }
         this.setSocket(null);
         this.updateRoom(false);
@@ -139,7 +140,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case SYNC_CHECK:
                 this.processSyncCheck(message);
                 break;
-            case CLIENT_CONNECTED:
+            case CLIENT_CONNECTED:                
+                this.sendGameConfiguration(this.getKillergame().getConfiguration());
                 this.destinationId = message.getSenderId();
                 this.updateRoom(true);
                 break;
@@ -249,7 +251,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
-            this.getKillergame().receiveConfiguration(message.getGameConfiguration());
             this.getKillergame().setPadsNum(0);
             this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
                     .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
@@ -393,7 +394,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
-    private void sendGameConfiguration(final GameConfiguration gameConfiguration) {
+    public void sendGameConfiguration(final GameConfiguration gameConfiguration) {
         this.sendMessage(Message.Builder.builder(GAME_CONFIGURATION_COMMAND, KillerServer.getId())
                 .withGameConfiguration(gameConfiguration)
                 .build());
