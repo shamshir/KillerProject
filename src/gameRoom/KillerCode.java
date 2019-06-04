@@ -29,7 +29,8 @@ public class KillerCode extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setSize(1200, 900);
         if (sp == true) {
-            jLabelTeam.setIcon(new ImageIcon("src/gameRoom/img/KillerTeam.gif"));
+            //jLabelTeam.setIcon(new ImageIcon("src/gameRoom/img/KillerTeam.gif"));
+            jLabelTeam.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/KillerTeam.gif")));
         }
     }
     
