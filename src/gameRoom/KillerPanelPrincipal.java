@@ -113,6 +113,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         }
         if (sp == true) {
             jLabelPacman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sPacman.png")));
+            kg.setPacmanExistence(true);
             kg.enableUltrapacman();
         }
     }
@@ -171,7 +172,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
             if (s == false) {
                 kg.changeMusic(KillerRadio.ClipType.ENDING);
             }
-            KillerCode kc = new KillerCode();
+            KillerCode kc = new KillerCode(sp);
             kc.setVisible(true);
         }
     }
