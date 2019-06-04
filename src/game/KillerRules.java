@@ -1,5 +1,6 @@
 package game;
 
+import sound.KillerSound;
 import visibleObjects.*;
 
 /**
@@ -18,7 +19,7 @@ public class KillerRules {
     public static final int OCTANE_MAX_SPEED_NEBULOSA = 3;
     
     // Batmobile
-    public static final int BATMOBILE_HEALTH = 30;
+    public static final int BATMOBILE_HEALTH = 40;
     public static final int BATMOBILE_DAMAGE = 30;
     public static final int BATMOBILE_MAX_SPEED = 5;
     public static final int BATMOBILE_MAX_SPEED_NEBULOSA = 3;
@@ -42,18 +43,27 @@ public class KillerRules {
     // Asteroids
     public static final double MIN_ASTEROIDS = 3;
     public static final double MAX_ASTEROIDS = 6;
+    public static final double MIN_VX_ASTEROIDS = 1;
+    public static final double MAX_VX_ASTEROIDS = 3;
+    public static final double MIN_VY_ASTEROIDS = 1;
+    public static final double MAX_VY_ASTEROIDS = 3;
+    
     // Nebulosas
     public static final double MIN_NEBULOSAS = 0.8;
     public static final double MAX_NEBULOSAS = 2.3;
+    
     // Planets
     public static final double MIN_PLANETS = 0.7;
     public static final double MAX_PLANETS = 2.3;
+    
     // BlackHoles
     public static final double MIN_BLACKHOLES= 0;
-    public static final double MAX_BLACKHOLES = 1.5;
+    public static final double MAX_BLACKHOLES = 1;
+    
     // Pacmans
     public static final double MIN_PACMANS = 0;
-    public static final double MAX_PACMANS = 1.5;
+    public static final double MAX_PACMANS = 1;
+    
     // PowerUps
     public static final double MIN_POWERUPS = 0.8;
     public static final double MAX_POWERUPS = 2.1;
@@ -63,13 +73,15 @@ public class KillerRules {
     // ***************************************************************************************************** //
     // *************************** [            Collision Alive          ] ********************************* //
     // ***************************************************************************************************** //
+    
     /**
      * @author Alvaro
      * @param game
      * @param alive
      */
     static void collisionAliveWithBlackHole(KillerGame game, Alive alive) {
-        if (Math.random() < 0.5) {
+        KillerRules.correctXandYOnCollideBlackHole(alive);
+       if (Math.random() < 0.5) {
             KillerRules.sendAliveToPrev(game, alive);
         } else {
             KillerRules.sendAliveToNext(game, alive);
@@ -83,6 +95,7 @@ public class KillerRules {
      * @param wall
      */
     public static void collisionAliveWithWall(KillerGame game, Alive alive, Wall wall) {
+        
         // Detect wall type
         if (wall.getType() == Wall.Limit.UP) {
             // Teleport to bottom
@@ -93,16 +106,24 @@ public class KillerRules {
             alive.setY(0 + alive.getImgHeight() + 1);
         }
         if (wall.getType() == Wall.Limit.RIGHT) {
+            // Send to next
+            alive.setX(alive.getImgWidth() + 1);
+            System.out.println("Muro derecho");
             KillerRules.sendAliveToNext(game, alive);
         }
         if (wall.getType() == Wall.Limit.LEFT) {
+            // Send to prev
+            alive.setX(KillerGame.VIEWER_WIDTH - alive.getImgWidth() - 1);
+            System.out.println("Muro izquierdo");
             KillerRules.sendAliveToPrev(game, alive);
         }
+        
     }
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Ship           ] ********************************* //
     // ***************************************************************************************************** //
+    
     /**
      * @author Alvaro
      * @param game
@@ -116,9 +137,8 @@ public class KillerRules {
     }
 
     /**
-     * Por ahora no es utilizado. Ya que se usa collisionWithAlive(). En caso de
-     * querer que esta colision haga algo diferente se debe tocar aqui.
-     *
+     * Por ahora no es utilizado. Ya que se usa collisionWithAlive(). 
+     * En caso de querer que esta colision haga algo diferente se debe tocar aqui.
      * @author Alvaro
      * @param game
      * @param ship
@@ -145,13 +165,26 @@ public class KillerRules {
             ship.setTiempoEnNebulosa(10);
         }
     }
-
+    
+    /**
+     * @author Alvaro
+     * @param game
+     * @param ship
+     * @param pacman 
+     */
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
-        ship.changeState(Alive.State.DEAD);
-        //ship.getGame().removeObject(ship);
+        game.removeObject(ship);
         pacman.setSize(ship.getHealth());
+        game.startSound(KillerSound.ClipType.PACMAN_EAT);
+        game.getNextModule().sendInfoMessageToPad("pad_dead", ship.getId());
     }
-
+    
+    /**
+     * @author Alvaro
+     * @param game
+     * @param ship
+     * @param planeta 
+     */
     public static void collisionShipWithPlaneta(KillerGame game, KillerShip ship, Planeta planeta) {
         double[] damages = ship.getPhysicsShip().collisionXPlanet(planeta);
         KillerRules.substractHealthShip(game, ship, (int) damages[0] * DAMAGE_BY_COLLISION);
@@ -222,8 +255,7 @@ public class KillerRules {
 
     public static void collisionShootWithPacman(KillerGame game, Shoot shot, Pacman pacman) {
         KillerRules.substractHealthAlive(pacman, shot.getDamage());
-        pacman.setDx(shot.getDx());
-        pacman.setDy(shot.getDy());
+        pacman.getPhysics().collisionXShoot(shot);
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
         //shot.getGame().removeObject(shot);
@@ -239,8 +271,8 @@ public class KillerRules {
         if (powerUp.isWrappered()) {
             powerUp.quitarVida(shot.getDamage());
             if (powerUp.getHealth() < 0) {
-                powerUp.unwrapper();
                 powerUp.setWrappered(false);
+                powerUp.unwrapper();
                 powerUp.setAvailable(true);
             }
             // Remove shot from the array
@@ -361,7 +393,25 @@ public class KillerRules {
         // Remove Power up from the array
         game.removeObject(powerUp);
         // Increment Pacman Health on PACMAN_INCREMENT
-        pacman.setHealth(KillerRules.PACMAN_INCREMENT);
+        pacman.setSize(KillerRules.PACMAN_INCREMENT);
+    }
+    
+    public static void collisionPacmanWithWall(KillerGame game, Pacman pacman, Wall wall) {
+        
+        KillerRules.collisionAliveWithWall(game, pacman, wall);
+        
+        if (game.getUltraPacman()) {
+            
+            Pacman pacwoman = new Pacman(game, pacman.getX(), pacman.getY());
+            
+            if (pacman.getX() < KillerGame.VIEWER_WIDTH / 2) {
+                pacwoman.setX(pacwoman.getImgWidth());
+            } else {
+                pacwoman.setX(KillerGame.VIEWER_WIDTH - pacwoman.getImgWidth());
+            }
+        
+        }
+        
     }
 
     // ***************************************************************************************************** //
@@ -406,8 +456,8 @@ public class KillerRules {
         alive.quitarVida(damage);
         // Set die status to KillerShip
         if (alive.getHealth() <= 0) {
-            // alive.changeState(Alive.State.DYING);
-            // alive.onDying();
+            //alive.changeState(Alive.State.DYING);
+            //alive.onDying();
             alive.changeState(Alive.State.DEAD);
             //alive.getGame().removeObject(alive);
             dead = true;
@@ -431,6 +481,20 @@ public class KillerRules {
         }
         // Return live status
         return dead;
+    }
+        
+    /**
+     * @author Alvaro
+     * @param alive
+     */
+    private static void correctXandYOnCollideBlackHole(Alive alive) {
+        System.out.println("Blackhole");
+        double correctX = Math.random() * (KillerGame.VIEWER_WIDTH - alive.getImgWidth())  + alive.getImgWidth();
+        double correctY = Math.random() * (KillerGame.VIEWER_WIDTH - alive.getImgHeight())  + alive.getImgHeight();
+        if (alive.getX() < KillerGame.VIEWER_WIDTH / 2) {
+            correctX = KillerGame.VIEWER_WIDTH - alive.getImgWidth();
+        }
+        alive.setX(correctX);
     }
 
 }

@@ -1,11 +1,14 @@
 package gameRoom;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author Yeray
  */
 public class KillerCode extends javax.swing.JFrame {
-    
+    private Boolean sp;
     //variables para eventos
     int[] sequence = {27};
     int currentButton = 0;
@@ -13,7 +16,8 @@ public class KillerCode extends javax.swing.JFrame {
     /**
      * Creates new form KillerCode
      */
-    public KillerCode() {
+    public KillerCode(Boolean sp) {
+        this.sp = sp;
         initComponents();
         initConf();
     }
@@ -23,7 +27,11 @@ public class KillerCode extends javax.swing.JFrame {
      */
     private void initConf(){
         this.setLocationRelativeTo(null);
-        this.setSize(720, 718);
+        this.setSize(1200, 900);
+        if (sp == true) {
+            //jLabelTeam.setIcon(new ImageIcon("src/gameRoom/img/KillerTeam.gif"));
+            jLabelTeam.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/KillerTeam.gif")));
+        }
     }
     
     /**
@@ -39,6 +47,7 @@ public class KillerCode extends javax.swing.JFrame {
     }
     if(currentButton == sequence.length) {
         currentButton = 0;
+        KillerPanelPrincipal.menuRadio();
         this.dispose();
     }
     }
@@ -52,15 +61,17 @@ public class KillerCode extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jLabelTeam = new javax.swing.JLabel();
         jTextFieldExit = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1200, 900));
         setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(1200, 900));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/putoMono.jpg"))); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 720, -1));
+        jLabelTeam.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/KillerTeam.png"))); // NOI18N
+        getContentPane().add(jLabelTeam, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         jTextFieldExit.setText("jTextField1");
         jTextFieldExit.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -68,7 +79,7 @@ public class KillerCode extends javax.swing.JFrame {
                 jTextFieldExitKeyPressed(evt);
             }
         });
-        getContentPane().add(jTextFieldExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 40, -1, -1));
+        getContentPane().add(jTextFieldExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(1210, 10, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -113,13 +124,13 @@ public class KillerCode extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new KillerCode().setVisible(true);
+                //new KillerCode().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabelTeam;
     private javax.swing.JTextField jTextFieldExit;
     // End of variables declaration//GEN-END:variables
 }

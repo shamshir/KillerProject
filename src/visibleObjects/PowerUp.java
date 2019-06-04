@@ -59,7 +59,7 @@ public class PowerUp extends Static implements Destructible {
                    this.loadImg("src/visibleObjects/img/health.png");
                    break;
                 case "DAMAGE":
-                   this.loadImg("src/visibleObjects/img/safe.png");
+                   this.loadImg("src/visibleObjects/img/power.png");
                    break;
             }
         }

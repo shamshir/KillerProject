@@ -1,5 +1,6 @@
 package gameRoom;
 
+import communications.KillerPad;
 import game.KillerGame;
 import java.util.Hashtable;
 import sound.KillerRadio;
@@ -42,7 +43,14 @@ public class KillerRoom extends javax.swing.JFrame {
         this.setLocationRelativeTo(null); 
         this.setContentPane(kpp);
         KillerPanelPrincipal.jTextFieldSecret.requestFocus(); 
-        kg.changeMusic(KillerRadio.ClipType.MENU);
+        kpp.setNetworkConf(true, true, true, false);
+    }
+    
+    /**
+     * Configuración de opciones externa
+     */
+    public void setNetworkConf(boolean soundEffects, boolean soundMusic, boolean pacmanActive, boolean ultraPacman) {
+        kpp.setNetworkConf(soundEffects, soundMusic, pacmanActive, ultraPacman);
     }
     
     /**
@@ -50,7 +58,7 @@ public class KillerRoom extends javax.swing.JFrame {
      * Para pintarla en el jPanel de Conectar
      * @param players 
      */
-    public void updateUsers(Hashtable<String, KillerShip> players){
+    public void updateUsers(Hashtable<String, KillerPad> players){
         kpc.updateUsers(players);
     }
 
@@ -99,6 +107,7 @@ public class KillerRoom extends javax.swing.JFrame {
      */
     public void setKillerPanelPrincipal() {
         this.setContentPane(kpp);
+        kpw.updateUI();
         KillerPanelPrincipal.jTextFieldSecret.requestFocus();
     }
 
@@ -113,10 +122,13 @@ public class KillerRoom extends javax.swing.JFrame {
     /**
      * Método que cambia el jPanel actual al de Ganador
      * Pensado para ser usado cuando solo quede un jugador
+     * @param aux
      */
-    public void setKillerPanelWinner() {
+    public void setKillerPanelWinner(String aux) {
         this.setContentPane(kpw);
         kpw.updateUI();
+        kpw.setWinner(aux);
+        
     }
     
     /**

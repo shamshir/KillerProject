@@ -31,8 +31,10 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String DECREMENT_PADS_NUM = "decrementPadsNum";
     private static final String WIN_COMMAND = "win";
     private static final String PAD_WIN_COMMAND = "pad_win";
+    private static final String GAME_CONFIGURATION_COMMAND = "gameConfiguration";
+    private static final String WINNER_COMMAND = "winner";
+    private static final String RESET_KILLERGAME_COMMAND = "reset";
 
-    private static final String SHOOT_TYPE = "shoot";
     private static final String SHIP_TYPE = "ship";
     private static final String PACMAN_TYPE = "pacman";
     private static final String ASTEROID_TYPE = "asteroid";
@@ -145,10 +147,19 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 this.disconnect();
                 break;
             case DECREMENT_PADS_NUM:
-                this.processDecrement(message);
+                this.processPadDecrement(message);
                 break;
             case WIN_COMMAND:
                 this.processWin(message);
+                break;
+            case GAME_CONFIGURATION_COMMAND:
+                this.processGameConfiguration(message);
+                break;
+            case WINNER_COMMAND:
+                this.processWinner(message);
+                break;
+            case RESET_KILLERGAME_COMMAND:
+                this.processReset(message);
                 break;
             default:
                 final String command = message.getCommand();
@@ -174,9 +185,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         switch (object.getObjectType()) {
             case SHIP_TYPE:
                 this.createShip(object);
-                break;
-            case SHOOT_TYPE:
-                this.createShoot(object);
                 break;
             case ASTEROID_TYPE:
                 this.createAsteroid(object);
@@ -232,15 +240,17 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         super.setDestinationIp(EMPTY_STRING);
     }
 
-    public void sendStart() {
+    public void sendStart(GameConfiguration configuration) {
         this.getKillergame().setPadsNum(0);
         this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId())
                 .withServersQuantity(this.getKillergame().getPadsSize())
+                .withGameConfiguration(configuration)
                 .build());
     }
 
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
+//            this.getKillergame().receiveConfiguration(message.getGameConfiguration());
             this.getKillergame().setPadsNum(0);
             this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
                     .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
@@ -255,7 +265,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         if (!isMessageMine(message.getSenderId())) {
             this.getKillergame().getNextModule().sendMessage(message);
             System.exit(0);
-            //TODO this.getKillergame().quitGame();
         }
     }
 
@@ -326,13 +335,6 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getDamage(), Color.decode(object.getColor()));
     }
 
-    private void createShoot(ObjectResponse object) {
-        this.getKillergame().reciveShoot(object.getX(), object.getY(),
-                object.getRadians(), object.getDx(),
-                object.getDy(), object.getId(),
-                object.getDamage());
-    }
-
     private void createAsteroid(ObjectResponse object) {
         this.getKillergame().reciveAsteroid(object.getX(), object.getY(),
                 object.getImgHeight(), object.getM(),
@@ -356,11 +358,11 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
-    public void sendDecement() {
+    public void sendPadDecrement() {
         this.sendMessage(Message.Builder.builder(DECREMENT_PADS_NUM, KillerServer.getId()).build());
     }
 
-    private void processDecrement(final Message message) {
+    private void processPadDecrement(final Message message) {
         if (this.getKillergame().getPadsNum() > 0) {
             this.getKillergame().decrementPadsNum();
         }
@@ -375,7 +377,44 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             pad.sendMessage(Message.Builder.builder(PAD_WIN_COMMAND, KillerServer.getId())
                     .withReceiverId(pad.getId())
                     .build());
+            //anunciar ganador al resto de ordenadores
+            this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(WINNER_COMMAND, KillerServer.getId())
+                    .withReceiverId(pad.getUser())
+                    .build());
+            this.getKillergame().setWinner(pad.getUser());
         } else if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
+    }
+    
+    private void processWinner(final Message message){
+        if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().setWinner(message.getReceiverId());
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
+    }
+
+    public void sendGameConfiguration(final GameConfiguration gameConfiguration) {
+        this.sendMessage(Message.Builder.builder(GAME_CONFIGURATION_COMMAND, KillerServer.getId())
+                .withGameConfiguration(gameConfiguration)
+                .build());
+    }
+
+    private void processGameConfiguration(final Message message) {
+        if (!this.isMessageMine(message.getSenderId())) {
+            this.getKillergame().receiveConfiguration(message.getGameConfiguration());
+            this.getKillergame().getNextModule().sendMessage(message);
+        }
+    }
+    
+    private void sendReset(){
+        this.sendMessage(Message.Builder.builder(RESET_KILLERGAME_COMMAND, KillerServer.getId())
+            .build());
+    }
+    
+    private void processReset(final Message message){
+        if (!this.isMessageMine(message.getSenderId())) {
+            //this.getKillergame().reset()
             this.getKillergame().getNextModule().sendMessage(message);
         }
     }

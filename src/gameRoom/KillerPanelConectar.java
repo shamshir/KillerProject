@@ -1,11 +1,16 @@
 package gameRoom;
 
+import communications.KillerPad;
 import game.KillerGame;
 import java.awt.Color;
+import java.awt.Font;
 import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import sound.KillerSound;
 import visibleObjects.KillerShip;
 
@@ -27,6 +32,9 @@ public class KillerPanelConectar extends javax.swing.JPanel {
     
     //Strings
     private String player;
+    
+    //Tabla
+    DefaultTableModel model;
 
     /**
      * Creates new form NewJPanelConectar
@@ -36,7 +44,7 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         initComponents();
         kg = kr.getKg();
         setTextData();
-
+        configJTable();
     }
 
     /**
@@ -44,11 +52,10 @@ public class KillerPanelConectar extends javax.swing.JPanel {
      *
      * @param players
      */
-    public void updateUsers(Hashtable<String, KillerShip> players) {
-        Enumeration<KillerShip> enumeration = players.elements();
-        System.out.println("Jugadores conectados:");
+    public void updateUsers(Hashtable<String, KillerPad> players) {
+        model.setRowCount(0);
+        Enumeration<KillerPad> enumeration = players.elements();
         while (enumeration.hasMoreElements()) {
-            System.out.println(enumeration.nextElement().getUser());
             player = enumeration.nextElement().getUser();
             updateJTable(player);
         }
@@ -59,9 +66,36 @@ public class KillerPanelConectar extends javax.swing.JPanel {
      * @param player 
      */
     public void updateJTable(String player){
-        
+        Vector row = new Vector();
+        row.add(player);
+        model.addRow(row);
     }
-
+    
+    /**
+     * Método que configura la jTable, jScrollPanel que la contiene,
+     * el modelo de la tabla y el título de esta.
+     */
+    public void configJTable(){
+        model = (DefaultTableModel) jTablePlayers.getModel();
+        jTablePlayers.setBackground(new Color(0, 0, 0, 0));
+        ((DefaultTableCellRenderer) jTablePlayers.getDefaultRenderer(Object.class)).setBackground(new Color(0, 0, 0, 0));
+        jTablePlayers.setGridColor(new Color(255,204,0, 255));
+        jTablePlayers.setForeground(new Color(255,204,0, 255));
+        jScrollPanePlayers.setOpaque(false);
+        jTablePlayers.setOpaque(false);
+        ((DefaultTableCellRenderer) jTablePlayers.getDefaultRenderer(Object.class)).setOpaque(false);
+        jScrollPanePlayers.getViewport().setOpaque(false);
+        ((DefaultTableCellRenderer) jTablePlayers.getDefaultRenderer(Object.class)).setHorizontalAlignment( JLabel.CENTER );
+        jTablePlayers.setShowGrid(false);
+        jTablePlayers.getTableHeader().setReorderingAllowed(false);
+        jTablePlayers.getTableHeader().setForeground(new Color(255,204,0, 255));
+        jTablePlayers.getTableHeader().setBackground(new Color(0, 0,0, 0));
+        jTablePlayers.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 12));
+        jTablePlayers.getTableHeader().setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        ((DefaultTableCellRenderer) jTablePlayers.getDefaultRenderer(Object.class)).setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jScrollPanePlayers.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+    }
+    
     /**
      * Método que pinta datos de conexión locales a modo de ejemplo y ayuda
      */
@@ -136,6 +170,8 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jLabelIpIzq = new javax.swing.JLabel();
         jLabelPortIzq = new javax.swing.JLabel();
         jTextFieldIpIzq = new javax.swing.JTextField();
+        jScrollPanePlayers = new javax.swing.JScrollPane();
+        jTablePlayers = new javax.swing.JTable();
         jLabel1IpDer = new javax.swing.JLabel();
         jTextFieldIpDer = new javax.swing.JTextField();
         jLabel1PortDer = new javax.swing.JLabel();
@@ -171,7 +207,7 @@ public class KillerPanelConectar extends javax.swing.JPanel {
                 jButton1ActionPerformed(evt);
             }
         });
-        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 430, 130, -1));
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 440, 130, -1));
 
         jButtonConectarIzq.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/conectarIz.png"))); // NOI18N
         jButtonConectarIzq.setBorderPainted(false);
@@ -207,6 +243,18 @@ public class KillerPanelConectar extends javax.swing.JPanel {
         jTextFieldIpIzq.setOpaque(false);
         jTextFieldIpIzq.setPreferredSize(new java.awt.Dimension(90, 20));
         add(jTextFieldIpIzq, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, -1));
+
+        jTablePlayers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Jugadores Conectados"
+            }
+        ));
+        jScrollPanePlayers.setViewportView(jTablePlayers);
+
+        add(jScrollPanePlayers, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 120, 190, 290));
 
         jLabel1IpDer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1IpDer.setForeground(new java.awt.Color(255, 204, 0));
@@ -330,6 +378,8 @@ public class KillerPanelConectar extends javax.swing.JPanel {
     private javax.swing.JLabel jLabelIpIzq;
     private javax.swing.JLabel jLabelPortIzq;
     private javax.swing.JLabel jLabelTitulo;
+    private javax.swing.JScrollPane jScrollPanePlayers;
+    private javax.swing.JTable jTablePlayers;
     private javax.swing.JTextField jTextFieldIpDer;
     private javax.swing.JTextField jTextFieldIpIzq;
     private javax.swing.JTextField jTextFieldPortDer;
