@@ -86,7 +86,7 @@ public class Pacman extends Automata {
         if (health >= 30) {
             this.imgHeight = health;
             this.imgWidth = health;
-        } else {            
+        } else {
             this.imgHeight = 30;
             this.imgWidth = 30;
         }
@@ -99,21 +99,19 @@ public class Pacman extends Automata {
      */
     public void setSize(int size) {
 //        if (size >= 0) {
-            if ((this.imgHeight + size) <= 300) {
-                this.imgWidth += size;
-                this.imgHeight += size;
-                this.health += size;
-                this.radius = this.imgHeight / 2;
-                this.m = Math.PI * (this.radius * this.radius);
-                System.out.println("Pacman: crezco");
-            } else {
-                this.imgWidth = 300;
-                this.imgHeight = 300;
-                this.health = 300;
-                this.radius = this.imgHeight / 2;
-                this.m = Math.PI * (this.radius * this.radius);
-                System.out.println("Pacman: me quedo igual");
-            }
+        if ((this.imgHeight + size) <= 300) {
+            this.imgWidth += size;
+            this.imgHeight += size;
+            this.health += size;
+            this.radius = this.imgHeight / 2;
+            this.m = Math.PI * (this.radius * this.radius);
+        } else {
+            this.imgWidth = 300;
+            this.imgHeight = 300;
+            this.health = 300;
+            this.radius = this.imgHeight / 2;
+            this.m = Math.PI * (this.radius * this.radius);
+        }
 //        } else {
 //            if ((this.imgHeight + size) >= 30) {
 //                this.imgWidth += size;
@@ -156,10 +154,12 @@ public class Pacman extends Automata {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (mouthOpened) {
 //            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
-            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 30), 270);
+//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 30), 270);
+            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 50), 260);
         } else {
 //            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
-            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 5), 330);
+//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 5), 330);
+            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 10), 340);
         }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
