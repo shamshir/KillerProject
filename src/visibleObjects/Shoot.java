@@ -24,6 +24,7 @@ public class Shoot extends Automata {
         this.id = ship.getId();
         this.state = State.ALIVE;
         this.damage = ship.getDamage(); // Daño de su nave
+        this.color = ship.getColor();
 
         this.maxspeed = 7;
         this.health = 1;

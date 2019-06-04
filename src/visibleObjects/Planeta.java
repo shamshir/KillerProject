@@ -31,9 +31,7 @@ public class Planeta extends Static {
     // *********************
     @Override
     protected void setImage() {
-        int s = (int)(Math.random()* 2 + 1);
-        System.out.println("Planeta " + s);
-        if (s == 1) {
+        if ((int)(Math.random()* 2 + 1) == 1) {
             this.loadImg("src/visibleObjects/img/planeta1.png");
         } else {
             this.loadImg("src/visibleObjects/img/planeta2.png");

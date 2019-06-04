@@ -56,7 +56,7 @@ public class KillerShip extends Alive {
         this.configureShip();
         this.setImage();
 
-        this.imgHeight = 60;
+        this.imgHeight = this.checkImgHeight();
         this.setImgSize();
         this.a = 0.07;
         this.m = (this.imgWidth * this.imgHeight) / 2;
@@ -121,7 +121,7 @@ public class KillerShip extends Alive {
         this.damage = damage;
         this.setImage();
 
-        this.imgHeight = 60;
+        this.imgHeight = this.checkImgHeight();
         this.setImgSize(); // (Ha de estar cargada la img con setImage)
         this.m = (this.imgWidth * this.imgHeight) / 2;
         this.physicsShip = new PhysicsShip(this); // han de estar inicializadas todas las variables de fisicas
@@ -329,6 +329,27 @@ public class KillerShip extends Alive {
     private void turboStart() {
         this.maxspeed += KillerRules.MAX_SPEED_INCREMENT;
     }
+    
+    private int checkImgHeight() {
+        int height;
+        if (null == this.type) {            
+            height = 60;
+        } else switch (this.type) {
+            case MARAUDER:
+                height = 100;
+                break;
+            case BATMOBILE:
+                height = 75;
+                break;
+            default:
+                height = 60;
+                break;
+        }
+        System.out.println("type " + this.type);
+        System.out.println("height " + height);
+        
+        return height;
+    }
 
     private int getInitHealth() {
         int initHealth = 0;
@@ -373,7 +394,7 @@ public class KillerShip extends Alive {
             c = this.color;
             barWidth = (this.imgWidth * this.health) / this.getInitHealth();
         } else {
-            c = Color.decode("#ffd700");
+            c = Color.white;
             barWidth = this.imgWidth;
         }
         g2d.setColor(c);
