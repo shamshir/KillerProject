@@ -82,4 +82,13 @@ public class BlackHole extends Static implements Runnable {
     // *********************
     // * Getters & Setters *
     // *********************
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+    
 }
