@@ -16,8 +16,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import javax.swing.*;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 import javax.sound.sampled.Clip;
 import physics.CollidePhysics;
 import visibleObjects.PowerUp.Power;
@@ -44,11 +47,11 @@ public class KillerGame extends JFrame {
     public static boolean exit = false;
     public static final int VIEWER_WIDTH = 1920;
     public static final int VIEWER_HEIGHT = 1080;
-    
+
     // Gen objects
     private int matrizWidth[][] = new int[8][4];
     private int matrizHeight[][] = new int[8][4];
-    
+
     // Object list
     private ArrayList<VisibleObject> objects = new ArrayList<>();
 
@@ -86,7 +89,6 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [        KillerGame Constructors      ] ********************************* //
     // ***************************************************************************************************** //
-    
     /**
      * @author Alvaro
      */
@@ -510,11 +512,10 @@ public class KillerGame extends JFrame {
             }
         }
     }
-    
+
     // ***************************************************************************************************** //
     // *************************** [             Add Methods             ] ********************************* //
     // ***************************************************************************************************** //
-    
     /**
      * @author Christian
      */
@@ -592,19 +593,20 @@ public class KillerGame extends JFrame {
             }
         }
     }
+
     /**
      * @author Christian
-     * @param number 
+     * @param number
      */
     private void addPowerUps(int number) {
-        
+
         for (int i = 0; i < number; i++) {
-            
+
             int[] values = selectPosition();
             int x = values[0];
             int y = values[1];
             int powerUpType = values[5];
-            
+
             if (powerUpType < 0.5) {
                 this.objects.add(new PowerUp(this, x, y, 70, 70, Power.HEALTH));
             } else {
@@ -717,11 +719,8 @@ public class KillerGame extends JFrame {
 
         return nums;
     }
-    
-    
-    
+
     public void restartGame() {
-        
         this.viewer.stop();
         this.remove(this.viewer);
         this.viewer = null;
@@ -733,13 +732,24 @@ public class KillerGame extends JFrame {
         this.changeMusic(KillerRadio.ClipType.MENU);
         this.room.setVisible(true);
     }
-    
+
     public void setWinner(String name) {
-        
+
         this.room.setKillerPanelWinner(name);
         this.setVisible(false);
         this.room.setVisible(true);
-        
+
+        Enumeration<KillerPad> enumeration = this.pads.elements();
+        while (enumeration.hasMoreElements()) {
+            enumeration.nextElement().closeSocket();
+        }
+
+        for (VisibleObject object : this.objects) {
+            if (object instanceof Alive) {
+                ((Alive) object).setState(Alive.State.DEAD);
+            }
+        }
+
     }
 
     // ***************************************************************************************************** //
@@ -781,12 +791,12 @@ public class KillerGame extends JFrame {
     public void sendObjectToNext(Alive object) {
         this.nextModule.sendObject(object);
     }
-    
+
     public void sendGameConfiguration() {
-        
         GameConfiguration configuration = GameConfiguration.Builder.builder().soundEffects(this.soundEffects).pacmanActive(this.pacmanActive).soundsMusic(this.soundMusic).ultraPacman(this.ultraPacman).build();
-        this.nextModule.sendGameConfiguration(configuration);
-        
+        if (this.nextModule != null) {
+            this.nextModule.sendGameConfiguration(configuration);
+        }
     }
 
     /**
@@ -794,22 +804,25 @@ public class KillerGame extends JFrame {
      */
     public void sendStart() {
         if (this.status == Status.ROOM) {
-            this.nextModule.sendStart(GameConfiguration.Builder.builder().soundEffects(this.soundEffects).pacmanActive(this.pacmanActive).soundsMusic(this.soundMusic).ultraPacman(this.ultraPacman).build());
+            sendGameConfiguration();
+            this.nextModule.sendStart();
             this.status = Status.GAME;
         }
     }
 
     public void receiveConfiguration(GameConfiguration configuration) {
-        
+
         this.soundEffects = configuration.getSoundEffects();
         this.soundMusic = configuration.getSoundsMusic();
-        if (!soundMusic) {this.stopMusic();}
+        if (!soundMusic) {
+            this.stopMusic();
+        }
         this.pacmanActive = configuration.getPacmanActive();
         this.ultraPacman = configuration.getUltraPacman();
         this.room.setNetworkConf(this.soundEffects, this.soundMusic, this.pacmanActive, this.ultraPacman);
-    
+
     }
-    
+
     // ***************************************************************************************************** //
     // *************************** [            Window Methods           ] ********************************* //
     // ***************************************************************************************************** //
@@ -835,8 +848,8 @@ public class KillerGame extends JFrame {
         this.setResizable(false);
         try {
             this.setUndecorated(true);
-        } catch(Exception e) {
-            
+        } catch (Exception e) {
+
         }
         this.setVisible(true);
     }
@@ -917,6 +930,9 @@ public class KillerGame extends JFrame {
     public boolean newPad(String ip, Socket socket, String user, String color) {
         boolean result = false;
         if (this.status == Status.ROOM) {
+            if (this.pads.get(ip) != null) {
+                this.pads.get(ip).closeSocket();
+            }
             KillerPad pad = new KillerPad(this, socket, user, color);
             this.pads.put(ip, pad);
             new Thread(pad).start();
@@ -1174,9 +1190,13 @@ public class KillerGame extends JFrame {
     public boolean getPacmanExistence() {
         return pacmanActive;
     }
-    
+
     public boolean getUltraPacman() {
         return this.ultraPacman;
+    }
+    
+    public GameConfiguration getConfiguration() {
+        return GameConfiguration.Builder.builder().soundEffects(this.soundEffects).pacmanActive(this.pacmanActive).soundsMusic(this.soundMusic).ultraPacman(this.ultraPacman).build();
     }
 
     // ***************************************************************************************************** //
@@ -1184,6 +1204,7 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     public void enableUltrapacman() {
         this.ultraPacman = true;
+        //sendGameConfiguration();
     }
 
     public static void exit() {
@@ -1235,6 +1256,7 @@ public class KillerGame extends JFrame {
      */
     public void setSoundMusic(boolean soundMusic) {
         this.soundMusic = soundMusic;
+        //sendGameConfiguration();
     }
 
     /**
@@ -1242,6 +1264,7 @@ public class KillerGame extends JFrame {
      */
     public void setSoundEffects(boolean soundEffects) {
         this.soundEffects = soundEffects;
+        //sendGameConfiguration();
     }
 
     /**
@@ -1249,6 +1272,7 @@ public class KillerGame extends JFrame {
      */
     public void setPacmanExistence(boolean pacmanActive) {
         this.pacmanActive = pacmanActive;
+        //sendGameConfiguration();
     }
 
     // ***************************************************************************************************** //
@@ -1260,8 +1284,8 @@ public class KillerGame extends JFrame {
      */
     public void removePad(KillerPad pad) {
         this.pads.remove(pad.getId());
-        this.objects.remove(this.getShipByIP(pad.getId()));
         this.ships.remove(pad.getId());
+        this.room.updateUsers(this.pads);
     }
 
     /**
@@ -1270,11 +1294,11 @@ public class KillerGame extends JFrame {
      */
     public void removeShip(KillerShip ship) {
         try {
-           if (this.getShipByIP(ship.getId()).equals(ship)) {
-            this.ships.remove(ship.getId());
-            } 
+            if (this.getShipByIP(ship.getId()).equals(ship)) {
+                this.ships.remove(ship.getId());
+            }
         } catch (Exception e) {
-            
+
         }
     }
 

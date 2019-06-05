@@ -53,11 +53,58 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         m = music;
         p = pacman;
         sp = sPacman;
-        setSounds();
-        setMusic();
-        setPacman();
+        setNetworkSounds();
+        setNetworkMusic();
+        setNetworkPacman();
     }
 
+       /**
+     * Método que cambia el icono y el estado a cada clic 
+     * Para reflejar cuando una configuración viene de otra pantalla
+     */
+    public void setNetworkSounds() {
+        if (s == false) {
+            jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/noSound.png")));
+            s = true;
+        } else {
+            jLabelSound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sound.png")));
+            s = false;
+        }
+    }
+
+    /**
+     * Método que cambia el icono y el estado a cada clic 
+     * Para reflejar cuando una configuración viene de otra pantalla
+     */
+    public void setNetworkMusic() {
+        if (m == false) {
+            jLabelMusic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/musicFalse.png")));
+            m = true;
+        } else {
+            jLabelMusic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/musicTrue.png")));
+            m = false;
+        }
+    }
+
+    /**
+     * Método que cambia el icono y el estado a cada clic 
+     * Para reflejar cuando una configuración viene de otra pantalla
+     *
+     */
+    
+    public void setNetworkPacman() {
+        if (p == false) {
+            jLabelPacman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/pacmanR.png")));
+            p = true;
+        } else {
+            jLabelPacman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/pacman.png")));
+            p = false;
+        }
+        if (sp == true) {
+            jLabelPacman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sPacman.png")));
+        }
+    }
+    
     /**
      * Método que cambia el icono y el estado a cada clic y cambia la activación
      * de los sonidos del juego
@@ -113,6 +160,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         }
         if (sp == true) {
             jLabelPacman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/sPacman.png")));
+            kg.setPacmanExistence(true);
             kg.enableUltrapacman();
         }
     }
@@ -171,7 +219,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
             if (s == false) {
                 kg.changeMusic(KillerRadio.ClipType.ENDING);
             }
-            KillerCode kc = new KillerCode();
+            KillerCode kc = new KillerCode(sp);
             kc.setVisible(true);
         }
     }
