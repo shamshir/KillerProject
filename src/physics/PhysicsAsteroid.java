@@ -92,8 +92,8 @@ public class PhysicsAsteroid {
         double vx2 = tangentX * pTan2 + normalX * mom2 * 0.6;
         double vy2 = tangentY * pTan2 + normalY * mom2 * 0.6;
 
-        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 100;
-        double result2 = Math.sqrt(vx2 * vx2 + vy2 * vy2) / 100;
+        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 3;
+        double result2 = Math.sqrt(vx2 * vx2 + vy2 * vy2) / 3;
 
         double max = 1.6;
 
@@ -185,7 +185,7 @@ public class PhysicsAsteroid {
         double vx1 = tangentX * pTan1 + normalX * mom1 *3;
         double vy1 = tangentY * pTan1 + normalY * mom1 *3;
 
-        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 100;
+        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1)/2;
 
         double max = 1.6;
 
