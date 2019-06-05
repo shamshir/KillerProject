@@ -13,14 +13,11 @@ import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.swing.*;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
 import javax.sound.sampled.Clip;
 import physics.CollidePhysics;
 import visibleObjects.PowerUp.Power;
@@ -45,12 +42,15 @@ public class KillerGame extends JFrame {
     private boolean pacmanActive = true;
     private boolean ultraPacman = false;
     public static boolean exit = false;
+    public static int worldType = 0;
     public static final int VIEWER_WIDTH = 1920;
     public static final int VIEWER_HEIGHT = 1080;
 
     // Gen objects
-    private int matrizWidth[][] = new int[8][4];
-    private int matrizHeight[][] = new int[8][4];
+    private int objectMatrixWidth[][] = new int[KillerRules.OBJECT_GRID_WIDTH][KillerRules.OBJECT_GRID_HEIGHT];
+    private int objectMatrixHeight[][] = new int[KillerRules.OBJECT_GRID_WIDTH][KillerRules.OBJECT_GRID_HEIGHT];
+    private int nebulaMatrixWidth[][] = new int[KillerRules.OBJECT_GRID_WIDTH][KillerRules.OBJECT_GRID_HEIGHT];
+    private int nebulaMatrixHeight[][] = new int[KillerRules.OBJECT_GRID_WIDTH][KillerRules.OBJECT_GRID_HEIGHT];
 
     // Object list
     private ArrayList<VisibleObject> objects = new ArrayList<>();
@@ -277,13 +277,6 @@ public class KillerGame extends JFrame {
             }
         }
 
-        // Collision with Nebulosa
-        if (object instanceof Nebulosa) {
-            if (CollidePhysics.collisionCxC(shoot, (Nebulosa) object)) {
-                KillerRules.collisionShootWithNebulosa(shoot);
-            }
-        }
-
         // Collision with Pacman
         if (object instanceof Pacman) {
             if (CollidePhysics.collisionCxC(shoot, (Pacman) object)) {
@@ -338,7 +331,7 @@ public class KillerGame extends JFrame {
         // Collision with Asteroid
         if (object instanceof Asteroid && !asteroid.equals(object)) {
             if (CollidePhysics.collisionCxC(asteroid, (Asteroid) object)) {
-                KillerRules.collisionAsteroidWithAsteroid(this, asteroid, (Asteroid) (object));
+                KillerRules.collisionAsteroidWithAsteroid(asteroid, (Asteroid) (object));
             }
         }
 
@@ -346,13 +339,6 @@ public class KillerGame extends JFrame {
         if (object instanceof BlackHole) {
             if (CollidePhysics.collisionCxC(asteroid, (BlackHole) object)) {
                 KillerRules.collisionAsteroidWithBlackHole(this, asteroid);
-            }
-        }
-
-        // Collision with Nebulosa
-        if (object instanceof Nebulosa) {
-            if (CollidePhysics.collisionCxC(asteroid, (Nebulosa) object)) {
-                KillerRules.collisionAsteroidWithNebulosa(asteroid);
             }
         }
 
@@ -367,13 +353,6 @@ public class KillerGame extends JFrame {
         if (object instanceof Planeta) {
             if (CollidePhysics.collisionCxC(asteroid, (Planeta) object)) {
                 KillerRules.collisionAsteroidWithPlaneta(asteroid, (Planeta) object);
-            }
-        }
-
-        // Collision with PowerUp
-        if (object instanceof PowerUp) {
-            if (CollidePhysics.collisionCxC(asteroid, (PowerUp) object)) {
-                KillerRules.collisionAsteroidWithPowerUp(this, asteroid, (PowerUp) (object));
             }
         }
 
@@ -418,13 +397,6 @@ public class KillerGame extends JFrame {
         if (object instanceof BlackHole) {
             if (CollidePhysics.collisionCxC(pacman, (BlackHole) object)) {
                 KillerRules.collisionPacmanWithBlackHole(this, pacman);
-            }
-        }
-
-        // Collision with Nebulosa
-        if (object instanceof Nebulosa) {
-            if (CollidePhysics.collisionCxC(pacman, (Nebulosa) object)) {
-                KillerRules.collisionPacmanWithNebulosa(pacman);
             }
         }
 
@@ -492,7 +464,7 @@ public class KillerGame extends JFrame {
         // Add walls
         this.addWalls();
 
-        this.addObjects();
+        this.addObjects(this.worldType);
 
         // Start threads
         this.startThreads();
@@ -511,213 +483,6 @@ public class KillerGame extends JFrame {
                 new Thread((Alive) object).start();
             }
         }
-    }
-
-    // ***************************************************************************************************** //
-    // *************************** [             Add Methods             ] ********************************* //
-    // ***************************************************************************************************** //
-    /**
-     * @author Christian
-     */
-    public void addObjects() {
-
-        this.newRejillaPositions();
-        this.addPlanets(genPlanets());
-        this.addAsteroids(genAsteroids());
-        this.addNebulosas(genNebulosas());
-        this.addPacmans(genPacmans());
-        this.addBlackHoles(genBlackHoles());
-        this.addPowerUps(genPowerUps());
-
-    }
-
-    private void addPlanets(int number) {
-        for (int i = 0; i < number; i++) {
-            // Get Planet values
-            int[] values = selectPosition();
-            int x = values[0];
-            int y = values[1];
-            int height = values[4];
-            // New asteroid and set values
-            this.objects.add(new Planeta(this, x, y, height));
-        }
-    }
-
-    private void addAsteroids(int number) {
-        for (int i = 0; i < number; i++) {
-            // Get Asteroid values
-            int[] values = selectPosition();
-            int x = values[0];
-            int y = values[1];
-            int vx = values[2];
-            int vy = values[3];
-            // New asteroid and set values
-            Asteroid asteroid = new Asteroid(this, x, y, 40, 6, 2);
-            asteroid.setVx(vx);
-            asteroid.setVy(vy);
-            this.objects.add(asteroid);
-        }
-    }
-
-    private void addBlackHoles(int number) {
-        for (int i = 0; i < number; i++) {
-            // Get Black Hole values
-            int[] values = selectPosition();
-            int x = values[0];
-            int y = values[1];
-            // New Black Hole and set values
-            this.objects.add(new BlackHole(this, x, y, 80, 80));
-        }
-    }
-
-    private void addNebulosas(int number) {
-        for (int i = 0; i < number; i++) {
-            // Get Nebulosa values
-            int[] values = selectPosition();
-            int x = values[0];
-            int y = values[1];
-            // New Nebulosa
-            this.objects.add(new Nebulosa(this, x, y, 120, 90));
-        }
-    }
-
-    private void addPacmans(int number) {
-        if (this.pacmanActive) {
-            for (int i = 0; i < number; i++) {
-                // Get Pacman values
-                int[] values = selectPosition();
-                int x = values[0];
-                int y = values[1];
-                // New Pacman
-                this.objects.add(new Pacman(this, x, y));
-            }
-        }
-    }
-
-    /**
-     * @author Christian
-     * @param number
-     */
-    private void addPowerUps(int number) {
-
-        for (int i = 0; i < number; i++) {
-
-            int[] values = selectPosition();
-            int x = values[0];
-            int y = values[1];
-            int powerUpType = values[5];
-
-            if (powerUpType < 0.5) {
-                this.objects.add(new PowerUp(this, x, y, 70, 70, Power.HEALTH));
-            } else {
-                this.objects.add(new PowerUp(this, x, y, 70, 70, Power.DAMAGE));
-            }
-
-        }
-    }
-
-    /**
-     * @author Christian
-     * @return
-     */
-    public int genAsteroids() {
-        return genObjects(KillerRules.MIN_ASTEROIDS, KillerRules.MAX_ASTEROIDS);
-    }
-
-    public int genNebulosas() {
-        return genObjects(KillerRules.MIN_NEBULOSAS, KillerRules.MAX_NEBULOSAS);
-    }
-
-    public int genPlanets() {
-        return genObjects(KillerRules.MIN_PLANETS, KillerRules.MAX_PLANETS);
-    }
-
-    public int genBlackHoles() {
-        return genObjects(KillerRules.MIN_BLACKHOLES, KillerRules.MAX_BLACKHOLES);
-    }
-
-    public int genPacmans() {
-        return genObjects(KillerRules.MIN_PACMANS, KillerRules.MAX_PACMANS);
-    }
-
-    public int genPowerUps() {
-        return genObjects(KillerRules.MIN_POWERUPS, KillerRules.MAX_POWERUPS);
-    }
-
-    /**
-     * @author Christian
-     * @param minimum
-     * @param maximum
-     * @return
-     */
-    public int genObjects(double min, double max) {
-        double number = Math.random() * ((max - min) + 1) + min;
-        return (int) number;
-    }
-
-    private void newRejillaPositions() {
-
-        for (int aux = 0; aux < 4; aux++) {
-            for (int i = 0; i < 8; i++) {
-                matrizWidth[i][aux] = KillerGame.VIEWER_WIDTH * (i + 1) / 9;
-                matrizHeight[i][aux] = KillerGame.VIEWER_HEIGHT * (aux + 1) / 5;
-            }
-        }
-
-    }
-
-    public int[] selectPosition() {
-        boolean exit = true;
-        int[] nums;
-        do {
-            int n = (int) (Math.random() * (8 - 0) + 0);
-            int m = (int) (Math.random() * (4 - 0) + 0);
-            int n2 = (int) (Math.random() * (8 - 0) + 0);
-            int m2 = (int) (Math.random() * (4 - 0) + 0);
-            int vx = 0;
-            int vy = 0;
-            int powerUp = 0;
-
-            double symbolVx = Math.random();
-            double symbolVy = Math.random();
-            if (symbolVx <= 0.5) {
-                vx = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VX_ASTEROIDS) + KillerRules.MIN_VX_ASTEROIDS) * -1;
-                powerUp = 0;
-            } else {
-                vx = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VX_ASTEROIDS) + KillerRules.MIN_VX_ASTEROIDS);
-                powerUp = 1;
-            }
-            if (symbolVy > 0.5) {
-                vy = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VY_ASTEROIDS) + KillerRules.MIN_VY_ASTEROIDS) * -1;
-
-            } else {
-                vy = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VY_ASTEROIDS) + KillerRules.MIN_VY_ASTEROIDS);
-
-            }
-
-            int dim = (int) (Math.random() * (200 - 100) + 100);
-
-            nums = new int[6];
-
-            if (matrizWidth[n][m] == 0 || matrizHeight[n][m] == 0) {
-
-                exit = false;
-
-            } else {
-                nums[0] = matrizWidth[n][m];
-                nums[1] = matrizHeight[n][m];
-                nums[2] = vx;
-                nums[3] = vy;
-                nums[4] = dim;
-                nums[5] = powerUp;
-
-                matrizWidth[n][m] = 0;
-                matrizHeight[n2][m2] = 0;
-                exit = true;
-            }
-        } while (!exit);
-
-        return nums;
     }
 
     public void restartGame() {
@@ -750,6 +515,385 @@ public class KillerGame extends JFrame {
             }
         }
 
+    }
+
+    // ***************************************************************************************************** //
+    // *************************** [             Add Methods             ] ********************************* //
+    // ***************************************************************************************************** //
+    
+    /**
+     * @author Christian
+     * @param number 
+     */
+    public void addObjects(int number) {
+        switch (number) {
+            case 1:
+                this.BasicWorld();
+                break;
+            case 2:
+                this.AsteroidWorld();
+                break;
+            case 3:
+                this.PacmanWorld();
+                break;
+            case 4:
+                this.ClearedWorld();
+                break;
+            case 5:
+                this.TpWorld();
+                break;
+            case 6:
+                this.PowerUpsWorld();
+                break;
+            case 7:
+                this.PlanetWorld();
+                break;
+            case 8:
+                this.addObjects((int) (Math.random() * (7 - 0) + 1));
+                break;
+            default:
+                System.out.println("�No has seleccionado un mundo valido! Se pondr� por defecto el mundo b�sico");
+                this.BasicWorld();
+                break;
+        }
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void BasicWorld() {
+        this.newGirdPositions();
+        this.newGirdNebulaPositions();
+        this.addNebulas(genNebulosas());
+        this.addPlanets(genPlanets());
+        this.addAsteroids(genAsteroids());
+        this.addPacmans(genPacmans());
+        this.addBlackHoles(genBlackHoles());
+        this.addPowerUps(genPowerUps());
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void AsteroidWorld() {
+        this.newGirdPositions();
+        this.addPlanets(3);
+        this.addAsteroids(15);
+        this.addPowerUps(3);
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void PacmanWorld() {
+        this.newGirdPositions();
+        this.addPlanets(3);
+        this.addPacmans(15);
+        this.addPowerUps(3);
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void TpWorld() {
+        this.newGirdPositions();
+        this.addPlanets(3);
+        this.addBlackHoles(10);
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void PowerUpsWorld() {
+        this.newGirdPositions();
+        this.addPowerUps(15);
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void PlanetWorld() {
+        this.newGirdPositions();
+        this.addPlanets(20);
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void ClearedWorld() {
+        this.newGirdNebulaPositions();
+        this.addNebulas(4);
+    }
+    
+    /**
+     * @author Christian
+     * @param quantity 
+     */
+    private void addPlanets(int quantity) {
+        for (int i = 0; i < quantity; i++) {
+            // Get Planet values
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            int height = values[4];
+            int randomX = values[6] / 4;
+            int randomY = values[7] / 4;
+            // New asteroid and set values
+            this.objects.add(new Planeta(this, x + randomX, y + randomY, height));
+        }
+    }
+    
+    /**
+     * @author Christian
+     * @param quantity 
+     */
+    private void addAsteroids(int quantity) {
+        for (int i = 0; i < quantity; i++) {
+            // Get Asteroid values
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            int vx = values[2];
+            int vy = values[3];
+            int randomX = values[6];
+            int randomY = values[7];
+            int randomHeight = values[8];
+            // New asteroid and set values                                  random height 40  range (30-(60-70))
+            Asteroid asteroid = new Asteroid(this, x + randomX, y + randomY, randomHeight, KillerRules.ASTEROID_HEATLTH, 2);
+            asteroid.setVx(vx);
+            asteroid.setVy(vy);
+            this.objects.add(asteroid);
+        }
+    }
+    
+    /**
+     * @author Christian
+     * @param quantity 
+     */
+    private void addBlackHoles(int quantity) {
+        for (int i = 0; i < quantity; i++) {
+            // Get Black Hole values
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            int randomX = values[6];
+            int randomY = values[7];
+            // New Black Hole and set values
+            this.objects.add(new BlackHole(this, x + randomX, y + randomY, 80, 80));
+        }
+    }
+    
+    /**
+     * @author Christian
+     * @param quantity 
+     */
+    private void addNebulas(int quantity) {
+        for (int i = 0; i < quantity; i++) {
+            // Get Nebulosa values
+            int[] values = selectPositionNebulosas();
+            int x = values[0];
+            int y = values[1];
+            int randomX = values[2];
+            int randomY = values[3];
+            // New Nebulosa
+            this.objects.add(new Nebulosa(this, x + (randomX), y + (randomY), 720, 440));
+        }
+    }
+    
+    /**
+     * @author Christian
+     * @param quantity 
+     */
+    private void addPacmans(int quantity) {
+        if (this.pacmanActive) {
+            for (int i = 0; i < quantity; i++) {
+                // Get Pacman values
+                int[] values = selectPosition();
+                int x = values[0];
+                int y = values[1];
+                int randomX = values[6];
+                int randomY = values[7];
+                // New Pacman
+                this.objects.add(new Pacman(this, x + randomX, y + randomY));
+            }
+        }
+    }
+
+    /**
+     * @author Christian
+     * @param number
+     */
+    private void addPowerUps(int number) {
+
+        for (int i = 0; i < number; i++) {
+
+            int[] values = selectPosition();
+            int x = values[0];
+            int y = values[1];
+            int powerUpType = values[5];
+            int randomX = values[6];
+            int randomY = values[7];
+            if (powerUpType < 0.5) {
+                this.objects.add(new PowerUp(this, x + randomX, y + randomY, 70, 70, Power.HEALTH));
+            } else {
+                this.objects.add(new PowerUp(this, x + randomX, y + randomY, 70, 70, Power.DAMAGE));
+            }
+        }
+    }
+
+    /**
+     * @author Christian
+     * @return
+     */
+    public int genAsteroids() {
+        return genObjects(KillerRules.MIN_ASTEROIDS, KillerRules.MAX_ASTEROIDS);
+    }
+
+    /**
+     * @author Christian
+     * @return 
+     */
+    public int genNebulosas() {
+        return genObjects(KillerRules.MIN_NEBULOSAS, KillerRules.MAX_NEBULOSAS);
+    }
+
+    public int genPlanets() {
+        return genObjects(KillerRules.MIN_PLANETS, KillerRules.MAX_PLANETS);
+    }
+
+    public int genBlackHoles() {
+        return genObjects(KillerRules.MIN_BLACKHOLES, KillerRules.MAX_BLACKHOLES);
+    }
+
+    public int genPacmans() {
+        return genObjects(KillerRules.MIN_PACMANS, KillerRules.MAX_PACMANS);
+    }
+
+    public int genPowerUps() {
+        return genObjects(KillerRules.MIN_POWERUPS, KillerRules.MAX_POWERUPS);
+    }
+
+    /**
+     * @author Christian
+     * @param minimum
+     * @param maximum
+     * @return
+     */
+    public int genObjects(double min, double max) {
+        double number = Math.random() * ((max - min) + 1) + min;
+        return (int) number;
+    }
+
+    private void newGirdPositions() {
+
+        for (int aux = 0; aux < 4; aux++) {
+            for (int i = 0; i < 8; i++) {
+                objectMatrixWidth[i][aux] = KillerGame.VIEWER_WIDTH * (i + 1) / 9;
+                objectMatrixHeight[i][aux] = KillerGame.VIEWER_HEIGHT * (aux + 1) / 5;
+            }
+        }
+    }
+
+    private void newGirdNebulaPositions() {
+
+        for (int aux = 0; aux < 2; aux++) {
+            for (int i = 0; i < 2; i++) {
+                nebulaMatrixWidth[i][aux] = KillerGame.VIEWER_WIDTH * (i + 1) / 3;
+                nebulaMatrixHeight[i][aux] = KillerGame.VIEWER_HEIGHT * (aux + 1) / 3;
+            }
+        }
+    }
+
+    public int[] selectPosition() {
+        boolean exit = true;
+        int[] nums;
+        do {
+            int n = (int) (Math.random() * (8 - 0) + 0);
+            int m = (int) (Math.random() * (4 - 0) + 0);
+            // Int for position semi-random
+            int n2 = (int) (Math.random() * (100 - 0) + 0);
+            int m2 = (int) (Math.random() * (100 - 0) + 0);
+            // Int for diametre random
+            int heightAsteroid = (int) (Math.random() * (65 - 30) + 30);
+            //int for
+            int vx = 0;
+            int vy = 0;
+            int powerUp = 0;
+            double symbolVx = Math.random();
+            double symbolVy = Math.random();
+            if (symbolVx <= 0.5) {
+                vx = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VX_ASTEROIDS) + KillerRules.MIN_VX_ASTEROIDS) * -1;
+                powerUp = 0;
+                n2 = n2 * -1;
+            } else {
+                vx = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VX_ASTEROIDS) + KillerRules.MIN_VX_ASTEROIDS);
+                powerUp = 1;
+            }
+            if (symbolVy > 0.5) {
+                vy = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VY_ASTEROIDS) + KillerRules.MIN_VY_ASTEROIDS) * -1;
+                m2 = m2 * -1;
+            } else {
+                vy = (int) (Math.random() * (KillerRules.MAX_VX_ASTEROIDS - KillerRules.MIN_VY_ASTEROIDS) + KillerRules.MIN_VY_ASTEROIDS);
+            }
+            int dim = (int) (Math.random() * (200 - 100) + 100);
+            nums = new int[9];
+            if (objectMatrixWidth[n][m] == 0 || objectMatrixHeight[n][m] == 0) {
+
+                exit = false;
+            } else {
+                nums[0] = objectMatrixWidth[n][m];
+                nums[1] = objectMatrixHeight[n][m];
+                nums[2] = vx;
+                nums[3] = vy;
+                nums[4] = dim;
+                nums[5] = powerUp;
+                nums[6] = n2;
+                nums[7] = m2;
+                nums[8] = heightAsteroid;
+                objectMatrixWidth[n][m] = 0;
+                objectMatrixHeight[n][m] = 0;
+                exit = true;
+            }
+        } while (!exit);
+        return nums;
+    }
+
+    public int[] selectPositionNebulosas() {
+        boolean exit = true;
+        int[] nums2;
+        double symbolVx = Math.random();
+        double symbolVy = Math.random();
+        int n2;
+        int m2;
+        if (symbolVx <= 0.5) {
+            n2 = (int) (Math.random() * (400 - 0) + 0) * -1;
+        } else {
+            n2 = (int) (Math.random() * (400 - 0) + 0);
+        }
+        if (symbolVy <= 0.5) {
+            m2 = (int) (Math.random() * (100 - 0) + 0) * -1;
+        } else {
+            m2 = (int) (Math.random() * (100 - 0) + 0);
+        }
+        // 
+        do {
+            int n = (int) (Math.random() * (4 - 0) + 0);
+            int m = (int) (Math.random() * (2 - 0) + 0);
+            nums2 = new int[4];
+            if (nebulaMatrixWidth[n][m] == 0 || nebulaMatrixHeight[n][m] == 0) {
+
+                exit = false;
+            } else {
+                nums2[0] = nebulaMatrixWidth[n][m];
+                nums2[1] = nebulaMatrixHeight[n][m];
+                nums2[2] = n2;
+                nums2[3] = m2;
+                nebulaMatrixWidth[n][m] = 0;
+                nebulaMatrixHeight[n][m] = 0;
+                exit = true;
+            }
+        } while (!exit);
+        return nums2;
     }
 
     // ***************************************************************************************************** //
@@ -907,6 +1051,14 @@ public class KillerGame extends JFrame {
     public void newAsteroid(double x, double y, int imgHeight, int health, double maxspeed) {
         Asteroid asteroid = new Asteroid(this, x, y, imgHeight, health, maxspeed);
         this.objects.add(asteroid);
+    }
+
+    private void newBlackHole(int x, int y) {
+        // New Black Hole and set values
+        BlackHole blackhole = new BlackHole(this, x, y, 80, 80);
+        this.objects.add(blackhole);
+        // Strat thread
+        //new Thread(blackhole).start();
     }
 
     /**
@@ -1194,7 +1346,7 @@ public class KillerGame extends JFrame {
     public boolean getUltraPacman() {
         return this.ultraPacman;
     }
-    
+
     public GameConfiguration getConfiguration() {
         return GameConfiguration.Builder.builder().soundEffects(this.soundEffects).pacmanActive(this.pacmanActive).soundsMusic(this.soundMusic).ultraPacman(this.ultraPacman).build();
     }
@@ -1209,6 +1361,13 @@ public class KillerGame extends JFrame {
 
     public static void exit() {
         KillerGame.exit = true;
+    }
+
+    public void decrementPadsNum() {
+        this.padsNum--;
+        if (this.padsNum == 1) {
+            this.nextModule.sendMessage(Message.Builder.builder("win", KillerServer.getId()).build());
+        }
     }
 
     public void setIpPrev(String ip) {
@@ -1231,15 +1390,24 @@ public class KillerGame extends JFrame {
         this.nextModule.setDestinationPort(port);
     }
 
-    public void decrementPadsNum() {
-        this.padsNum--;
-        if (this.padsNum == 1) {
-            this.nextModule.sendMessage(Message.Builder.builder("win", KillerServer.getId()).build());
-        }
-    }
-
     public void setServersQuantity(int serversQuantity) {
         this.serversQuantity = serversQuantity;
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void setSoundEffects(boolean soundEffects) {
+        this.soundEffects = soundEffects;
+        //sendGameConfiguration();
+    }
+    
+    /**
+     * @author Christian
+     */
+    public void setSoundMusic(boolean soundMusic) {
+        this.soundMusic = soundMusic;
+        //sendGameConfiguration();
     }
 
     public void setSyncronized(boolean synchro) {
@@ -1250,21 +1418,9 @@ public class KillerGame extends JFrame {
     public void setWindowNumber(int windowNumber) {
         this.windowNumber = windowNumber;
     }
-
-    /**
-     * @author Christian
-     */
-    public void setSoundMusic(boolean soundMusic) {
-        this.soundMusic = soundMusic;
-        //sendGameConfiguration();
-    }
-
-    /**
-     * @author Christian
-     */
-    public void setSoundEffects(boolean soundEffects) {
-        this.soundEffects = soundEffects;
-        //sendGameConfiguration();
+    
+    public void setWorld(int world) {
+        this.worldType = world;
     }
 
     /**
@@ -1272,7 +1428,6 @@ public class KillerGame extends JFrame {
      */
     public void setPacmanExistence(boolean pacmanActive) {
         this.pacmanActive = pacmanActive;
-        //sendGameConfiguration();
     }
 
     // ***************************************************************************************************** //
