@@ -6,7 +6,6 @@ import visibleObjects.Alive;
 import visibleObjects.Asteroid;
 import visibleObjects.KillerShip;
 import visibleObjects.Pacman;
-import visibleObjects.Shoot;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ObjectResponse {
