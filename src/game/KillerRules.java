@@ -1,5 +1,6 @@
 package game;
 
+import communications.KillerServer;
 import sound.KillerSound;
 import visibleObjects.*;
 
@@ -30,15 +31,18 @@ public class KillerRules {
     public static final int MARAUDER_MAX_SPEED = 3;
     public static final int MARAUDER_MAX_SPEED_NEBULOSA = 3;
     
+    // Ship Modiffiers
+    public static final int MAX_SPEED_INCREMENT = 3;
+    public static final int POWER_UP_HEALTH_INCREMENT = 30;
+    public static final int POWER_UP_DAMAGE_INCREMENT = 15;
+    public static final int SAFE_TIME = 2500;
+    
     // Pacman
     public static final int PACMAN_INITIAL_HEALTH = 10;
     public static final int PACMAN_INCREMENT = 10;
     public static final int PACMAN_DECREMENT = 1;
-    
-    public static final int DAMAGE_BY_COLLISION = 100;
-    public static final int MAX_SPEED_INCREMENT = 3;
-    public static final int POWER_UP_HEALTH_INCREMENT = 30;
-    public static final int POWER_UP_DAMAGE_INCREMENT = 15;
+    public static final double MIN_PACMANS = 0;
+    public static final double MAX_PACMANS = 1;
     
     // Asteroids
     public static final double MIN_ASTEROIDS = 3;
@@ -47,6 +51,7 @@ public class KillerRules {
     public static final double MAX_VX_ASTEROIDS = 3;
     public static final double MIN_VY_ASTEROIDS = 1;
     public static final double MAX_VY_ASTEROIDS = 3;
+    public static final int ASTEROID_HEATLTH = 40;
     
     // Nebulosas
     public static final double MIN_NEBULOSAS = 0.8;
@@ -59,16 +64,14 @@ public class KillerRules {
     // BlackHoles
     public static final double MIN_BLACKHOLES= 0;
     public static final double MAX_BLACKHOLES = 1;
-    
-    // Pacmans
-    public static final double MIN_PACMANS = 0;
-    public static final double MAX_PACMANS = 1;
-    
-    // PowerUps
+
+    // Power Ups
     public static final double MIN_POWERUPS = 0.8;
     public static final double MAX_POWERUPS = 2.1;
     
-    public static final int SAFE_TIME = 2500;
+    // World generation constants
+    public static final int OBJECT_GRID_WIDTH = 8;
+    public static final int OBJECT_GRID_HEIGHT = 4;
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Alive          ] ********************************* //
@@ -99,21 +102,25 @@ public class KillerRules {
         // Detect wall type
         if (wall.getType() == Wall.Limit.UP) {
             // Teleport to bottom
-            alive.setY((game.getHeight()) - (alive.getImgHeight() + 1));
+            alive.setY( KillerGame.VIEWER_HEIGHT - alive.getImgHeight());
         }
         if (wall.getType() == Wall.Limit.DOWN) {
             // Teleport to top
-            alive.setY(0 + alive.getImgHeight() + 1);
+            alive.setY(1);
         }
         if (wall.getType() == Wall.Limit.RIGHT) {
             // Send to next
-            alive.setX(alive.getImgWidth() + 100);
-            KillerRules.sendAliveToNext(game, alive);
+            alive.setX(1);
+            if (!KillerServer.getId().equals(game.getNextModule().getDestinationId())) {
+                KillerRules.sendAliveToNext(game, alive);
+            }
         }
         if (wall.getType() == Wall.Limit.LEFT) {
             // Send to prev
-            alive.setX(KillerGame.VIEWER_WIDTH - alive.getImgWidth() - 100);
-            KillerRules.sendAliveToPrev(game, alive);
+            alive.setX(KillerGame.VIEWER_WIDTH - alive.getImgWidth() / 2);
+            if (!KillerServer.getId().equals(game.getNextModule().getDestinationId())) {
+                KillerRules.sendAliveToPrev(game, alive);
+            }
         }
         
     }
@@ -130,8 +137,8 @@ public class KillerRules {
      */
     public static void collisionShipWithAsteroid(KillerGame game, KillerShip ship, Asteroid asteroid) {
         double[] damages = ship.getPhysicsShip().collisionXAsteroid(asteroid);
-        KillerRules.substractHealthShip(game, ship, (int) damages[0] * DAMAGE_BY_COLLISION);
-        KillerRules.substractHealthAlive(asteroid, (int) damages[1] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthShip(game, ship, (int) damages[0]);
+        KillerRules.substractHealthAlive(asteroid, (int) damages[1]);
     }
 
     /**
@@ -185,7 +192,7 @@ public class KillerRules {
      */
     public static void collisionShipWithPlaneta(KillerGame game, KillerShip ship, Planeta planeta) {
         double[] damages = ship.getPhysicsShip().collisionXPlanet(planeta);
-        KillerRules.substractHealthShip(game, ship, (int) damages[0] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthShip(game, ship, (int) damages[0]);
     }
 
     public static void collisionShipWithPowerUp(KillerGame game, KillerShip ship, PowerUp powerUp) {
@@ -205,8 +212,8 @@ public class KillerRules {
 
     public static void collisionShipWithShip(KillerGame game, KillerShip ship, KillerShip ship2) {
         double[] damages = ship.getPhysicsShip().collisionXShip(ship2);
-        KillerRules.substractHealthShip(game, ship, ((int) damages[0] * KillerRules.DAMAGE_BY_COLLISION));
-        KillerRules.substractHealthShip(game, ship2, ((int) damages[1] * KillerRules.DAMAGE_BY_COLLISION));
+        KillerRules.substractHealthShip(game, ship, ((int) damages[0]));
+        KillerRules.substractHealthShip(game, ship2, ((int) damages[1]));
     }
 
     /**
@@ -219,21 +226,23 @@ public class KillerRules {
             if (KillerRules.substractHealthShip(game, ship, shoot.getDamage())) {
                 game.getNextModule().sendInfoMessageToPad("pad_kill", shoot.getId());
             }
-            // Remove shot from the array
             shoot.setState(Alive.State.DEAD);
-            //shoot.getGame().removeObject(shoot);
         }
     }
 
     // ***************************************************************************************************** //
     // *************************** [            Collision Shoot          ] ********************************* //
     // ***************************************************************************************************** //
+    
+    /**
+     * @author Alvaro
+     * @param game
+     * @param shot
+     * @param asteroid 
+     */
     public static void collisionShootWithAsteroid(KillerGame game, Shoot shot, Asteroid asteroid) {
-        // Quitar vida al asteroide / Posible metodo substract health to alive de killer rules
         KillerRules.substractHealthAlive(asteroid, shot.getDamage());
-        // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        //shot.getGame().removeObject(shot);
     }
 
     /**
@@ -241,28 +250,20 @@ public class KillerRules {
      * @param shot
      */
     public static void collisionShootWithBlackHole(Shoot shot) {
-        // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        //shot.getGame().removeObject(shot);
-    }
-
-    public static void collisionShootWithNebulosa(Shoot shot) {
-        // Por ahora no pasa nada, aunque se podria implementar que los disparos fuesen mas lento igual que las naves
     }
 
     public static void collisionShootWithPacman(KillerGame game, Shoot shot, Pacman pacman) {
         if (KillerRules.substractHealthAlive(pacman, shot.getDamage())) {
             pacman.getKillerRadio().stopSound();
+            game.startSound(KillerSound.ClipType.PACMAN_DIE);
         }
         pacman.getPhysics().collisionXShoot(shot);
-        // Remove shot from the array
         shot.setState(Alive.State.DEAD);
     }
 
     public static void collisionShootWithPlaneta(KillerGame game, Shoot shot, Planeta planeta) {
-        // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        //shot.getGame().removeObject(shot);
     }
 
     public static void collisionShootWithPowerUp(KillerGame game, Shoot shot, PowerUp powerUp) {
@@ -273,9 +274,7 @@ public class KillerRules {
                 powerUp.unwrapper();
                 powerUp.setAvailable(true);
             }
-            // Remove shot from the array
             shot.setState(Alive.State.DEAD);
-            //shot.getGame().removeObject(shot);
         }
     }
 
@@ -285,11 +284,10 @@ public class KillerRules {
      * @param shooot Easter egg :)
      */
     public static void collisionShootWithShoot(KillerGame game, Shoot shoot, Shoot shooot) {
-        // Remove shots from the array
-        shoot.setState(Alive.State.DEAD);
-        //shoot.getGame().removeObject(shoot);
-        shooot.setState(Alive.State.DEAD);
-        //shooot.getGame().removeObject(shooot);
+        if (shoot.getId() != shooot.getId()) {
+            shoot.setState(Alive.State.DEAD);
+            shooot.setState(Alive.State.DEAD);
+        }
     }
 
     /**
@@ -297,18 +295,16 @@ public class KillerRules {
      * @param shoot
      */
     public static void collisionShootWithWall(Shoot shot) {
-        // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        //shot.getGame().removeObject(shot);
     }
 
     // ***************************************************************************************************** //
     // *************************** [          Collision Asteroid         ] ********************************* //
     // ***************************************************************************************************** //
-    static void collisionAsteroidWithAsteroid(KillerGame aThis, Asteroid asteroid, Asteroid geodude) {
+    static void collisionAsteroidWithAsteroid(Asteroid asteroid, Asteroid geodude) {
         double[] damages = asteroid.getPhysicsAsteroid().collisionXAsteroid(geodude);
-        KillerRules.substractHealthAlive(asteroid, (int) damages[0] * DAMAGE_BY_COLLISION);
-        KillerRules.substractHealthAlive(geodude, (int) damages[1] * DAMAGE_BY_COLLISION);
+        KillerRules.substractHealthAlive(asteroid, (int) damages[0]);
+        KillerRules.substractHealthAlive(geodude, (int) damages[1]);
     }
 
     /**
@@ -322,34 +318,38 @@ public class KillerRules {
     static void collisionAsteroidWithBlackHole(KillerGame game, Asteroid asteroid) {
         KillerRules.collisionAliveWithBlackHole(game, (Alive) asteroid);
     }
-
-    static void collisionAsteroidWithNebulosa(Asteroid asteroid) {
-        // Por ahora nada
-    }
-
-    static void collisionAsteroidWithPacman(KillerGame aThis, Asteroid asteroid, Pacman pacman) {
+    
+    /**
+     * @author Alvaro
+     * @param game
+     * @param asteroid
+     * @param pacman 
+     */
+    static void collisionAsteroidWithPacman(KillerGame game, Asteroid asteroid, Pacman pacman) {
         if (asteroid.getImgHeight() < pacman.getImgHeight()) {
             asteroid.changeState(Alive.State.DEAD);
-            //asteroid.getGame().removeObject(asteroid);
             pacman.setSize(asteroid.getHealth());
+            game.startSound(KillerSound.ClipType.PACMAN_EAT);
         } else {
             pacman.setDx(asteroid.getDx());
             pacman.setDy(asteroid.getDy());
         }
     }
-
+    
+    /**
+     * @author Alvaro
+     * @param asteroid
+     * @param planeta 
+     */
     static void collisionAsteroidWithPlaneta(Asteroid asteroid, Planeta planeta) {
         double[] damages = asteroid.getPhysicsAsteroid().collisionXPlanet(planeta);
-        KillerRules.substractHealthAlive(asteroid, (int) damages[0] * DAMAGE_BY_COLLISION);
-    }
-
-    static void collisionAsteroidWithPowerUp(KillerGame aThis, Asteroid asteroid, PowerUp powerUp) {
-        // Por ahora nada
+        KillerRules.substractHealthAlive(asteroid, (int) damages[0]);
     }
 
     // ***************************************************************************************************** //
     // *************************** [          Collision Pacman           ] ********************************* //
     // ***************************************************************************************************** //
+    
     /**
      * Por ahora no es utilizado. Ya que se usa collisionWithAlive(). En caso de
      * querer que esta colision haga algo diferente se debe tocar aqui.
@@ -361,25 +361,28 @@ public class KillerRules {
     static void collisionPacmanWithBlackHole(KillerGame game, Pacman pacman) {
         KillerRules.collisionAliveWithBlackHole(game, pacman);
     }
-
-    static void collisionPacmanWithNebulosa(Pacman pacman) {
-        // Por ahora nada
-    }
-
-    static void collisionPacmanWithPacman(KillerGame aThis, Pacman pacman, Pacman pacwoman) {
+    
+    /**
+     * @author Alvaro
+     * @param game
+     * @param pacman
+     * @param pacwoman 
+     */
+    static void collisionPacmanWithPacman(KillerGame game, Pacman pacman, Pacman pacwoman) {
         if (pacman.getHealth() > pacwoman.getHealth()) {
             pacman.setSize(pacwoman.getHealth());
             pacwoman.changeState(Alive.State.DEAD);
-            //pacwoman.getGame().removeObject(pacwoman);
+            game.startSound(KillerSound.ClipType.PACMAN_EAT);
+            game.startSound(KillerSound.ClipType.PACMAN_DIE);
         } else if (pacman.getHealth() < pacwoman.getHealth()) {
-            pacwoman.setSize(pacwoman.getHealth());
+            pacwoman.setSize(pacman.getHealth());
             pacman.changeState(Alive.State.DEAD);
-            //pacman.getGame().removeObject(pacman);
+            game.startSound(KillerSound.ClipType.PACMAN_EAT);
+            game.startSound(KillerSound.ClipType.PACMAN_DIE);
         } else {
             pacman.changeState(Alive.State.DEAD);
-            //pacman.getGame().removeObject(pacman);
             pacwoman.changeState(Alive.State.DEAD);
-            //pacwoman.getGame().removeObject(pacwoman);
+            game.startSound(KillerSound.ClipType.PACMAN_DIE);
         }
     }
 
@@ -490,10 +493,8 @@ public class KillerRules {
     private static void correctXandYOnCollideBlackHole(Alive alive) {
         double correctX = Math.random() * (KillerGame.VIEWER_WIDTH - alive.getImgWidth())  + alive.getImgWidth();
         double correctY = Math.random() * (KillerGame.VIEWER_WIDTH - alive.getImgHeight())  + alive.getImgHeight();
-        if (alive.getX() < KillerGame.VIEWER_WIDTH / 2) {
-            correctX = KillerGame.VIEWER_WIDTH - alive.getImgWidth();
-        }
         alive.setX(correctX);
+        alive.setY(correctY);
     }
 
 }
