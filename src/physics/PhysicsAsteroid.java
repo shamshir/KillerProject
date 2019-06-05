@@ -95,7 +95,7 @@ public class PhysicsAsteroid {
         double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 100;
         double result2 = Math.sqrt(vx2 * vx2 + vy2 * vy2) / 100;
 
-        double max = 0.6;
+        double max = 1.6;
 
         if (vx1 > max) {
             this.vx = max;
