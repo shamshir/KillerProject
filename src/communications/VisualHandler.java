@@ -340,14 +340,14 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getImgHeight(), object.getM(),
                 object.getHealth(), object.getRadians(),
                 object.getVx(), object.getVy(),
-                object.getA());
+                object.getA(), object.getImgFile());
     }
 
     private void createPacman(ObjectResponse object) {
         this.getKillergame().recivePacman(object.getX(), object.getY(),
                 object.getM(), object.getHealth(),
                 object.getRadians(), object.getVx(),
-                object.getVy(), object.getA());
+                object.getVy(), object.getA(), object.getImgHeight());
     }
 
     public void updateRoom(final boolean connected) {
