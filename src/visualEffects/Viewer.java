@@ -23,7 +23,7 @@ public class Viewer extends Canvas implements Runnable {
     private KillerGame killerGame;
 
     private final int FPS = 60;
-    private final int TOTAL_BACKGOUND_IMGS = 6;
+    private final int TOTAL_BACKGOUND_IMGS = 12;
     private double target = 1000 / FPS;
 
     private BufferedImage backgroundImg;
@@ -87,8 +87,8 @@ public class Viewer extends Canvas implements Runnable {
 
         try {
 //            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/b" + numBackground + ".jpeg"));
-            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/killerMoonImg" + numBackground
-                    + ".jpg"));
+            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/moon" + numBackground
+                    + ".png"));
 
         } catch (IOException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
