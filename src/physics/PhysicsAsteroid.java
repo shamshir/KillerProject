@@ -92,10 +92,18 @@ public class PhysicsAsteroid {
         double vx2 = tangentX * pTan2 + normalX * mom2 * 0.6;
         double vy2 = tangentY * pTan2 + normalY * mom2 * 0.6;
 
-        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 100;
-        double result2 = Math.sqrt(vx2 * vx2 + vy2 * vy2) / 100;
+        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1 + alivem) / 10;
+        double result2 = Math.sqrt(vx2 * vx2 + vy2 * vy2 + m) / 10;
 
-        double max = 0.6;
+        if (result1 > 15) {
+            result1 = 15;
+        }
+
+        if (result2 > 15) {
+            result2 = 15;
+        }
+
+        double max = 1.6;
 
         if (vx1 > max) {
             this.vx = max;
@@ -161,8 +169,6 @@ public class PhysicsAsteroid {
 
         this.ast.setX(x);
         this.ast.setY(y);
- 
-
 
         //vector normal al vector tangente a los circulos
         double normalX = (alivex - this.x) / distance;
@@ -182,10 +188,14 @@ public class PhysicsAsteroid {
         //conservación del momento
         double mom1 = (pNorm1 * (this.m - alivem) + 2 * alivem * pNorm2) / (this.m + alivem);
 
-        double vx1 = tangentX * pTan1 + normalX * mom1 *3;
-        double vy1 = tangentY * pTan1 + normalY * mom1 *3;
+        double vx1 = tangentX * pTan1 + normalX * mom1 * 3;
+        double vy1 = tangentY * pTan1 + normalY * mom1 * 3;
 
-        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1) / 100;
+        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1 + alivem) / 5;
+
+        if (result1 > 25) {
+            result1 = 25;
+        }
 
         double max = 1.6;
 

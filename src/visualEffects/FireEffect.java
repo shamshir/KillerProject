@@ -41,6 +41,9 @@ public class FireEffect extends KillerImage {
 
         this.heatMap = new int[this.getHeight() - this.getOriginalImage().getHeight()][this.getWidth()];
         this.createDefaultSparks();
+
+//        this.blink();
+
     }
 
     /**
@@ -340,7 +343,7 @@ public class FireEffect extends KillerImage {
     public void run() {
 
         while (this.hasVisibleObjectThisEffect() && this.isVisibleObjectSafeOrAlive()) {
-            this.updateFire();            
+            this.updateFire();
 
             try {
                 Thread.sleep(5);

@@ -95,7 +95,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             } catch (Exception ex) {
                 this.setSocket(null, this.destinationId);
                 done = true;
-            }
+                System.out.println("VisualHandler -> Error: " + ex.getMessage());
+            }                
         }
         this.setSocket(null);
         this.updateRoom(false);
@@ -139,7 +140,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case SYNC_CHECK:
                 this.processSyncCheck(message);
                 break;
-            case CLIENT_CONNECTED:
+            case CLIENT_CONNECTED:                
+                this.sendGameConfiguration(this.getKillergame().getConfiguration());
                 this.destinationId = message.getSenderId();
                 this.updateRoom(true);
                 break;
@@ -240,17 +242,15 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         super.setDestinationIp(EMPTY_STRING);
     }
 
-    public void sendStart(GameConfiguration configuration) {
+    public void sendStart() {
         this.getKillergame().setPadsNum(0);
         this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId())
                 .withServersQuantity(this.getKillergame().getPadsSize())
-                .withGameConfiguration(configuration)
                 .build());
     }
 
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
-//            this.getKillergame().receiveConfiguration(message.getGameConfiguration());
             this.getKillergame().setPadsNum(0);
             this.getKillergame().getNextModule().sendMessage(Message.Builder.builder(START_GAME, message.getSenderId())
                     .withServersQuantity(message.getServersQuantity() + this.getKillergame().getPadsSize())
@@ -340,14 +340,14 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getImgHeight(), object.getM(),
                 object.getHealth(), object.getRadians(),
                 object.getVx(), object.getVy(),
-                object.getA());
+                object.getA(), object.getImgFile());
     }
 
     private void createPacman(ObjectResponse object) {
         this.getKillergame().recivePacman(object.getX(), object.getY(),
                 object.getM(), object.getHealth(),
                 object.getRadians(), object.getVx(),
-                object.getVy(), object.getA());
+                object.getVy(), object.getA(), object.getImgHeight());
     }
 
     public void updateRoom(final boolean connected) {

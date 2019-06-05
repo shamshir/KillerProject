@@ -61,7 +61,6 @@ public class ExplosionEffect extends KillerImage {
         while (this.frame < this.framesList.length) {
             paintFrame();
             this.frame++;
-            System.out.println("frame: " + this.frame);
 
             try {
                 Thread.sleep(200);
