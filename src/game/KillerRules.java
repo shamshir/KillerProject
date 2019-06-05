@@ -107,14 +107,12 @@ public class KillerRules {
         }
         if (wall.getType() == Wall.Limit.RIGHT) {
             // Send to next
-            alive.setX(alive.getImgWidth() + 1);
-            System.out.println("Muro derecho");
+            alive.setX(alive.getImgWidth() + 100);
             KillerRules.sendAliveToNext(game, alive);
         }
         if (wall.getType() == Wall.Limit.LEFT) {
             // Send to prev
-            alive.setX(KillerGame.VIEWER_WIDTH - alive.getImgWidth() - 1);
-            System.out.println("Muro izquierdo");
+            alive.setX(KillerGame.VIEWER_WIDTH - alive.getImgWidth() - 100);
             KillerRules.sendAliveToPrev(game, alive);
         }
         
@@ -173,7 +171,7 @@ public class KillerRules {
      * @param pacman 
      */
     public static void collisionShipWithPacman(KillerGame game, KillerShip ship, Pacman pacman) {
-        game.removeObject(ship);
+        ship.setState(Alive.State.DEAD);
         pacman.setSize(ship.getHealth());
         game.startSound(KillerSound.ClipType.PACMAN_EAT);
         game.getNextModule().sendInfoMessageToPad("pad_dead", ship.getId());
@@ -194,15 +192,14 @@ public class KillerRules {
         if (!powerUp.isWrappered()) {
             game.removeObject(powerUp);
             powerUp.setAvailable(false);
+            game.getNextModule().sendInfoMessageToPad("pad_powerup", ship.getId());
             if (powerUp.getType() == PowerUp.Power.DAMAGE) {
                 ship.powerUpDamage(KillerRules.POWER_UP_DAMAGE_INCREMENT);
             }
             if (powerUp.getType() == PowerUp.Power.HEALTH) {
                 ship.powerUpHealth(KillerRules.POWER_UP_HEALTH_INCREMENT);
+                game.getNextModule().sendInfoHealthMessageToPad(ship.getId(), ship.getHealth());
             }
-        } else {
-            // Se calcula el daño que recibe la nave con Physiscs
-            // Se llama al metodo restar vida de nave de Killerrules
         }
     }
 
@@ -254,11 +251,12 @@ public class KillerRules {
     }
 
     public static void collisionShootWithPacman(KillerGame game, Shoot shot, Pacman pacman) {
-        KillerRules.substractHealthAlive(pacman, shot.getDamage());
+        if (KillerRules.substractHealthAlive(pacman, shot.getDamage())) {
+            pacman.getKillerRadio().stopSound();
+        }
         pacman.getPhysics().collisionXShoot(shot);
         // Remove shot from the array
         shot.setState(Alive.State.DEAD);
-        //shot.getGame().removeObject(shot);
     }
 
     public static void collisionShootWithPlaneta(KillerGame game, Shoot shot, Planeta planeta) {
@@ -425,7 +423,6 @@ public class KillerRules {
     public static void sendAliveToPrev(KillerGame game, Alive alive) {
         // Delete from the array
         alive.setState(Alive.State.DEAD);
-        //game.removeObject(alive);
         // Send alive to the prev module
         game.sendObjectToPrev(alive);
     }
@@ -438,7 +435,6 @@ public class KillerRules {
     public static void sendAliveToNext(KillerGame game, Alive alive) {
         // Delete from the array
         alive.setState(Alive.State.DEAD);
-        // game.removeObject(alive);
         // Send alive to the next module
         game.sendObjectToNext(alive);
     }
@@ -456,9 +452,9 @@ public class KillerRules {
         alive.quitarVida(damage);
         // Set die status to KillerShip
         if (alive.getHealth() <= 0) {
-            //alive.changeState(Alive.State.DYING);
-            //alive.onDying();
-            alive.changeState(Alive.State.DEAD);
+            alive.changeState(Alive.State.DYING);
+            alive.onDying();
+            //alive.changeState(Alive.State.DEAD);
             //alive.getGame().removeObject(alive);
             dead = true;
         }
@@ -473,12 +469,16 @@ public class KillerRules {
      * @return True if Ship state becomes dead and False if it still alive.
      */
     private static boolean substractHealthShip(KillerGame game, KillerShip ship, int damage) {
+        // Bling
+        //ship.getKillerImage().blink();
         // Dead status
         boolean dead = false;
         if (KillerRules.substractHealthAlive(ship, damage)) {
             game.getNextModule().sendInfoMessageToPad("pad_dead", ship.getId());
             dead = true;
         }
+        // Send health info to pad
+        game.getNextModule().sendInfoHealthMessageToPad(ship.getId(), ship.getHealth());
         // Return live status
         return dead;
     }
@@ -488,7 +488,6 @@ public class KillerRules {
      * @param alive
      */
     private static void correctXandYOnCollideBlackHole(Alive alive) {
-        System.out.println("Blackhole");
         double correctX = Math.random() * (KillerGame.VIEWER_WIDTH - alive.getImgWidth())  + alive.getImgWidth();
         double correctY = Math.random() * (KillerGame.VIEWER_WIDTH - alive.getImgHeight())  + alive.getImgHeight();
         if (alive.getX() < KillerGame.VIEWER_WIDTH / 2) {
