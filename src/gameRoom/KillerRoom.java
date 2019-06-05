@@ -14,6 +14,7 @@ public class KillerRoom extends javax.swing.JFrame {
     public KillerPanelPrincipal kpp;
     public KillerPanelWinner kpw;
     public KillerPanelConectar kpc;
+    public KillerPanelAjustes kpa;
     public KillerGame kg;
     
     /**
@@ -33,6 +34,7 @@ public class KillerRoom extends javax.swing.JFrame {
         kpp = new KillerPanelPrincipal(this);
         kpw = new KillerPanelWinner(this);
         kpc = new KillerPanelConectar(this);
+        kpa = new KillerPanelAjustes(this);
     }
     
     /**
@@ -119,6 +121,14 @@ public class KillerRoom extends javax.swing.JFrame {
         kpc.updateUI();
     }
 
+    /**
+     * Método que cambia el jPanel actual al de Ajustes
+     */
+    public void setKillerPanelAjustes() {
+        this.setContentPane(kpa);
+        kpa.updateUI();
+    }
+    
     /**
      * Método que cambia el jPanel actual al de Ganador
      * Pensado para ser usado cuando solo quede un jugador
