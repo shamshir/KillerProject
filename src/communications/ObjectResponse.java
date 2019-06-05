@@ -33,6 +33,7 @@ public class ObjectResponse {
     private int damage;
     private String color;
     private int imgHeight;
+    private int imgFile;
 
     private static final String EMPTY_STRING = "";
     private static final String SHOOT_TYPE = "shoot";
@@ -68,6 +69,7 @@ public class ObjectResponse {
         this.imgHeight = builder.imgHeight;        
         this.m = builder.m;
         this.a = builder.a;
+        this.imgFile = builder.imgFile;
     }
 
     public String getObjectType() {
@@ -162,6 +164,10 @@ public class ObjectResponse {
         return a;
     }
 
+    public int getImgFile() {
+        return imgFile;
+    }
+    
     public static ObjectResponse convertObjectToObjectResponse(final Alive object) {
         if (object instanceof KillerShip) {
             return buildObjectResponseFromKillerShip((KillerShip) object);        
@@ -207,9 +213,11 @@ public class ObjectResponse {
                 .vx(asteroid.getVx())
                 .vy(asteroid.getVy())
                 .radians(asteroid.getRadians())
+                .a(asteroid.getA())
+                .imgFile(asteroid.getImgFile())
                 .build();
     }
-
+    
     private static ObjectResponse buildObjectResponseFromPacman(final Pacman pacman) {
         return ObjectResponse.Builder.builder(PACMAN_TYPE)
                 .x(pacman.getX())
@@ -220,6 +228,7 @@ public class ObjectResponse {
                 .vy(pacman.getVy())
                 .radians(pacman.getRadians())
                 .a(pacman.getA())
+                .imgHeight(pacman.getImgHeight())
                 .build();
     }
 
@@ -246,6 +255,7 @@ public class ObjectResponse {
         private int damage;
         private String color;
         private int imgHeight;
+        private int imgFile;
         private double m;
         private double a;
 
@@ -357,6 +367,11 @@ public class ObjectResponse {
             return this;
         }
 
+        public Builder imgFile(final int imgFile) {
+            this.imgFile = imgFile;
+            return this;
+        }
+        
         public Builder m(final double m) {
             this.m = m;
             return this;
