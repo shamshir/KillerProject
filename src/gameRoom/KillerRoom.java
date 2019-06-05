@@ -45,7 +45,7 @@ public class KillerRoom extends javax.swing.JFrame {
         this.setLocationRelativeTo(null); 
         this.setContentPane(kpp);
         KillerPanelPrincipal.jTextFieldSecret.requestFocus(); 
-        kpp.setNetworkConf(true, true, true, false);
+        kg.changeMusic(KillerRadio.ClipType.MENU);
     }
     
     /**
