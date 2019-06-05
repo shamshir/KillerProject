@@ -272,6 +272,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         jLabelSound = new javax.swing.JLabel();
         jLabelMusic = new javax.swing.JLabel();
         jLabelPacman = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jLabelFondo = new javax.swing.JLabel();
         jTextFieldSecret = new javax.swing.JTextField();
 
@@ -338,7 +339,7 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
                 jButtonSalirActionPerformed(evt);
             }
         });
-        add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 340, -1, -1));
+        add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 390, -1, -1));
 
         jLabelConFeedackL.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabelConFeedackL.setForeground(new java.awt.Color(255, 0, 0));
@@ -376,6 +377,18 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
             }
         });
         add(jLabelPacman, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 490, -1, -1));
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/ajustes.png"))); // NOI18N
+        jButton1.setText("jButtonAjustes");
+        jButton1.setBorderPainted(false);
+        jButton1.setContentAreaFilled(false);
+        jButton1.setPreferredSize(new java.awt.Dimension(150, 40));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 340, -1, -1));
 
         jLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/stars.gif"))); // NOI18N
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -497,8 +510,15 @@ public class KillerPanelPrincipal extends javax.swing.JPanel {
         setPacman();
     }//GEN-LAST:event_jLabelPacmanMouseClicked
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // AJUSTES
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
+        kr.setKillerPanelAjustes();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonConectar;
     private javax.swing.JButton jButtonJugar;
     private javax.swing.JButton jButtonSalir;
