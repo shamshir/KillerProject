@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import physics.PhysicsShip;
 import visualEffects.ExplosionEffect;
 import visualEffects.FireEffect;
+import visualEffects.KillerImage;
 
 public class KillerShip extends Alive {
 
@@ -25,6 +26,7 @@ public class KillerShip extends Alive {
     private PhysicsShip physicsShip;
     private int tiempoEnNebulosa;
     private Color color;
+    private KillerImage xplosion;
 
     // Físicas
     private double tx; // posición del morro de la nave
@@ -64,6 +66,7 @@ public class KillerShip extends Alive {
         this.tiempoEnNebulosa = 0;
 
         this.kImg = new FireEffect(this);
+        this.xplosion = new ExplosionEffect(this);
     }
 
     /**
@@ -100,7 +103,7 @@ public class KillerShip extends Alive {
         this.user = user;
         this.color = color;
         this.type = type;
-        // Físicas ---> que parámetros pasan?
+        
         this.a = 0.07;
         this.radians = radians;
         this.dx = dx;
@@ -130,6 +133,7 @@ public class KillerShip extends Alive {
         this.timer = System.currentTimeMillis();
 
         this.kImg = new FireEffect(this);
+        this.xplosion = new ExplosionEffect(this);
     }
 
     @Override
@@ -163,8 +167,9 @@ public class KillerShip extends Alive {
                 ex.printStackTrace();
             }
         }
-
+        
         this.game.removeObject(this);
+        System.out.println("KillerShip MUERE");
     }
 
     /**
@@ -253,9 +258,9 @@ public class KillerShip extends Alive {
     private void checkSafe() {
         if (System.currentTimeMillis() - timer > 5000) {
             this.state = State.ALIVE;
-            this.setImage();
-            // Adapto las coordenadas para la hitbox a la img
-            this.setImgSize();
+//            this.setImage();
+//            // Adapto las coordenadas para la hitbox a la img
+//            this.setImgSize();
         }
     }
 
@@ -417,8 +422,8 @@ public class KillerShip extends Alive {
     // Interfaz Destructible
     @Override
     public void onDying() {
-        this.kImg = new ExplosionEffect(this);
-        (new Thread(this.kImg)).start();
+//        this.kImg = new ExplosionEffect(this);
+        (new Thread(this.xplosion)).start();
     }
 
     @Override
@@ -443,7 +448,7 @@ public class KillerShip extends Alive {
                 this.drawLifeBar(g2d);
                 break;
             case DYING:
-                g2d.drawImage(this.kImg, (int) this.x, (int) this.y, this.imgWidth, this.imgHeight, null);
+                g2d.drawImage(this.xplosion, (int) this.x, (int) this.y, this.imgHeight, this.imgHeight, null);
                 break;
             default:
                 //System.out.println("KillerShip render --> DEAD, rendering DEFAULT");
@@ -565,6 +570,14 @@ public class KillerShip extends Alive {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public KillerImage getXplosion() {
+        return xplosion;
+    }
+
+    public void setXplosion(KillerImage xplosion) {
+        this.xplosion = xplosion;
     }
 
 }

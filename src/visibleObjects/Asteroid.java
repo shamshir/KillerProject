@@ -35,9 +35,46 @@ public class Asteroid extends Automata {
         this.vx = maxspeed;
         this.vy = maxspeed;
         this.physicsAsteroid = new PhysicsAsteroid(this); // han de estar inicializadas todas las variables de fisicas
-
+        this.kImg = new ExplosionEffect(this);
     }
+    
+    // 2o CONSTRUCTOR DEFINITIVO
+    
+    /**
+     * Constructor para instanciar un asteroid cuando se recibe de otro PC
+     * 
+     * @param game
+     * @param x
+     * @param y
+     * @param imgHeight
+     * @param m
+     * @param health
+     * @param radians
+     * @param vx
+     * @param vy
+     * @param a
+     * @param imgFile 
+     */
+    public Asteroid(KillerGame game, double x, double y, int imgHeight, double m, int health,
+            double radians, double vx, double vy, double a, int imgFile) {
+        super(game, x, y);
 
+        this.imgFile = imgFile; // numero de imagen a cargar
+        this.setImage();
+        this.imgHeight = imgHeight;
+        this.imgWidth = imgHeight;
+        this.radius = this.imgHeight / 2;
+        this.m = m;
+        this.health = health;
+        this.radians = radians;
+        this.vx = vx;
+        this.vy = vy;
+        this.a = a;
+        this.physicsAsteroid = new PhysicsAsteroid(this); // han de estar inicializadas todas las variables de fisicas
+        this.kImg = new ExplosionEffect(this);
+    }
+    
+    // ELIMINAR CONSTRUCTOR
     /**
      * Constructor para instanciar el obj si viene de otro pc
      *
@@ -67,7 +104,7 @@ public class Asteroid extends Automata {
         this.vy = vy;
         this.a = a;
         this.physicsAsteroid = new PhysicsAsteroid(this); // han de estar inicializadas todas las variables de fisicas
-
+        this.kImg = new ExplosionEffect(this);
     }
 
     /**
@@ -98,7 +135,7 @@ public class Asteroid extends Automata {
     // ********************************************************
     @Override
     public void onDying() {
-        this.kImg = new ExplosionEffect(this);
+//        this.kImg = new ExplosionEffect(this);
         (new Thread(this.kImg)).start();
     }
 
@@ -129,5 +166,13 @@ public class Asteroid extends Automata {
 
     public void setPhysicsAsteroid(PhysicsAsteroid physicsAsteroid) {
         this.physicsAsteroid = physicsAsteroid;
+    }
+
+    public int getImgFile() {
+        return imgFile;
+    }
+
+    public void setImgFile(int imgFile) {
+        this.imgFile = imgFile;
     }
 }
