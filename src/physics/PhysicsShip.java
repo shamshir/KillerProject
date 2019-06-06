@@ -383,7 +383,7 @@ public class PhysicsShip {
         double vx1 = tangentX * pTan1 + normalX * mom1 * var1;
         double vy1 = tangentY * pTan1 + normalY * mom1 * var1;
 
-        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1 + alivem) / 4;
+        double result1 = Math.sqrt(vx1 * vx1 + vy1 * vy1);
         
         if (result1 > 40) {
             result1 = 40;
