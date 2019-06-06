@@ -15,13 +15,13 @@ import visibleObjects.VisibleObject;
  */
 public class ExplosionEffect extends KillerImage {
 
-    private BufferedImage[] framesList;
+    private static BufferedImage[] framesList;
     private int frame;
 
     public ExplosionEffect(VisibleObject vo) {
         super(vo, 300, 300); // tamaño imagen explosion
 
-        this.framesList = new BufferedImage[12];
+        ExplosionEffect.framesList = new BufferedImage[12];
         this.frame = 0;
         this.loadImages();
     }
@@ -29,18 +29,18 @@ public class ExplosionEffect extends KillerImage {
     private void loadImages() {
 
         try {
-            this.framesList[0] = ImageIO.read(new File("src/visualEffects/xplosion/x1.png"));
-            this.framesList[1] = ImageIO.read(new File("src/visualEffects/xplosion/x2.png"));
-            this.framesList[2] = ImageIO.read(new File("src/visualEffects/xplosion/x3.png"));
-            this.framesList[3] = ImageIO.read(new File("src/visualEffects/xplosion/x4.png"));
-            this.framesList[4] = ImageIO.read(new File("src/visualEffects/xplosion/x5.png"));
-            this.framesList[5] = ImageIO.read(new File("src/visualEffects/xplosion/x6.png"));
-            this.framesList[6] = ImageIO.read(new File("src/visualEffects/xplosion/x7.png"));
-            this.framesList[7] = ImageIO.read(new File("src/visualEffects/xplosion/x8.png"));
-            this.framesList[8] = ImageIO.read(new File("src/visualEffects/xplosion/x9.png"));
-            this.framesList[9] = ImageIO.read(new File("src/visualEffects/xplosion/x10.png"));
-            this.framesList[10] = ImageIO.read(new File("src/visualEffects/xplosion/x11.png"));
-            this.framesList[11] = ImageIO.read(new File("src/visualEffects/xplosion/x12.png"));
+            ExplosionEffect.framesList[0] = ImageIO.read(new File("src/visualEffects/xplosion/x1.png"));
+            ExplosionEffect.framesList[1] = ImageIO.read(new File("src/visualEffects/xplosion/x2.png"));
+            ExplosionEffect.framesList[2] = ImageIO.read(new File("src/visualEffects/xplosion/x3.png"));
+            ExplosionEffect.framesList[3] = ImageIO.read(new File("src/visualEffects/xplosion/x4.png"));
+            ExplosionEffect.framesList[4] = ImageIO.read(new File("src/visualEffects/xplosion/x5.png"));
+            ExplosionEffect.framesList[5] = ImageIO.read(new File("src/visualEffects/xplosion/x6.png"));
+            ExplosionEffect.framesList[6] = ImageIO.read(new File("src/visualEffects/xplosion/x7.png"));
+            ExplosionEffect.framesList[7] = ImageIO.read(new File("src/visualEffects/xplosion/x8.png"));
+            ExplosionEffect.framesList[8] = ImageIO.read(new File("src/visualEffects/xplosion/x9.png"));
+            ExplosionEffect.framesList[9] = ImageIO.read(new File("src/visualEffects/xplosion/x10.png"));
+            ExplosionEffect.framesList[10] = ImageIO.read(new File("src/visualEffects/xplosion/x11.png"));
+            ExplosionEffect.framesList[11] = ImageIO.read(new File("src/visualEffects/xplosion/x12.png"));
 
         } catch (IOException e) {
             System.err.println("Xplosion file not found");
@@ -51,14 +51,14 @@ public class ExplosionEffect extends KillerImage {
     private void paintFrame() {
 
         this.clearImage();
-        this.graphics.drawImage(this.framesList[this.frame], 0, 0, null);
+        this.graphics.drawImage(ExplosionEffect.framesList[this.frame], 0, 0, null);
 
     }
 
     @Override
     public void run() {
         
-        while (this.frame < this.framesList.length) {
+        while (this.frame < ExplosionEffect.framesList.length) {
             paintFrame();
             this.frame++;
 

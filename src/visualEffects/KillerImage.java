@@ -107,9 +107,9 @@ public class KillerImage extends BufferedImage implements Runnable {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-//            if (visibleObject instanceof KillerShip) {
+
             paintColorizedShipImage();
-//            }
+
 
             timer.stop();
             timer = null;
