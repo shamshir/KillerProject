@@ -92,7 +92,7 @@ public class KillerClient implements Runnable {
             if (i >= 3 && this.visualHandler.isConnected()) {
                 this.sendSyncCheck();
             }
-            if (this.syncTimeOut >= 10) {
+            if (this.syncTimeOut >= 30) {
                 this.syncTimeOut();
             }
             this.syncTimeOut++;

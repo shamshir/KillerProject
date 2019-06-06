@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [         KillerGame Attributes       ] ********************************* //
     // ***************************************************************************************************** //
+    
     // Game status
     public enum Status {
         ROOM, GAME
@@ -43,8 +45,10 @@ public class KillerGame extends JFrame {
     private boolean ultraPacman = false;
     public static boolean exit = false;
     public static int worldType = 0;
-    public static final int VIEWER_WIDTH = 1920;
-    public static final int VIEWER_HEIGHT = 1080;
+    public static final int VIEWER_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
+    public static final int VIEWER_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
+    public static final int DEFAULT_WIDTH = 1920;
+    public static final int DEFAULT_HEIGHT = 1080;
 
     // Gen objects
     private int objectMatrixWidth[][] = new int[KillerRules.OBJECT_GRID_WIDTH][KillerRules.OBJECT_GRID_HEIGHT];
@@ -89,29 +93,23 @@ public class KillerGame extends JFrame {
     // ***************************************************************************************************** //
     // *************************** [        KillerGame Constructors      ] ********************************* //
     // ***************************************************************************************************** //
+    
     /**
      * @author Alvaro
      */
     public KillerGame() {
-
         // Add key listener
         addKeyEventListener();
-
         // Set game status
         this.status = Status.ROOM;
-
         // Init radio
         this.newRadio();
-
         // Init sounds
         this.newSound();
-
         // Show room
         this.newRoom();
-
         // Open communications
         this.generateComunnications();
-
     }
 
     // ***************************************************************************************************** //
@@ -410,7 +408,7 @@ public class KillerGame extends JFrame {
         // Collision with Planeta
         if (object instanceof Planeta) {
             if (CollidePhysics.collisionCxC(pacman, (Planeta) object)) {
-                KillerRules.collisionPacmanWithPlaneta(pacman);
+                KillerRules.collisionPacmanWithPlaneta(this, pacman, (Planeta) object);
             }
         }
 
@@ -438,7 +436,7 @@ public class KillerGame extends JFrame {
         // Collision with Wall
         if (object instanceof Wall) {
             if (CollidePhysics.collisionObjxWall(pacman, (Wall) object)) {
-                KillerRules.collisionPacmanWithWall(this, pacman, (Wall) (object));
+                KillerRules.collisionAliveWithWall(this, pacman, (Wall) (object));
             }
         }
 
@@ -460,10 +458,11 @@ public class KillerGame extends JFrame {
 
         // Add Viewer
         this.newViewer();
-
+        
         // Add walls
         this.addWalls();
-
+        
+        // Add objects
         this.addObjects(this.worldType);
 
         // Start threads
@@ -519,6 +518,14 @@ public class KillerGame extends JFrame {
         }
 
     }
+    
+    public static int widthBasedOnWindowWidth(int width) {
+        return (int) (width * (KillerGame.VIEWER_WIDTH / KillerGame.DEFAULT_WIDTH));
+    }
+    
+    public static int heightBasedOnWindowHeight(int width) {
+        return (int) (width * (KillerGame.VIEWER_HEIGHT / KillerGame.DEFAULT_HEIGHT));
+    }
 
     // ***************************************************************************************************** //
     // *************************** [             Add Methods             ] ********************************* //
@@ -526,37 +533,38 @@ public class KillerGame extends JFrame {
     
     /**
      * @author Christian
-     * @param number 
+     * @param worldType 
      */
-    public void addObjects(int number) {
-        switch (number) {
+    public void addObjects(int worldType) {
+        
+        switch (worldType) {
             case 1:
-                this.BasicWorld();
+                this.generateBasicWorld();
                 break;
             case 2:
-                this.AsteroidWorld();
+                this.generateAsteroidWorld();
                 break;
             case 3:
-                this.PacmanWorld();
+                this.generatePacmanWorld();
                 break;
             case 4:
-                this.ClearedWorld();
+                this.generateClearedWorld();
                 break;
             case 5:
-                this.TpWorld();
+                this.generateBlackHolesWorld();
                 break;
             case 6:
-                this.PowerUpsWorld();
+                this.generatePowerUpsWorld();
                 break;
             case 7:
                 this.PlanetWorld();
                 break;
             case 8:
-                this.addObjects((int) (Math.random() * (7 - 0) + 1));
+                int randomWorldType = (int) (Math.random() * (7 - 0) + 1);
+                this.addObjects(randomWorldType);
                 break;
             default:
-                System.out.println("�No has seleccionado un mundo valido! Se pondr� por defecto el mundo b�sico");
-                this.BasicWorld();
+                this.generateBasicWorld();
                 break;
         }
     }
@@ -564,7 +572,7 @@ public class KillerGame extends JFrame {
     /**
      * @author Christian
      */
-    public void BasicWorld() {
+    public void generateBasicWorld() {
         this.newGirdPositions();
         this.newGirdNebulaPositions();
         this.addNebulas(genNebulosas());
@@ -578,7 +586,7 @@ public class KillerGame extends JFrame {
     /**
      * @author Christian
      */
-    public void AsteroidWorld() {
+    public void generateAsteroidWorld() {
         this.newGirdPositions();
         this.addPlanets(3);
         this.addAsteroids(15);
@@ -588,7 +596,7 @@ public class KillerGame extends JFrame {
     /**
      * @author Christian
      */
-    public void PacmanWorld() {
+    public void generatePacmanWorld() {
         this.newGirdPositions();
         this.addPlanets(3);
         this.addPacmans(15);
@@ -598,16 +606,17 @@ public class KillerGame extends JFrame {
     /**
      * @author Christian
      */
-    public void TpWorld() {
+    public void generateBlackHolesWorld() {
         this.newGirdPositions();
-        this.addPlanets(3);
+        this.addPowerUps(3);
+        this.addAsteroids(3);
         this.addBlackHoles(10);
     }
     
     /**
      * @author Christian
      */
-    public void PowerUpsWorld() {
+    public void generatePowerUpsWorld() {
         this.newGirdPositions();
         this.addPowerUps(15);
     }
@@ -623,9 +632,8 @@ public class KillerGame extends JFrame {
     /**
      * @author Christian
      */
-    public void ClearedWorld() {
-        this.newGirdNebulaPositions();
-        this.addNebulas(4);
+    public void generateClearedWorld() {
+        
     }
     
     /**
@@ -682,7 +690,7 @@ public class KillerGame extends JFrame {
             int randomX = values[6];
             int randomY = values[7];
             // New Black Hole and set values
-            this.newBlackHole(x, y);
+            this.newBlackHole(x + randomX, y + randomY);
         }
     }
     
@@ -869,19 +877,19 @@ public class KillerGame extends JFrame {
         int n2;
         int m2;
         if (symbolVx <= 0.5) {
-            n2 = (int) (Math.random() * (400 - 0) + 0) * -1;
+            n2 = (int) (Math.random() * (400)) * -1;
         } else {
-            n2 = (int) (Math.random() * (400 - 0) + 0);
+            n2 = (int) (Math.random() * (400));
         }
         if (symbolVy <= 0.5) {
-            m2 = (int) (Math.random() * (100 - 0) + 0) * -1;
+            m2 = (int) (Math.random() * (100)) * -1;
         } else {
-            m2 = (int) (Math.random() * (100 - 0) + 0);
+            m2 = (int) (Math.random() * (100));
         }
         // 
         do {
-            int n = (int) (Math.random() * (4 - 0) + 0);
-            int m = (int) (Math.random() * (2 - 0) + 0);
+            int n = (int) (Math.random() * (4 - 2));
+            int m = (int) (Math.random() * (2));
             nums2 = new int[4];
             if (nebulaMatrixWidth[n][m] == 0 || nebulaMatrixHeight[n][m] == 0) {
 
@@ -963,6 +971,9 @@ public class KillerGame extends JFrame {
         this.soundMusic = configuration.getSoundsMusic();
         if (!soundMusic) {
             this.stopMusic();
+        }
+        if (soundMusic) {
+            this.changeMusic(KillerRadio.ClipType.MENU);
         }
         this.pacmanActive = configuration.getPacmanActive();
         this.ultraPacman = configuration.getUltraPacman();
