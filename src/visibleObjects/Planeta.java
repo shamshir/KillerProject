@@ -26,9 +26,6 @@ public class Planeta extends Static {
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
-    // *********************
-    // * Getters & Setters *
-    // *********************
     @Override
     protected void setImage() {
         if ((int)(Math.random()* 2 + 1) == 1) {
@@ -37,4 +34,7 @@ public class Planeta extends Static {
             this.loadImg("src/visibleObjects/img/planeta2.png");
         }
     }
+    // *********************
+    // * Getters & Setters *
+    // *********************
 }

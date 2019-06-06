@@ -27,8 +27,6 @@ public class Nebulosa extends Static {
     protected void setImage() {
         this.loadImg("src/visibleObjects/img/nebulosa.png");
     }
-    
-    // TO DO --> frenar(Alive obj) ??
 
     // ********************************************************
     // *                     Interfaces                       *

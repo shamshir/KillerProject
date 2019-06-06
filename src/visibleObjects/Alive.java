@@ -7,9 +7,7 @@ public abstract class Alive extends VisibleObject implements Runnable, Destructi
     public enum State {
         SAFE, ALIVE, DYING, DEAD
     }
-
-    // Físicas: son necesarios los mismos atributos en todos los Alive?
-    // En VisibleObject --> protected double angle; ... this.angle = Math.toRadians(0);
+    
     protected double a;
     protected double dx;
     protected double dy;
@@ -27,17 +25,6 @@ public abstract class Alive extends VisibleObject implements Runnable, Destructi
         this.a = 0.01;
     }
 
-    // TO DO: constructor común para instanciar objetos Alive recibidos de otro pc
-    // Valores necesarios para físicas?
-//    public Alive(KillerGame game, double x, double y, double angle, double dx, double dy, int health) {
-//        super(game, x, y);        
-//        this.a = 0.01;
-//        this.angle = angle;
-//        this.dx = dx;
-//        this.dy = dy;
-//        this.health = health;
-//    }
-    // TO DO: descomentar si es el mismo método de físicas para todos los objetos
     protected abstract void move();
 
     public void changeState(State state) {
@@ -49,7 +36,7 @@ public abstract class Alive extends VisibleObject implements Runnable, Destructi
     // ********************************************************
     
     /**
-     * Método para restar vida, no cambia ningún estado ni comprueba nada...
+     * Método para restar vida
      * @param damage vida que quita
      */       
     @Override

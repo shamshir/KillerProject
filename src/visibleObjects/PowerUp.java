@@ -41,7 +41,7 @@ public class PowerUp extends Static implements Destructible {
     }
 
     /**
-     * Método para cambiar la imagen del powerUp al quedarse sin vida
+     * Método para cambiar la imagen del powerUp, llamado al quedarse sin vida
      */
     public void unwrapper() {
         this.setImage();
@@ -49,6 +49,9 @@ public class PowerUp extends Static implements Destructible {
         this.radius = this.imgHeight / 2;
     }
 
+    /**
+     * Método que cargala imagen del Pwerup
+     */
     @Override
     protected void setImage() {
         if (wrappered) {
@@ -78,8 +81,7 @@ public class PowerUp extends Static implements Destructible {
 
     @Override
     public void onDying() {
-//        this.wrappered = false;
-//        this.unwrapper();
+        
     }
 
     @Override

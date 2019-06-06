@@ -12,15 +12,9 @@ public abstract class Automata extends Alive {
         super(game, x, y);
         this.state = State.ALIVE;
     }
-    
-    // TO DO: constructor común para instanciar objetos Autonomous recibidos de otro pc
 
     @Override
-    public void run() {
-        // Sonido del Pacman
-        if (this instanceof Pacman) {
-            this.game.changeMusic(KillerRadio.ClipType.PACMAN_MOVE);
-        }        
+    public void run() {  
 
         while (state != State.DEAD) {
 

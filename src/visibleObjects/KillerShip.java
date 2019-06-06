@@ -70,8 +70,7 @@ public class KillerShip extends Alive {
     }
 
     /**
-     * Constructor para instanciar la nave si viene de otro pc; por defecto son
-     * invencibles.
+     * Constructor para instanciar la nave si viene de otro pc
      *
      * @param game
      * @param x
@@ -81,12 +80,12 @@ public class KillerShip extends Alive {
      * @param dy
      * @param vx
      * @param vy
-     * @param tx hitbox
-     * @param ty hitbox
-     * @param lx hitbox
-     * @param ly hitbox
-     * @param rx hitbox
-     * @param ry hitbox
+     * @param tx
+     * @param ty
+     * @param lx
+     * @param ly
+     * @param rx
+     * @param ry
      * @param id
      * @param user
      * @param type
@@ -117,8 +116,7 @@ public class KillerShip extends Alive {
         this.rx = rx;
         this.ry = ry;
         this.configureSpeed();
-
-        //this.state = State.SAFE;
+        
         this.state = State.ALIVE;
         this.health = health;
         this.damage = damage;
@@ -169,12 +167,10 @@ public class KillerShip extends Alive {
         }
         
         this.game.removeObject(this);
-        System.out.println("KillerShip MUERE");
     }
 
     /**
-     * Método llamado por el KillerPad para mandar la info que llega del mando.
-     * El KillerShip la ha de descodificsr. Ajustar valores a lo que se envía
+     * Método llamado por el KillerPad para hacer la acción que llega del mando.
      *
      * @param kAction
      */
@@ -200,7 +196,7 @@ public class KillerShip extends Alive {
     }
 
     /**
-     * Método aumentar el daño de la nave al coger el powerUp DAMAGE
+     * Método para aumentar el daño de la nave al coger el powerUp DAMAGE
      *
      * @param damage
      */
@@ -222,6 +218,9 @@ public class KillerShip extends Alive {
         physicsShip.move();
     }
 
+    /**
+     * Método para cargar imagen de la nave según el tipo
+     */
     @Override
     protected void setImage() {
         switch (type) {
@@ -248,19 +247,19 @@ public class KillerShip extends Alive {
 
     /**
      * Cambiará los valores de dirección y ángulo en función de la info enviada
-     * por el mando. Parámetros aún por decidir según la info recibida
+     * por el mando.
      */
     private void moveShip(double dx, double dy) {
         this.dx = dx;
         this.dy = -dy;
     }
 
+    /**
+     * Método para quitar el escudo a la nave cuando pasan 5 segundos
+     */
     private void checkSafe() {
         if (System.currentTimeMillis() - timer > 5000) {
             this.state = State.ALIVE;
-//            this.setImage();
-//            // Adapto las coordenadas para la hitbox a la img
-//            this.setImgSize();
         }
     }
 
@@ -323,18 +322,31 @@ public class KillerShip extends Alive {
 
     }
 
+    /**
+     * Método para hacer dash cuando el jugador pulsa el botón dash
+     */
     private void dash() {
         this.physicsShip.dash();
     }
 
+    /**
+     * Método para recuperar la velocidad máxima de la nave cuando el jugador termina el turbo
+     */
     private void turboEnd() {
         this.configureSpeed();
     }
 
+    /**
+     * Método para aumentar la velocidad máxima de la nave mientras dura el turbo
+     */
     private void turboStart() {
         this.maxspeed += KillerRules.MAX_SPEED_INCREMENT;
     }
     
+    /**
+     * Método para definir la altura de la nave según el tipo
+     * @return altura de la nave en px
+     */
     private int checkImgHeight() {
         int height;
         if (null == this.type) {            
@@ -350,12 +362,14 @@ public class KillerShip extends Alive {
                 height = 60;
                 break;
         }
-        System.out.println("type " + this.type);
-        System.out.println("height " + height);
         
         return height;
     }
 
+    /**
+     * Método que devuelve la salud de la nave según el tipo
+     * @return salud de la nave
+     */
     private int getInitHealth() {
         int initHealth = 0;
         switch (type) {
@@ -377,28 +391,42 @@ public class KillerShip extends Alive {
     // *************************
     // *    Drawing methods    *
     // *************************
+    /**
+     * Método para rotar escalar y pintar la imagen de la nave con el fuego
+     * @param g2d 
+     */
     private void drawFireEffect(Graphics2D g2d) {
-//        double scale = (double) this.imgWidth / (double) ((FireEffect) this.kImg).getWidth();
-        double scale = (double) this.imgWidth / (double) this.kImg.getWidth();
+        
+        double scale = (double) this.imgWidth / (double) this.kImg.getWidth(); // Cálculo del factor de escalado de la imagen en función de las dimensiones de la nave
         AffineTransform transform = new AffineTransform();
-        transform.translate(x, y);
-        transform.rotate(-radians, this.imgWidth / 2, this.imgHeight / 2);
-        transform.scale(scale, scale);
+        transform.translate(x, y); // Coordenadas donde pintar
+        transform.rotate(-radians, this.imgWidth / 2, this.imgHeight / 2); // Ángulo de rotación a aplicar
+        transform.scale(scale, scale); // Factor de escalado a aplicar
         g2d.drawImage(this.kImg, transform, null);
     }
 
+    /**
+     * Método para pintar el nombre del usuario
+     * @param g2d 
+     */
     private void drawUserName(Graphics2D g2d) {
         g2d.setColor(Color.white);
         g2d.drawString(this.user, (int) x, (int) y - 36);
     }
 
+    /**
+     * Método para pintar la barra de vida
+     * @param g2d 
+     */
     private void drawLifeBar(Graphics2D g2d) {
         double barWidth;
         Color c;
         if (this.health <= this.getInitHealth()) {
+            // Barra de vida proporcional a la salud, del color elegido por el jugador
             c = this.color;
             barWidth = (this.imgWidth * this.health) / this.getInitHealth();
         } else {
+            // Si el jugador tiene más vida que su vida máxima, la barra cse pone de color blanco
             c = Color.white;
             barWidth = this.imgWidth;
         }
@@ -410,6 +438,10 @@ public class KillerShip extends Alive {
 
     }
 
+    /**
+     * Método para pintar el escudo cuando la nave es invulnerable
+     * @param g2d 
+     */
     private void drawSafe(Graphics2D g2d) {
         g2d.setColor(this.color);
         g2d.setStroke(new BasicStroke(2));
@@ -420,9 +452,11 @@ public class KillerShip extends Alive {
     // *                     Interfaces                       *
     // ********************************************************
     // Interfaz Destructible
+    /**
+     * Método para iniciar el ExplosionEffect
+     */
     @Override
     public void onDying() {
-//        this.kImg = new ExplosionEffect(this);
         (new Thread(this.xplosion)).start();
     }
 
@@ -432,6 +466,11 @@ public class KillerShip extends Alive {
     }
 
     // Interfaz Renderizable
+    /**
+     * Método para pintar la nave. Si está en estado SAFE pinta el FireEffect, los datos de la nave y el escudo,
+     * en estado ALIVE pinta el FireEffect y los datos de la nave, y en estado DYING pinta la ExplosionEffect
+     * @param g2d 
+     */
     @Override
     public void render(Graphics2D g2d) {
 
