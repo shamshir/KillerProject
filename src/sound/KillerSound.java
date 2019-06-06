@@ -6,6 +6,7 @@
 package sound;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.logging.Level;
@@ -77,7 +78,8 @@ public class KillerSound implements Runnable {
     public Clip getSound(String file) {
 
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("src/sound/SoundsGame/" + file));
+            URL url = this.getClass().getResource(file);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
             AudioFormat format = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             Clip sound = (Clip) AudioSystem.getLine(info);
