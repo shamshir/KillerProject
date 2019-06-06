@@ -485,12 +485,6 @@ public class KillerGame extends JFrame {
     }
 
     public void restartGame() {
-        this.viewer.stop();
-        this.remove(this.viewer);
-        this.viewer = null;
-        this.objects = new ArrayList<>();
-        this.ships = new Hashtable();
-        this.pads = new Hashtable();
         this.status = KillerGame.Status.ROOM;
         this.stopMusic();
         this.changeMusic(KillerRadio.ClipType.MENU);
@@ -498,7 +492,8 @@ public class KillerGame extends JFrame {
     }
 
     public void setWinner(String name) {
-
+        
+        this.stopMusic();
         this.room.setKillerPanelWinner(name);
         this.setVisible(false);
         this.room.setVisible(true);
@@ -516,6 +511,15 @@ public class KillerGame extends JFrame {
                 ((BlackHole) object).setAlive(false);
             }
         }
+        
+        this.viewer.stop();
+        this.remove(this.viewer);
+        this.viewer = null;
+        this.objects = new ArrayList<>();
+        this.ships = new Hashtable();
+        this.pads = new Hashtable();
+        
+        this.changeMusic(KillerRadio.ClipType.ENDING);
 
     }
     
@@ -1103,7 +1107,6 @@ public class KillerGame extends JFrame {
             this.pads.put(ip, pad);
             new Thread(pad).start();
             result = true;
-            System.out.println(user);
             this.room.updateUsers(this.pads);
         }
         return result;
@@ -1454,6 +1457,9 @@ public class KillerGame extends JFrame {
      */
     public void removePad(KillerPad pad) {
         this.pads.remove(pad.getId());
+        if (this.status == KillerGame.Status.ROOM) {
+            this.removeObject(this.getShipByIP(pad.getId()));
+        }
         this.ships.remove(pad.getId());
         this.room.updateUsers(this.pads);
     }

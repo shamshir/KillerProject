@@ -36,7 +36,6 @@ public class KillerRadio implements Runnable {
 
         // Stops the clip running
         this.stopSound();
-
         // Changes the new Song
         this.clip = getSound(this.clipNames.get(ct));
         this.playSound();
@@ -63,11 +62,10 @@ public class KillerRadio implements Runnable {
     }
 
     public void stopSound() {
-        try {
+        if (this.clip != null) {
             this.clip.stop();
             this.clip.close();
             this.play = false;
-        } catch (Exception e) {
         }
     }
     
