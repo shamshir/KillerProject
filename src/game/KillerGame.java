@@ -972,12 +972,14 @@ public class KillerGame extends JFrame {
     public void receiveConfiguration(GameConfiguration configuration) {
 
         this.soundEffects = configuration.getSoundEffects();
-        this.soundMusic = configuration.getSoundsMusic();
+        if (configuration.getSoundsMusic() && !soundMusic) {
+            this.soundMusic = configuration.getSoundsMusic();
+            this.changeMusic(KillerRadio.ClipType.MENU);
+        } else {
+            this.soundMusic = configuration.getSoundsMusic();
+        }
         if (!soundMusic) {
             this.stopMusic();
-        }
-        if (soundMusic) {
-            this.changeMusic(KillerRadio.ClipType.MENU);
         }
         this.pacmanActive = configuration.getPacmanActive();
         this.ultraPacman = configuration.getUltraPacman();
@@ -1496,15 +1498,27 @@ public class KillerGame extends JFrame {
         // New KillerGame
         KillerGame game = new KillerGame();
         while (true) {
+            
             try {
                 Thread.sleep(200);
             } catch (Exception e) {
 
             }
+            
+            for (int inc = 0; inc < game.getObjects().size(); inc++) {
+                VisibleObject object = game.getObjects().get(inc);
+                if (object instanceof Alive) {
+                    if (((Alive) object).getState() == Alive.State.DEAD) {
+                        game.removeObject(object);
+                    }
+                }
+            }
+            
             if (KillerGame.exit) {
                 game.getNextModule().sendMessage(Message.Builder.builder("quit", KillerServer.getId()).build());
                 System.exit(0);
             }
+            
         }
     }
 
