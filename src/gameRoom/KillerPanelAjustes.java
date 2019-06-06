@@ -6,7 +6,10 @@
 package gameRoom;
 
 import game.KillerGame;
+import static java.util.Optional.empty;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.border.Border;
 import sound.KillerSound;
 
 /**
@@ -18,6 +21,9 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
     //Variable Killer Game
     private KillerGame kg;
     private KillerRoom kr;
+    
+    //Border
+    Border empty;
 
     /**
      * Creates new form KillerPanelAjustes
@@ -26,7 +32,23 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
         this.kr = kr;
         initComponents();
         kg = kr.getKg();
+        ajustesConf();
+    }
+    
+    /**
+     * Añade opciones extra a la confguración de jPanel
+     */
+    private void ajustesConf(){
         jLabelDescription.setHorizontalAlignment(JLabel.CENTER);
+        empty = BorderFactory.createEmptyBorder();
+        jLabelch1.setBorder(empty);
+        jLabelch2.setBorder(empty);
+        jLabelch3.setBorder(empty);
+        jLabelch4.setBorder(empty);
+        jLabelch5.setBorder(empty);
+        jLabelch6.setBorder(empty);
+        jLabelch7.setBorder(empty);
+        jLabelch8.setBorder(empty);
     }
 
     /**
@@ -119,31 +141,31 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
         jLabelch1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png"))); // NOI18N
         jLabelch1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jLabelch1.setPreferredSize(new java.awt.Dimension(24, 24));
-        add(jLabelch1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 150, -1, -1));
+        add(jLabelch1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 150, -1, -1));
 
         jLabelch3.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jLabelch3.setPreferredSize(new java.awt.Dimension(24, 24));
-        add(jLabelch3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 230, -1, -1));
+        add(jLabelch3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 230, -1, -1));
 
         jLabelch2.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jLabelch2.setPreferredSize(new java.awt.Dimension(24, 24));
-        add(jLabelch2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, -1, -1));
+        add(jLabelch2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 190, -1, -1));
 
         jLabelch4.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jLabelch4.setPreferredSize(new java.awt.Dimension(24, 24));
-        add(jLabelch4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 270, -1, -1));
+        add(jLabelch4, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 270, -1, -1));
 
         jLabelch5.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jLabelch5.setPreferredSize(new java.awt.Dimension(24, 24));
-        add(jLabelch5, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, -1, -1));
+        add(jLabelch5, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 150, -1, -1));
 
         jLabelch6.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jLabelch6.setPreferredSize(new java.awt.Dimension(24, 24));
-        add(jLabelch6, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 190, -1, -1));
+        add(jLabelch6, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, -1, -1));
 
         jLabelch7.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jLabelch7.setPreferredSize(new java.awt.Dimension(24, 24));
-        add(jLabelch7, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 230, -1, -1));
+        add(jLabelch7, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 230, -1, -1));
 
         jButtonAleatorio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Aleatorio.png"))); // NOI18N
         jButtonAleatorio.setBorderPainted(false);
@@ -273,7 +295,7 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
 
         jLabelch8.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
         jLabelch8.setPreferredSize(new java.awt.Dimension(24, 24));
-        add(jLabelch8, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 270, -1, -1));
+        add(jLabelch8, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, -1, -1));
 
         jButtonVacio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Vacio.png"))); // NOI18N
         jButtonVacio.setBorderPainted(false);

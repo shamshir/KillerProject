@@ -45,7 +45,7 @@ public abstract class VisibleObject implements Renderizable {
     protected void loadImg(String url) {
 
         try {
-            this.img = ImageIO.read(new File(url));
+            this.img = ImageIO.read(getClass().getResource(url));
         } catch (IOException e) {
             System.out.println("File not found");
         }

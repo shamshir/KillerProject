@@ -30,26 +30,26 @@ public class Wall extends Static {
             case UP:
                 this.x = 0;
                 this.y = 0;
-                this.imgWidth = game.getViewer().getWidth();
+                this.imgWidth = KillerGame.VIEWER_WIDTH;
                 this.imgHeight = 1;
                 break;
             case DOWN:
                 this.x = 0;
-                this.y = this.game.getViewer().getHeight() - 1;
-                this.imgWidth = this.game.getViewer().getWidth();
+                this.y = KillerGame.VIEWER_HEIGHT - 1;
+                this.imgWidth = KillerGame.VIEWER_WIDTH;
                 this.imgHeight = 1;
                 break;
             case LEFT:
                 this.x = 0;
                 this.y = 0;
                 this.imgWidth = 1;
-                this.imgHeight = this.game.getViewer().getHeight();
+                this.imgHeight = KillerGame.VIEWER_HEIGHT;
                 break;
             case RIGHT:
-                this.x = this.game.getViewer().getWidth() -1;
+                this.x = KillerGame.VIEWER_WIDTH - 1;
                 this.y = 0;
                 this.imgWidth = 1;
-                this.imgHeight = game.getViewer().getHeight();
+                this.imgHeight = KillerGame.VIEWER_HEIGHT;
                 break;
         }
     }
