@@ -107,9 +107,9 @@ public class KillerImage extends BufferedImage implements Runnable {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            if (visibleObject instanceof KillerShip) {
-                paintColorizedShipImage();
-            }
+
+            paintColorizedShipImage();
+
 
             timer.stop();
             timer = null;
@@ -118,7 +118,8 @@ public class KillerImage extends BufferedImage implements Runnable {
     }
 
     public void blink() {
-        if (this.visibleObject instanceof KillerShip) {
+        if (this.visibleObject instanceof KillerShip
+                && this.timer == null) {
             this.paintDamagedShip();
 
             this.timer = new Timer(100, new RestoreColorizedShipImage());
