@@ -355,7 +355,7 @@ public class KillerShip extends Alive {
             case MARAUDER:
                 height = 100;
                 break;
-            case BATMOBILE:
+            case OCTANE:
                 height = 75;
                 break;
             default:
