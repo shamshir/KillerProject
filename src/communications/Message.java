@@ -71,7 +71,7 @@ public class Message {
         return this.gameConfiguration;
     }
 
-    
+    //Metodo para convertir un String a un objeto Message
     public static Message readMessage(final String jsonStr) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -83,6 +83,7 @@ public class Message {
 
     }
 
+    //Metodo para convertir un objeto Message a String
     public static String convertMessageToJson(final Message message) {
         try {
             ObjectMapper mapper = new ObjectMapper();

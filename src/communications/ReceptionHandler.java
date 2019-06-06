@@ -64,6 +64,7 @@ public class ReceptionHandler {
         if(out!=null) this.out.println(Message.convertMessageToJson(message));
     }
 
+    //metodo para establecer la conexión
     public synchronized boolean setSocket(final Socket socket) {
         this.sock = socket;
         if (socket == null) {

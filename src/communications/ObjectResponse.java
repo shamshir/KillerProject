@@ -168,6 +168,7 @@ public class ObjectResponse {
         return imgFile;
     }
     
+    //metodo para convertir un Alive a un ObjectResponse
     public static ObjectResponse convertObjectToObjectResponse(final Alive object) {
         if (object instanceof KillerShip) {
             return buildObjectResponseFromKillerShip((KillerShip) object);        
@@ -179,6 +180,7 @@ public class ObjectResponse {
         return ObjectResponse.Builder.builder(EMPTY_STRING).build();
     }
 
+    //Crear un ObjectResponse a partir de una nave
     private static ObjectResponse buildObjectResponseFromKillerShip(KillerShip killerShip) {
         return ObjectResponse.Builder.builder(SHIP_TYPE)
                 .x(killerShip.getX())
@@ -202,7 +204,8 @@ public class ObjectResponse {
                 .color(killerShip.getColor())
                 .build();
     }
-
+    
+    //Crear un ObjectResponse a partir de un Asteroide
     private static ObjectResponse buildObjectResponseFromAsteroid(final Asteroid asteroid) {
         return ObjectResponse.Builder.builder(ASTEROID_TYPE)
                 .x(asteroid.getX())
@@ -218,6 +221,7 @@ public class ObjectResponse {
                 .build();
     }
     
+    //Crear un ObjectResponse a partir de un Pacman
     private static ObjectResponse buildObjectResponseFromPacman(final Pacman pacman) {
         return ObjectResponse.Builder.builder(PACMAN_TYPE)
                 .x(pacman.getX())

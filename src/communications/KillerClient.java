@@ -47,6 +47,7 @@ public class KillerClient implements Runnable {
         }
     }
 
+    //Intentar conectarse
     private void tryToConnect() {
         if (this.hasAnIPToConnect()) {
             try {
@@ -58,10 +59,12 @@ public class KillerClient implements Runnable {
         }
     }
 
+    // Comprobar si tengo información para conectarme
     private boolean hasAnIPToConnect() {
         return !EMPTY_STRING.equalsIgnoreCase(this.visualHandler.getDestinationIp());
     }
 
+    //Realizar connexión con otra pantalla
     private void contact(final Socket sock) throws Exception {
 
         final ConnectionResponse connectionResponse = ConnectionResponse.Builder.builder()
@@ -77,34 +80,39 @@ public class KillerClient implements Runnable {
         out.println(Message.convertMessageToJson(message));
     }
 
+    //Establecer conexióon
     private void connect(final Socket sock) {
         this.visualHandler.setSocket(sock);
         this.syncTimeOut = 0;
     }
 
+    //Enviar mensaje de estado para evitar timeout
     private void sendStatusRequest() {
         this.visualHandler.sendLine(STATUS_REQUEST);
     }
 
+    //Metodo para realizar un seguimiento del estado de la syncronización de las pantallas
     private void checkSyncTimeOut(final int i) {
         if (this.killergame.getStatus() == KillerGame.Status.ROOM
                 && this.killergame.isSynchronized()) {
             if (i >= 3 && this.visualHandler.isConnected()) {
                 this.sendSyncCheck();
             }
-            if (this.syncTimeOut >= 10) {
+            if (this.syncTimeOut >= 30) {
                 this.syncTimeOut();
             }
             this.syncTimeOut++;
         }
     }
 
+    //enmviar mensaje para evitar timeout de la syncronizacion
     private void sendSyncCheck() {
         final Message message = Message.Builder.builder(SYNC_CHECK, KillerServer.getId())
                 .build();
         this.visualHandler.sendMessage(message);
     }
 
+    //Desyncronización cuando salta timeout
     private void syncTimeOut() {
         this.killergame.setSyncronized(false);
         this.killergame.setServersQuantity(0);

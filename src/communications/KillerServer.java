@@ -16,11 +16,11 @@ public class KillerServer implements Runnable {
 
         this.killergame = kg;
         this.tryToCreateServerSocket(port);
-        
-        if(this.serverSocket == null){            
-                throw new Exception("Ningun puerto ha sido encontrado, inserte otro puerto");
+
+        if (this.serverSocket == null) {
+            throw new Exception("Ningun puerto ha sido encontrado, inserte otro puerto");
         }
-        
+
         this.PORT = this.serverSocket.getLocalPort();
         this.id = InetAddress.getLocalHost().getHostAddress() + " - " + this.PORT;
         System.out.println("KillerServer -> Server iniciado en: " + this.id);
@@ -41,7 +41,8 @@ public class KillerServer implements Runnable {
 
     }
 
-    private void tryToCreateServerSocket(final int port){
+    //Intentar crear un servidor en el puerto establecido
+    private void tryToCreateServerSocket(final int port) {
         boolean ok = false;
         for (int i = 0; !ok && i < 10; i++) {
 
@@ -51,8 +52,9 @@ public class KillerServer implements Runnable {
             } catch (Exception ex) {
             }
         }
-    } 
-    
+    }
+
+    //Crear un thread con el que tratar la petición
     private void contact() {
 
         try {
@@ -66,8 +68,8 @@ public class KillerServer implements Runnable {
     public int getPort() {
         return this.PORT;
     }
-    
-    public static String getId(){
+
+    public static String getId() {
         return id;
     }
 

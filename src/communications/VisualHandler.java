@@ -8,13 +8,14 @@ import visibleObjects.Alive;
 public class VisualHandler extends ReceptionHandler implements Runnable {
 
     private KillerClient client;
-    private final boolean right;
+    private final boolean right;    //true si es modulo a la derecha, false izquierda
     private String destinationId;
     private static final String EMPTY_STRING = "";
 
     private static final String STATUS_REQUEST = "ok";
     private static final String BYE_LINE = "bye";
 
+    //Lista de comandos que se envían
     private static final String SEND_OBJECT_COMMAND = "object";
     private static final String CLIENT_CONNECTED = "connected";
     private static final String CLIENT_NOT_CONNECTED = "notConnected";
@@ -35,6 +36,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
     private static final String WINNER_COMMAND = "winner";
     private static final String RESET_KILLERGAME_COMMAND = "reset";
 
+    //Tipos de objetos que se envían
     private static final String SHIP_TYPE = "ship";
     private static final String PACMAN_TYPE = "pacman";
     private static final String ASTEROID_TYPE = "asteroid";
@@ -86,6 +88,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Bucle de leer mensajes
     private void listeningMessages() {
         boolean done = false;
 
@@ -102,6 +105,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         this.updateRoom(false);
     }
 
+    //Procesar las lineas que se reciben, devuelve un false en caso de desconexion
     private boolean processLine(final String line) {
         if (line == null) {
             return false;
@@ -116,6 +120,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return true;
     }
 
+    //Procesar los mensajes que se reciben
     private void processMessage(final Message message) {
 
         switch (message.getCommand()) {
@@ -140,7 +145,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
             case SYNC_CHECK:
                 this.processSyncCheck(message);
                 break;
-            case CLIENT_CONNECTED:                
+            case CLIENT_CONNECTED:
                 this.sendGameConfiguration(this.getKillergame().getConfiguration());
                 this.destinationId = message.getSenderId();
                 this.updateRoom(true);
@@ -164,6 +169,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 this.processReset(message);
                 break;
             default:
+                //Comprobamos si el mensaje va dirigido a un PAD
                 final String command = message.getCommand();
                 if (command != null && command.matches(PAD_COMMAND)) {
                     if (!this.isMessageMine(message.getSenderId())) {
@@ -176,12 +182,14 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Procesar un comando dirigido al PAD
     private void processPadCommand(final Message message) {
-
+        //Si el Pad está en esta pantalla, no lo enviaremos al resto de ordenadores
         boolean sendNextModule = this.getKillergame().getPadByIP(message.getSenderId()) == null;
         KillerPad.sendActionToPlayer(message, this.getKillergame(), sendNextModule);
     }
 
+    //metodo para recibir objetos
     private void receiveObject(final ObjectResponse object) {
 
         switch (object.getObjectType()) {
@@ -200,6 +208,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Metodo para enviar objetos
     public void sendObject(final Alive object) {
         final Message message = Message.Builder.builder(SEND_OBJECT_COMMAND, KillerServer.getId())
                 .withObject(ObjectResponse.convertObjectToObjectResponse(object))
@@ -207,6 +216,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         this.sendMessage(message);
     }
 
+    //Metodo para iniciar el cliente
     private void startClient() {
         this.client = new KillerClient(this, this.getKillergame());
         new Thread(this.client).start();
@@ -217,6 +227,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return super.getSocket();
     }
 
+    //Metodo para cerrar la conexion
     private void closeSocket() {
         try {
             if (this.isConnected()) {
@@ -228,6 +239,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Metodo para establecer una conexion
     public synchronized boolean setSocket(final Socket sock, final String destinationId) {
 
         if (super.setSocket(sock)) {
@@ -237,11 +249,13 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         return false;
     }
 
+    //Metodo para descon
     private void disconnect() {
         this.setSocket(null, EMPTY_STRING);
         super.setDestinationIp(EMPTY_STRING);
     }
 
+    //Metodo para enviar mensaje de start
     public void sendStart() {
         this.getKillergame().setPadsNum(0);
         this.sendMessage(Message.Builder.builder(START_GAME, KillerServer.getId())
@@ -249,6 +263,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 .build());
     }
 
+    //Procesar un mensaje de start
     private void processStart(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
             this.getKillergame().setPadsNum(0);
@@ -261,13 +276,15 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         this.getKillergame().startGame();
     }
 
+    //Procesar mensaje de exit
     private void processQuitGame(final Message message) {
         if (!isMessageMine(message.getSenderId())) {
             this.getKillergame().getNextModule().sendMessage(message);
             System.exit(0);
         }
     }
-
+    
+    //Procesar mensaje de informacion dirigida al PAD
     private void processInfoMessageToPad(final Message message) {
         final KillerPad pad = this.getKillergame().getPadByIP(message.getReceiverId());
         if (pad != null) {
@@ -277,14 +294,17 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Enviar mensaje dirigido al PAD
     public void sendInfoMessageToPad(final String command, final String padIp) {
         this.processInfoMessageToPad(Message.buildInfoMessageToPad(command, padIp));
     }
 
+    //Enviar mensaje de vida dirgido al PAD
     public void sendInfoHealthMessageToPad(final String padIp, final int health) {
         this.processInfoMessageToPad(Message.buildHealthMessageToPad(HEALTH_COMMAND, padIp, health));
     }
 
+    //Procesar mensaje de peticion de syncronizacion, ademas de contar el numero de ordenadores y el indice de ordenador
     private void processSyncRequest(final String senderId, final int quantity) {
         final Message messageToSend;
         if (this.isMessageMine(senderId)) {
@@ -303,6 +323,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         this.getKillergame().getNextModule().sendMessage(messageToSend);
     }
 
+    //Procesar confirmación de syncronizacion
     private void processSyncConfirmation(final Message message) {
         if (!this.isMessageMine(message.getSenderId())) {
             this.getKillergame().getNextModule().sendMessage(message);
@@ -312,6 +333,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Procesar mensaje de check de syncronizacion para evoitar el timeout
     private void processSyncCheck(final Message message) {
         if (!this.isMessageMine(message.getSenderId())) {
             this.getKillergame().getNextModule().sendMessage(message);
@@ -319,10 +341,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         this.getKillergame().getNextModule().getClient().resetSyncTimeOut();
     }
 
+    //Comprobación de si el mensaje recibido es de la misma pantalla, util para quitar tramas de la circulacion
     private boolean isMessageMine(final String id) {
         return KillerServer.getId().equals(id);
     }
 
+    //método para recibir una nave
     private void createShip(ObjectResponse object) {
         this.getKillergame().reciveShip(object.getX(), object.getY(), object.getRadians(),
                 object.getDx(), object.getDy(),
@@ -335,6 +359,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getDamage(), Color.decode(object.getColor()));
     }
 
+    //método para recibir un asteroide
     private void createAsteroid(ObjectResponse object) {
         this.getKillergame().reciveAsteroid(object.getX(), object.getY(),
                 object.getImgHeight(), object.getM(),
@@ -343,6 +368,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getA(), object.getImgFile());
     }
 
+    //método para recibir un Pacman
     private void createPacman(ObjectResponse object) {
         this.getKillergame().recivePacman(object.getX(), object.getY(),
                 object.getM(), object.getHealth(),
@@ -350,6 +376,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
                 object.getVy(), object.getA(), object.getImgHeight());
     }
 
+    //Metodo para actualizar el menu de conexión
     public void updateRoom(final boolean connected) {
         if (this.right) {
             this.getKillergame().getRoom().setFeedBackConnectionRight(connected);
@@ -358,10 +385,12 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Enviar mensaje para disminuir el numero de PADs
     public void sendPadDecrement() {
         this.sendMessage(Message.Builder.builder(DECREMENT_PADS_NUM, KillerServer.getId()).build());
     }
 
+    //Disminuir el numero de Pads
     private void processPadDecrement(final Message message) {
         if (this.getKillergame().getPadsNum() > 0) {
             this.getKillergame().decrementPadsNum();
@@ -371,6 +400,8 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Buscar quien es el ganador y enviarle un mensaje de victoria,
+    // ademas de comunicar al resto quien es el ganador
     private void processWin(final Message message) {
         KillerPad pad = this.getKillergame().getLastPad();
         if (pad != null) {
@@ -387,6 +418,7 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
     
+    //Mostrar el ganador de la partida
     private void processWinner(final Message message){
         if (!this.isMessageMine(message.getSenderId())) {
             this.getKillergame().setWinner(message.getReceiverId());
@@ -394,12 +426,14 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
 
+    //Enviar configuracion de la partida
     public void sendGameConfiguration(final GameConfiguration gameConfiguration) {
         this.sendMessage(Message.Builder.builder(GAME_CONFIGURATION_COMMAND, KillerServer.getId())
                 .withGameConfiguration(gameConfiguration)
                 .build());
     }
-
+    
+    //Establecer configuracion de la partida
     private void processGameConfiguration(final Message message) {
         if (!this.isMessageMine(message.getSenderId())) {
             this.getKillergame().receiveConfiguration(message.getGameConfiguration());
@@ -407,11 +441,13 @@ public class VisualHandler extends ReceptionHandler implements Runnable {
         }
     }
     
+    //NO IMPLEMENTADO
     private void sendReset(){
         this.sendMessage(Message.Builder.builder(RESET_KILLERGAME_COMMAND, KillerServer.getId())
             .build());
     }
     
+    //NO IMPLEMENTADO
     private void processReset(final Message message){
         if (!this.isMessageMine(message.getSenderId())) {
             //this.getKillergame().reset()
