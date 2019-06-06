@@ -225,13 +225,13 @@ public class KillerShip extends Alive {
     protected void setImage() {
         switch (type) {
             case BATMOBILE:
-                this.loadImg("src/visibleObjects/img/fastShip.png");
+                this.loadImg("img/fastShip.png");
                 break;
             case OCTANE:
-                this.loadImg("src/visibleObjects/img/normalShip.png");
+                this.loadImg("img/normalShip.png");
                 break;
             case MARAUDER:
-                this.loadImg("src/visibleObjects/img/bigShip.png");
+                this.loadImg("img/bigShip.png");
                 break;
             default:
                 break;

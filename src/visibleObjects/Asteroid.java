@@ -118,11 +118,11 @@ public class Asteroid extends Automata {
     @Override
     protected void setImage() {
         if (this.imgFile == 1) {
-            this.loadImg("src/visibleObjects/img/ast1.png");
+            this.loadImg("img/ast1.png");
         } else if (this.imgFile == 2) {
-            this.loadImg("src/visibleObjects/img/ast2.png");
+            this.loadImg("img/ast2.png");
         } else {
-            this.loadImg("src/visibleObjects/img/ast3.png");
+            this.loadImg("img/ast3.png");
         }
     }
     

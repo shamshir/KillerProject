@@ -52,7 +52,7 @@ public class Shoot extends Automata {
 
     @Override
     protected void setImage() {
-        this.loadImg("src/visibleObjects/img/shot.png");
+        this.loadImg("img/shot.png");
     }
 
     // ********************************************************

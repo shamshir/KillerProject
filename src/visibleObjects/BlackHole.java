@@ -65,7 +65,7 @@ public class BlackHole extends Static implements Runnable {
 
     @Override
     protected void setImage() {
-        this.loadImg("src/visibleObjects/img/blackhole.png");
+        this.loadImg("img/blackhole.png");
     }
 
     // ********************************************************
