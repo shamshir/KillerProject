@@ -107,25 +107,28 @@ public class Asteroid extends Automata {
         this.kImg = new ExplosionEffect(this);
     }
 
-    /**
-     * Cambiar en función de las físicas
-     */
     @Override
     protected void move() {
         physicsAsteroid.move();
     }
 
+    /**
+     * Carga la imagen según el valor de imgFile. Este valor se establecce aleatoriamente en el 1r constructor
+     */
     @Override
     protected void setImage() {
         if (this.imgFile == 1) {
-            this.loadImg("src/visibleObjects/img/ast1.png");
+            this.loadImg("img/ast1.png");
         } else if (this.imgFile == 2) {
-            this.loadImg("src/visibleObjects/img/ast2.png");
+            this.loadImg("img/ast2.png");
         } else {
-            this.loadImg("src/visibleObjects/img/ast3.png");
+            this.loadImg("img/ast3.png");
         }
     }
     
+    /**
+     * Método para determinar aleatoriamente cual de las tres imágenes se cargará
+     */
     private void setRandomFile() {
         this.imgFile = (int)(Math.random()* 3 + 1);
     }
@@ -133,13 +136,19 @@ public class Asteroid extends Automata {
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
+    /**
+     * Método para iniciar el ExplosionEffect
+     */
     @Override
     public void onDying() {
-//        this.kImg = new ExplosionEffect(this);
         (new Thread(this.kImg)).start();
     }
 
     // Interfaz Renderizable
+    /**
+     * Método para pintar el asteroide. Si está vivo se pintará la imagen, y si está muriendo se pintará la explosión
+     * @param g2d 
+     */
     @Override
     public void render(Graphics2D g2d) {
 

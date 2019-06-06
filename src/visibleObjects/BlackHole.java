@@ -31,12 +31,17 @@ public class BlackHole extends Static implements Runnable {
 
     }
 
+    /**
+     * Método para actualizar el ángulo que se aplicará para pintar la imagen.
+     */
     private void updateRadians() {
+        // Si el ángulo está a punto de llegar a los 360 grados (en radianes), el incremento disminuye
         if (this.radians + this.radiansIncrement > Math.PI * 2) {
             this.radiansIncrement -= 0.001;
         }
 
-        if (this.radiansIncrement == 0.0) { // Reinciar
+        // Si el incremento a aplicar llega a ser 0 se volverá a aplicar un incremento de 0.04 y se reinicia el ángulo a 0
+        if (this.radiansIncrement == 0.0) {
             this.radians = 0;
             this.radiansIncrement = 0.004;
         }
@@ -60,13 +65,17 @@ public class BlackHole extends Static implements Runnable {
 
     @Override
     protected void setImage() {
-        this.loadImg("src/visibleObjects/img/blackhole.png");
+        this.loadImg("img/blackhole.png");
     }
 
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
     // Interfaz Renderizable
+    /**
+     * Método para pintar la imagen del BlackHole con una animación de rotación.
+     * @param g2d 
+     */
     @Override
     public void render(Graphics2D g2d) {
         

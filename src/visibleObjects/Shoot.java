@@ -24,7 +24,7 @@ public class Shoot extends Automata {
         this.id = ship.getId();
         this.state = State.ALIVE;
         this.damage = ship.getDamage(); // Daño de su nave
-        this.color = ship.getColor();
+        this.color = ship.getColor(); // Color de su nave
 
         this.maxspeed = 7;
         this.health = 1;
@@ -40,7 +40,7 @@ public class Shoot extends Automata {
 
         this.radians = ship.radians + Math.PI / 2;
         this.m = 30;
-        this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de fisicas
+        this.physicsShoot = new PhysicsShoot(this); // han de estar inicializadas todas las variables de físicas
 
         this.kImg = new KillerImage(this);
     }
@@ -52,13 +52,17 @@ public class Shoot extends Automata {
 
     @Override
     protected void setImage() {
-        this.loadImg("src/visibleObjects/img/shot.png");
+        this.loadImg("img/shot.png");
     }
 
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
     // INTERFAZ Renderizable
+    /**
+     * Método para pintar una KillerImage que le aplica el color de la nave a la imagen de la bala
+     * @param g2d 
+     */
     @Override
     public void render(Graphics2D g2d) {
         g2d.drawImage(this.kImg, (int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, null);

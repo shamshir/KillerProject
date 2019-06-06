@@ -4,7 +4,6 @@ import game.KillerGame;
 import game.KillerRules;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import sound.KillerRadio;
 import visualEffects.ExplosionEffect;
 import physics.PhysicsPacman;
@@ -30,6 +29,7 @@ public class Pacman extends Automata {
     public Pacman(KillerGame game, double x, double y) {
         super(game, x, y);
 
+        System.out.println("Pacman constructor: constante KillerRules.PACMAN_INITIAL_HEALTH = " + KillerRules.PACMAN_INITIAL_HEALTH);
         this.health = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgHeight = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgWidth = KillerRules.PACMAN_INITIAL_HEALTH;
@@ -50,12 +50,11 @@ public class Pacman extends Automata {
         this.killerRadio = new KillerRadio();
         this.kImg = new ExplosionEffect(this);
     }
-    
+
     // 2o CONSTRUCTOR DEFINITIVO
-    
     /**
      * Constructor para instanciar un pacman cuando se recibe de otro PC
-     * 
+     *
      * @param game
      * @param x
      * @param y
@@ -65,7 +64,7 @@ public class Pacman extends Automata {
      * @param vx
      * @param vy
      * @param a
-     * @param imgHeight 
+     * @param imgHeight
      */
     public Pacman(KillerGame game, double x, double y, double m, int health,
             double radians, double vx, double vy, double a, int imgHeight) {
@@ -113,8 +112,8 @@ public class Pacman extends Automata {
         this.m = m;
         this.hit = 0;
         this.health = health;
-        this.imgHeight = health; // cambiar por checkInitialSize
-        this.imgWidth = health; // cambiar por checkInitialSize
+        this.imgHeight = health;
+        this.imgWidth = health;
         this.radius = this.imgHeight / 2;
         this.radians = radians;
         this.vx = vx;
@@ -132,38 +131,65 @@ public class Pacman extends Automata {
         this.kImg = new ExplosionEffect(this);
     }
 
+    @Override
+    public void run() {
+        // Iniciar sonido del Pacman
+        this.game.changeMusic(KillerRadio.ClipType.PACMAN_MOVE);
+        System.out.println("music ON");
+
+        while (state != State.DEAD) {
+
+            if (this.state != State.DYING) {
+                this.move();
+                game.checkColision(this);
+            }
+
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        // Parar sonido del Pacman
+        this.killerRadio.stopSound();
+        System.out.println("music OFF");
+        this.game.removeObject(this);
+    }
+
     /**
-     * Suma a width, height y health la cantidad pasada por parámetro
+     * Suma a width, height y health la cantidad pasada por parámetro.
+     * En principio tendrá el mismo ancho y alto que su salud, pero se
+     * limita el tamaño mínimo (50px) y máximo (500px) que podrá tener,
+     * independientemente de su salud.
+     * Se recalcula el radio y la masa.
      *
-     * @param size cantidad a incrementar
+     * @param size cantidad a incrementar (positiva o negativa)
      */
     public void setSize(int size) {
         this.health += size;
-//        System.out.println("Pacman EAT " + size);
 
-        if (this.health > 300) {
-            this.imgWidth = 300;
-            this.imgHeight = 300;
-        } else if (this.health < 20) {
-            this.imgWidth = 20;
-            this.imgHeight = 20;
+        if (this.health > 500) {
+            this.imgWidth = 500;
+            this.imgHeight = 500;
+        } else if (this.health < 50) {
+            this.imgWidth = 50;
+            this.imgHeight = 50;
         } else {
             this.imgWidth += size;
             this.imgHeight += size;
         }
         this.radius = this.imgHeight / 2;
         this.m = Math.PI * (this.radius * this.radius);
-
-//        System.out.println("Pacman HEALTH = " + this.health);
-//        System.out.println("Pacman WIDTH = " + this.imgWidth);
-//        System.out.println("Pacman HEIGHT = " + this.imgHeight);
-//        System.out.println("--------------");
     }
 
+    /**
+     * Método para quitar vida, modificando el alto, ancho, radio y m del pacman.
+     * Cambia el valor de la variable hit para que durante unos fotogramas se pinte de diferente color.
+     * @param damage daño recibido
+     */
     @Override
     public void quitarVida(int damage) {
-//        System.out.println("Pacman HITTED: damage --> " + damage);
-//        System.out.println("--------------");
         this.setSize(-damage);
         this.hit = 8;
     }
@@ -178,21 +204,31 @@ public class Pacman extends Automata {
 
     }
 
+    /**
+     * Método para pintar el Pacman.
+     * Tiene una pequeña animación para que abra y cierre la boca
+     * y para que cambie de color durante unos segundos cuando le disparan
+     * @param g2d 
+     */
     private void drawPacman(Graphics2D g2d) {
+        // Color en función de si le han disparado o no
         if (this.hit > 0) {
-            g2d.setColor(Color.decode("#f4ee7a"));
+            g2d.setColor(Color.decode("#fcf5bf"));
             this.hit--;
         } else {
             g2d.setColor(Color.decode("#f4db1d"));
         }
 
+        // Control para que tenga la boca abierta o cerrada
         if (System.currentTimeMillis() - this.fpsControlTime >= 500) {
             mouthOpened = !mouthOpened;
             this.fpsControlTime = System.currentTimeMillis();
         }
 
+        // Ángulo con el que se pintará, según su dirección
         int degrees = (int) (this.radians * 180 / Math.PI);
-        
+
+        // Se pinta un arco de longitud adecuada según si ha de tener la boca abierta o cerrada, y según el ángulo que lleva
         if (mouthOpened) {
             g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 50), 260);
         } else {
@@ -204,11 +240,12 @@ public class Pacman extends Automata {
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
+    /**
+     * Método para iniciar el ExplosionEffect
+     */
     @Override
     public void onDying() {
-//        this.kImg = new ExplosionEffect(this);
         (new Thread(this.kImg)).start();
-
     }
 
     // INTERFAZ Renderizable    

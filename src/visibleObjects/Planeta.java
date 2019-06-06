@@ -26,15 +26,15 @@ public class Planeta extends Static {
     // ********************************************************
     // *                     Interfaces                       *
     // ********************************************************
-    // *********************
-    // * Getters & Setters *
-    // *********************
     @Override
     protected void setImage() {
         if ((int)(Math.random()* 2 + 1) == 1) {
-            this.loadImg("src/visibleObjects/img/planeta1.png");
+            this.loadImg("img/planeta1.png");
         } else {
-            this.loadImg("src/visibleObjects/img/planeta2.png");
+            this.loadImg("img/planeta2.png");
         }
     }
+    // *********************
+    // * Getters & Setters *
+    // *********************
 }
