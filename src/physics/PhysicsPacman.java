@@ -62,8 +62,8 @@ public class PhysicsPacman {
         pac.setMaxspeed(maxspeed);
         pac.setRadians(radians);
 
-        pac.setImgWidth(WIDTH);
-        pac.setImgHeight(HEIGHT);
+    //    pac.setImgWidth(WIDTH);
+    //    pac.setImgHeight(HEIGHT);
     }
 
     public void updateFields() {

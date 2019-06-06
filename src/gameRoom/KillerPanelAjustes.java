@@ -6,19 +6,19 @@
 package gameRoom;
 
 import game.KillerGame;
+import javax.swing.JLabel;
 import sound.KillerSound;
-
-
 
 /**
  *
  * @author Yeray
  */
 public class KillerPanelAjustes extends javax.swing.JPanel {
+
     //Variable Killer Game
     private KillerGame kg;
     private KillerRoom kr;
-    
+
     /**
      * Creates new form KillerPanelAjustes
      */
@@ -26,10 +26,32 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
         this.kr = kr;
         initComponents();
         kg = kr.getKg();
+        jLabelDescription.setHorizontalAlignment(JLabel.CENTER);
     }
-    
-    public KillerPanelAjustes getKillerPanelAjustes(){
+
+    /**
+     * Vacia los checks
+     */
+    public void clearChecks() {
+        jLabelch1.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+        jLabelch2.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+        jLabelch3.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+        jLabelch4.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+        jLabelch5.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+        jLabelch6.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+        jLabelch7.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+        jLabelch8.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
+    }
+
+    public KillerPanelAjustes getKillerPanelAjustes() {
         return this;
+    }
+
+    /**
+     * LLamada al sonido de clic
+     */
+    public void clicSound() {
+        kg.startSound(KillerSound.ClipType.PC_CLICK);
     }
 
     /**
@@ -44,6 +66,24 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
         jLabelTitulo = new javax.swing.JLabel();
         jLabelCopy = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jLabelMundos = new javax.swing.JLabel();
+        jLabelch1 = new javax.swing.JLabel();
+        jLabelch3 = new javax.swing.JLabel();
+        jLabelch2 = new javax.swing.JLabel();
+        jLabelch4 = new javax.swing.JLabel();
+        jLabelch5 = new javax.swing.JLabel();
+        jLabelch6 = new javax.swing.JLabel();
+        jLabelch7 = new javax.swing.JLabel();
+        jButtonAleatorio = new javax.swing.JButton();
+        jButtonBasico = new javax.swing.JButton();
+        jButtonPedregoso = new javax.swing.JButton();
+        jButtonInfierno = new javax.swing.JButton();
+        jButtonPlanetas = new javax.swing.JButton();
+        jButtonEnderman = new javax.swing.JButton();
+        jButtonBonus = new javax.swing.JButton();
+        jLabelch8 = new javax.swing.JLabel();
+        jButtonVacio = new javax.swing.JButton();
+        jLabelDescription = new javax.swing.JLabel();
         jLabelFondo = new javax.swing.JLabel();
 
         setMaximumSize(new java.awt.Dimension(525, 525));
@@ -71,23 +111,340 @@ public class KillerPanelAjustes extends javax.swing.JPanel {
                 jButton1ActionPerformed(evt);
             }
         });
-        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 430, 130, -1));
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 440, 130, -1));
+
+        jLabelMundos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/TituloSeleccion.png"))); // NOI18N
+        add(jLabelMundos, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 100, -1, -1));
+
+        jLabelch1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png"))); // NOI18N
+        jLabelch1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jLabelch1.setPreferredSize(new java.awt.Dimension(24, 24));
+        add(jLabelch1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 150, -1, -1));
+
+        jLabelch3.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jLabelch3.setPreferredSize(new java.awt.Dimension(24, 24));
+        add(jLabelch3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 230, -1, -1));
+
+        jLabelch2.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jLabelch2.setPreferredSize(new java.awt.Dimension(24, 24));
+        add(jLabelch2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, -1, -1));
+
+        jLabelch4.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jLabelch4.setPreferredSize(new java.awt.Dimension(24, 24));
+        add(jLabelch4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 270, -1, -1));
+
+        jLabelch5.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jLabelch5.setPreferredSize(new java.awt.Dimension(24, 24));
+        add(jLabelch5, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, -1, -1));
+
+        jLabelch6.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jLabelch6.setPreferredSize(new java.awt.Dimension(24, 24));
+        add(jLabelch6, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 190, -1, -1));
+
+        jLabelch7.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jLabelch7.setPreferredSize(new java.awt.Dimension(24, 24));
+        add(jLabelch7, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 230, -1, -1));
+
+        jButtonAleatorio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Aleatorio.png"))); // NOI18N
+        jButtonAleatorio.setBorderPainted(false);
+        jButtonAleatorio.setContentAreaFilled(false);
+        jButtonAleatorio.setPreferredSize(new java.awt.Dimension(160, 30));
+        jButtonAleatorio.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/AleatorioOscuro.png"))); // NOI18N
+        jButtonAleatorio.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/AleatorioBrillante.png"))); // NOI18N
+        jButtonAleatorio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButtonAleatorioMouseEntered(evt);
+            }
+        });
+        jButtonAleatorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAleatorioActionPerformed(evt);
+            }
+        });
+        add(jButtonAleatorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 270, 150, -1));
+
+        jButtonBasico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Basico.png"))); // NOI18N
+        jButtonBasico.setBorderPainted(false);
+        jButtonBasico.setContentAreaFilled(false);
+        jButtonBasico.setPreferredSize(new java.awt.Dimension(160, 30));
+        jButtonBasico.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/BasicoOscuro.png"))); // NOI18N
+        jButtonBasico.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/BasicoBrillante.png"))); // NOI18N
+        jButtonBasico.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButtonBasicoMouseEntered(evt);
+            }
+        });
+        jButtonBasico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBasicoActionPerformed(evt);
+            }
+        });
+        add(jButtonBasico, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 150, 90, -1));
+
+        jButtonPedregoso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Pedregoso.png"))); // NOI18N
+        jButtonPedregoso.setBorderPainted(false);
+        jButtonPedregoso.setContentAreaFilled(false);
+        jButtonPedregoso.setPreferredSize(new java.awt.Dimension(160, 30));
+        jButtonPedregoso.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/PedregosoOscuro.png"))); // NOI18N
+        jButtonPedregoso.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/PedregosoBrillante.png"))); // NOI18N
+        jButtonPedregoso.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButtonPedregosoMouseEntered(evt);
+            }
+        });
+        jButtonPedregoso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPedregosoActionPerformed(evt);
+            }
+        });
+        add(jButtonPedregoso, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 190, 150, -1));
+
+        jButtonInfierno.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Infierno.png"))); // NOI18N
+        jButtonInfierno.setBorderPainted(false);
+        jButtonInfierno.setContentAreaFilled(false);
+        jButtonInfierno.setPreferredSize(new java.awt.Dimension(160, 30));
+        jButtonInfierno.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/InfiernoOscuro.png"))); // NOI18N
+        jButtonInfierno.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/InfiernoBrillante.png"))); // NOI18N
+        jButtonInfierno.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButtonInfiernoMouseEntered(evt);
+            }
+        });
+        jButtonInfierno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInfiernoActionPerformed(evt);
+            }
+        });
+        add(jButtonInfierno, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 230, 110, -1));
+
+        jButtonPlanetas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/planetas.png"))); // NOI18N
+        jButtonPlanetas.setBorderPainted(false);
+        jButtonPlanetas.setContentAreaFilled(false);
+        jButtonPlanetas.setPreferredSize(new java.awt.Dimension(160, 30));
+        jButtonPlanetas.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/planetasOscuro.png"))); // NOI18N
+        jButtonPlanetas.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/planetasBrillante.png"))); // NOI18N
+        jButtonPlanetas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButtonPlanetasMouseEntered(evt);
+            }
+        });
+        jButtonPlanetas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPlanetasActionPerformed(evt);
+            }
+        });
+        add(jButtonPlanetas, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 230, 130, -1));
+
+        jButtonEnderman.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Enderman.png"))); // NOI18N
+        jButtonEnderman.setBorderPainted(false);
+        jButtonEnderman.setContentAreaFilled(false);
+        jButtonEnderman.setPreferredSize(new java.awt.Dimension(160, 30));
+        jButtonEnderman.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/EndermanOscuro.png"))); // NOI18N
+        jButtonEnderman.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/EndermanBrillante.png"))); // NOI18N
+        jButtonEnderman.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButtonEndermanMouseEntered(evt);
+            }
+        });
+        jButtonEnderman.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEndermanActionPerformed(evt);
+            }
+        });
+        add(jButtonEnderman, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 150, 150, -1));
+
+        jButtonBonus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Bonus.png"))); // NOI18N
+        jButtonBonus.setBorderPainted(false);
+        jButtonBonus.setContentAreaFilled(false);
+        jButtonBonus.setPreferredSize(new java.awt.Dimension(160, 30));
+        jButtonBonus.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/BonusOscuro.png"))); // NOI18N
+        jButtonBonus.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/BonusBrillante.png"))); // NOI18N
+        jButtonBonus.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButtonBonusMouseEntered(evt);
+            }
+        });
+        jButtonBonus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBonusActionPerformed(evt);
+            }
+        });
+        add(jButtonBonus, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 190, 80, -1));
+
+        jLabelch8.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        jLabelch8.setPreferredSize(new java.awt.Dimension(24, 24));
+        add(jLabelch8, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 270, -1, -1));
+
+        jButtonVacio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/Vacio.png"))); // NOI18N
+        jButtonVacio.setBorderPainted(false);
+        jButtonVacio.setContentAreaFilled(false);
+        jButtonVacio.setPreferredSize(new java.awt.Dimension(160, 30));
+        jButtonVacio.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/VacioOscuro.png"))); // NOI18N
+        jButtonVacio.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/VacioBrillante.png"))); // NOI18N
+        jButtonVacio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButtonVacioMouseEntered(evt);
+            }
+        });
+        jButtonVacio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVacioActionPerformed(evt);
+            }
+        });
+        add(jButtonVacio, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 270, 70, -1));
+
+        jLabelDescription.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabelDescription.setForeground(new java.awt.Color(255, 204, 0));
+        jLabelDescription.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 204, 0)));
+        add(jLabelDescription, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 320, 270, 100));
 
         jLabelFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/stars.gif"))); // NOI18N
+        jLabelFondo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabelFondoMouseEntered(evt);
+            }
+        });
         add(jLabelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // VOLVER
-        kg.startSound(KillerSound.ClipType.PC_CLICK);
+        clicSound();
         kr.setKillerPanelPrincipal();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButtonBasicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBasicoActionPerformed
+        // Mundo básico
+        clicSound();
+        clearChecks();
+        jLabelch1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png")));
+        kg.setWorld(1);
+    }//GEN-LAST:event_jButtonBasicoActionPerformed
+
+    private void jButtonPedregosoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPedregosoActionPerformed
+        // Mundo Pedregoso
+        clicSound();
+        clearChecks();
+        jLabelch2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png")));
+        kg.setWorld(2);
+    }//GEN-LAST:event_jButtonPedregosoActionPerformed
+
+    private void jButtonInfiernoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInfiernoActionPerformed
+        // Mundo Infierno
+        clicSound();
+        clearChecks();
+        jLabelch3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png")));
+        kg.setWorld(3);
+    }//GEN-LAST:event_jButtonInfiernoActionPerformed
+
+    private void jButtonVacioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVacioActionPerformed
+        // Mundo Vacio
+        clicSound();
+        clearChecks();
+        jLabelch4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png")));
+        kg.setWorld(4);
+    }//GEN-LAST:event_jButtonVacioActionPerformed
+
+    private void jButtonEndermanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEndermanActionPerformed
+        // Mundo Enderman
+        clicSound();
+        clearChecks();
+        jLabelch5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png")));
+        kg.setWorld(5);
+    }//GEN-LAST:event_jButtonEndermanActionPerformed
+
+    private void jButtonBonusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBonusActionPerformed
+        // Mundo Bonus
+        clicSound();
+        clearChecks();
+        jLabelch6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png")));
+        kg.setWorld(6);
+    }//GEN-LAST:event_jButtonBonusActionPerformed
+
+    private void jButtonPlanetasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlanetasActionPerformed
+        // Mundo Nebuloso
+        clicSound();
+        clearChecks();
+        jLabelch7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png")));
+        kg.setWorld(7);
+    }//GEN-LAST:event_jButtonPlanetasActionPerformed
+
+    private void jButtonAleatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAleatorioActionPerformed
+        // Mundo Aleatorio
+        clicSound();
+        clearChecks();
+        jLabelch8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gameRoom/img/checked.png")));
+        kg.setWorld(8);
+    }//GEN-LAST:event_jButtonAleatorioActionPerformed
+
+    private void jButtonBasicoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonBasicoMouseEntered
+        // Descripción mundo básico
+        jLabelDescription.setText("<html>Este mundo puede contener todos<br>los elementos en óptima medida.</html>");
+    }//GEN-LAST:event_jButtonBasicoMouseEntered
+
+    private void jLabelFondoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelFondoMouseEntered
+        // Ocultar descripciones
+        jLabelDescription.setText("");
+    }//GEN-LAST:event_jLabelFondoMouseEntered
+
+    private void jButtonPedregosoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonPedregosoMouseEntered
+        // Descripción mundo pedregoso
+        jLabelDescription.setText("<html>Este mundo contiene gran   <br> cantidad de asteroides.</html>");
+    }//GEN-LAST:event_jButtonPedregosoMouseEntered
+
+    private void jButtonInfiernoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonInfiernoMouseEntered
+        // Descripción mundo infierno
+        jLabelDescription.setText("<html>Este mundo contiene gran  <br> cantidad de Pacman.</html>");
+    }//GEN-LAST:event_jButtonInfiernoMouseEntered
+
+    private void jButtonVacioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonVacioMouseEntered
+        // Descripción mundo vacio
+        jLabelDescription.setText("<html>Este mundo no contiene  <br> ningún elemento.</html>");
+    }//GEN-LAST:event_jButtonVacioMouseEntered
+
+    private void jButtonAleatorioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonAleatorioMouseEntered
+        // Descripción mundo aleatorio
+        jLabelDescription.setText("<html>Se genera un mundo  <br> aleatorio.</html>");
+    }//GEN-LAST:event_jButtonAleatorioMouseEntered
+
+    private void jButtonEndermanMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonEndermanMouseEntered
+        // Descripción mundo enderman
+        jLabelDescription.setText("<html>Este mundo contiene muchos <br> agujeros negros.</html>");
+    }//GEN-LAST:event_jButtonEndermanMouseEntered
+
+    private void jButtonBonusMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonBonusMouseEntered
+        // Descripción mundo bonus
+        jLabelDescription.setText("<html>Este mundo solo aparecen <br> power-ups.</html>");
+    }//GEN-LAST:event_jButtonBonusMouseEntered
+
+    private void jButtonPlanetasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonPlanetasMouseEntered
+        // Descripción mundo nebuloso
+        jLabelDescription.setText("<html>Este mundo contiene muchos <br> planetas.</html>");
+    }//GEN-LAST:event_jButtonPlanetasMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonAleatorio;
+    private javax.swing.JButton jButtonBasico;
+    private javax.swing.JButton jButtonBonus;
+    private javax.swing.JButton jButtonEnderman;
+    private javax.swing.JButton jButtonInfierno;
+    private javax.swing.JButton jButtonPedregoso;
+    private javax.swing.JButton jButtonPlanetas;
+    private javax.swing.JButton jButtonVacio;
     private javax.swing.JLabel jLabelCopy;
+    private javax.swing.JLabel jLabelDescription;
     private javax.swing.JLabel jLabelFondo;
+    private javax.swing.JLabel jLabelMundos;
     private javax.swing.JLabel jLabelTitulo;
+    private javax.swing.JLabel jLabelch1;
+    private javax.swing.JLabel jLabelch2;
+    private javax.swing.JLabel jLabelch3;
+    private javax.swing.JLabel jLabelch4;
+    private javax.swing.JLabel jLabelch5;
+    private javax.swing.JLabel jLabelch6;
+    private javax.swing.JLabel jLabelch7;
+    private javax.swing.JLabel jLabelch8;
     // End of variables declaration//GEN-END:variables
 }

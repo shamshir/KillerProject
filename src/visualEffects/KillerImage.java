@@ -2,6 +2,8 @@ package visualEffects;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
 import visibleObjects.Alive;
 import visibleObjects.KillerShip;
 import visibleObjects.Shoot;
@@ -27,6 +30,7 @@ public class KillerImage extends BufferedImage implements Runnable {
     protected int[][] colorMap;
     protected int renderWidth;
     protected int renderHeight;
+    protected Timer timer;
 
     /**
      * Con un solo parametro
@@ -52,9 +56,11 @@ public class KillerImage extends BufferedImage implements Runnable {
             this.paintObjectColor(shipColor);
 
         } else if (vo instanceof Shoot) {
-//            Color objectColor = ((Shoot) vo).getColor();
-//            this.paintObjectColor(objectColor);
+            Color objectColor = ((Shoot) vo).getColor();
+            this.paintObjectColor(objectColor);
         }
+
+        this.blink();
 
         this.setRenderHeight();
         this.setRenderWidth();
@@ -87,12 +93,64 @@ public class KillerImage extends BufferedImage implements Runnable {
             this.paintObjectColor(shipColor);
 
         } else if (vo instanceof Shoot) {
-//            Color objectColor = ((Shoot) vo).getColor();
-//            this.paintObjectColor(objectColor);
+            Color objectColor = ((Shoot) vo).getColor();
+            this.paintObjectColor(objectColor);
         }
 
+//        this.blink();
         this.setRenderHeight();
         this.setRenderWidth();
+    }
+
+    public class RestoreColorizedShipImage implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if (visibleObject instanceof KillerShip) {
+                paintColorizedShipImage();
+            }
+
+            timer.stop();
+            timer = null;
+            System.out.println("timer null: " + timer);
+        }
+    }
+
+    public void blink() {
+        if (this.visibleObject instanceof KillerShip) {
+            this.paintDamagedShip();
+
+            this.timer = new Timer(100, new RestoreColorizedShipImage());
+            this.timer.start();
+        }
+    }
+
+    private void paintOriginalimage() {
+        this.graphics.drawImage(this.getOriginalImage(), 0, 0, null);
+    }
+
+    private void paintColorizedShipImage() {
+        this.paintOriginalimage();
+        Color shipColor = ((KillerShip) visibleObject).getColor();
+        this.paintObjectColor(shipColor);
+    }
+
+    private void paintDamagedShip() {
+        int a, b, g, r;
+
+        for (int pos = 0; pos < this.raster.length; pos += 4) {
+            a = pos;
+            b = pos + 1;
+            g = pos + 2;
+            r = pos + 3;
+
+            if (Byte.toUnsignedInt(this.raster[a]) > 0) {
+                this.raster[b] = (byte) 10;
+                this.raster[g] = (byte) 10;
+                this.raster[r] = (byte) 255;
+            }
+        }
     }
 
     @Override

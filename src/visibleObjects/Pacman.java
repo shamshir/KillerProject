@@ -19,6 +19,7 @@ public class Pacman extends Automata {
     private boolean mouthOpened;
     private KillerRadio killerRadio;
     private PhysicsPacman physics;
+    private int hit;
 
     /**
      *
@@ -32,9 +33,12 @@ public class Pacman extends Automata {
         this.health = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgHeight = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgWidth = KillerRules.PACMAN_INITIAL_HEALTH;
+        System.out.println("Pacman width: " + this.imgWidth);
+        System.out.println("Pacman height: " + this.imgHeight);
         this.radius = this.imgHeight / 2;
         this.radians = Math.random() * (Math.PI * 2); // angulo aleatorio
         this.m = Math.PI * (this.radius * this.radius);
+        this.hit = 0;
 
         this.maxspeed = 1;
 
@@ -44,8 +48,52 @@ public class Pacman extends Automata {
         this.physics = new PhysicsPacman(this);
 
         this.killerRadio = new KillerRadio();
+        this.kImg = new ExplosionEffect(this);
+    }
+    
+    // 2o CONSTRUCTOR DEFINITIVO
+    
+    /**
+     * Constructor para instanciar un pacman cuando se recibe de otro PC
+     * 
+     * @param game
+     * @param x
+     * @param y
+     * @param m
+     * @param health
+     * @param radians
+     * @param vx
+     * @param vy
+     * @param a
+     * @param imgHeight 
+     */
+    public Pacman(KillerGame game, double x, double y, double m, int health,
+            double radians, double vx, double vy, double a, int imgHeight) {
+        super(game, x, y);
+
+        this.m = m;
+        this.hit = 0;
+        this.health = health;
+        this.imgHeight = imgHeight;
+        this.imgWidth = imgHeight;
+        this.radius = this.imgHeight / 2;
+        this.radians = radians;
+        this.vx = vx;
+        this.vy = vy;
+        this.a = a;
+
+        this.maxspeed = 1;
+
+        mouthOpened = true;
+        fpsControlTime = System.currentTimeMillis();
+
+        this.physics = new PhysicsPacman(this);
+
+        this.killerRadio = new KillerRadio();
+        this.kImg = new ExplosionEffect(this);
     }
 
+    // ELIMINAR CONSTRUCTOR
     /**
      *
      * @param game
@@ -63,6 +111,7 @@ public class Pacman extends Automata {
         super(game, x, y);
 
         this.m = m;
+        this.hit = 0;
         this.health = health;
         this.imgHeight = health; // cambiar por checkInitialSize
         this.imgWidth = health; // cambiar por checkInitialSize
@@ -80,16 +129,7 @@ public class Pacman extends Automata {
         this.physics = new PhysicsPacman(this);
 
         this.killerRadio = new KillerRadio();
-    }
-
-    private void checkInitialSize(int health) {
-        if (health >= 30) {
-            this.imgHeight = health;
-            this.imgWidth = health;
-        } else {
-            this.imgHeight = 30;
-            this.imgWidth = 30;
-        }
+        this.kImg = new ExplosionEffect(this);
     }
 
     /**
@@ -98,37 +138,34 @@ public class Pacman extends Automata {
      * @param size cantidad a incrementar
      */
     public void setSize(int size) {
-//        if (size >= 0) {
-        if ((this.imgHeight + size) <= 300) {
-            this.imgWidth += size;
-            this.imgHeight += size;
-            this.health += size;
-            this.radius = this.imgHeight / 2;
-            this.m = Math.PI * (this.radius * this.radius);
-        } else {
+        this.health += size;
+//        System.out.println("Pacman EAT " + size);
+
+        if (this.health > 300) {
             this.imgWidth = 300;
             this.imgHeight = 300;
-            this.health = 300;
-            this.radius = this.imgHeight / 2;
-            this.m = Math.PI * (this.radius * this.radius);
+        } else if (this.health < 20) {
+            this.imgWidth = 20;
+            this.imgHeight = 20;
+        } else {
+            this.imgWidth += size;
+            this.imgHeight += size;
         }
-//        } else {
-//            if ((this.imgHeight + size) >= 30) {
-//                this.imgWidth += size;
-//                this.imgHeight += size;
-//                this.health += size;
-//                this.radius = this.imgHeight / 2;
-//                this.m = Math.PI * (this.radius * this.radius);
-//                System.out.println("Pacman: me hago pequeño");
-//            } else if ((this.imgHeight + size) < 0){
-//                this.imgWidth = 30;
-//                this.imgHeight = 30;
-//                this.health = size;
-//                this.radius = this.imgHeight / 2;
-//                this.m = Math.PI * (this.radius * this.radius);
-//            }
-//
-//        }
+        this.radius = this.imgHeight / 2;
+        this.m = Math.PI * (this.radius * this.radius);
+
+//        System.out.println("Pacman HEALTH = " + this.health);
+//        System.out.println("Pacman WIDTH = " + this.imgWidth);
+//        System.out.println("Pacman HEIGHT = " + this.imgHeight);
+//        System.out.println("--------------");
+    }
+
+    @Override
+    public void quitarVida(int damage) {
+//        System.out.println("Pacman HITTED: damage --> " + damage);
+//        System.out.println("--------------");
+        this.setSize(-damage);
+        this.hit = 8;
     }
 
     @Override
@@ -142,7 +179,12 @@ public class Pacman extends Automata {
     }
 
     private void drawPacman(Graphics2D g2d) {
-        g2d.setColor(Color.YELLOW);
+        if (this.hit > 0) {
+            g2d.setColor(Color.decode("#f4ee7a"));
+            this.hit--;
+        } else {
+            g2d.setColor(Color.decode("#f4db1d"));
+        }
 
         if (System.currentTimeMillis() - this.fpsControlTime >= 500) {
             mouthOpened = !mouthOpened;
@@ -150,18 +192,12 @@ public class Pacman extends Automata {
         }
 
         int degrees = (int) (this.radians * 180 / Math.PI);
-
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
         if (mouthOpened) {
-//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 50), 260);
-//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 30), 270);
             g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 50), 260);
         } else {
-//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (this.radians + 10), 340);
-//            g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 5), 330);
             g2d.fillArc((int) (x - radius), (int) (y - radius), this.imgWidth, this.imgHeight, (int) (degrees + 10), 340);
         }
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
     }
 
@@ -170,7 +206,7 @@ public class Pacman extends Automata {
     // ********************************************************
     @Override
     public void onDying() {
-        this.kImg = new ExplosionEffect(this);
+//        this.kImg = new ExplosionEffect(this);
         (new Thread(this.kImg)).start();
 
     }
