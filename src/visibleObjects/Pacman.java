@@ -29,7 +29,6 @@ public class Pacman extends Automata {
     public Pacman(KillerGame game, double x, double y) {
         super(game, x, y);
 
-        System.out.println("Pacman constructor: constante KillerRules.PACMAN_INITIAL_HEALTH = " + KillerRules.PACMAN_INITIAL_HEALTH);
         this.health = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgHeight = KillerRules.PACMAN_INITIAL_HEALTH;
         this.imgWidth = KillerRules.PACMAN_INITIAL_HEALTH;
@@ -134,8 +133,7 @@ public class Pacman extends Automata {
     @Override
     public void run() {
         // Iniciar sonido del Pacman
-        this.game.changeMusic(KillerRadio.ClipType.PACMAN_MOVE);
-        System.out.println("music ON");
+        this.killerRadio.setClip(KillerRadio.ClipType.PACMAN_MOVE);
 
         while (state != State.DEAD) {
 
@@ -153,7 +151,6 @@ public class Pacman extends Automata {
 
         // Parar sonido del Pacman
         this.killerRadio.stopSound();
-        System.out.println("music OFF");
         this.game.removeObject(this);
     }
 
