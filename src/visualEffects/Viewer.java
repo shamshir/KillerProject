@@ -85,10 +85,12 @@ public class Viewer extends Canvas implements Runnable {
 
         int numBackground = (this.killerGame.getWindowNumber() % this.TOTAL_BACKGOUND_IMGS);
 
+        String url = "backgroundImages/moon" + numBackground + ".png";
+
+        
         try {
-//            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/b" + numBackground + ".jpeg"));
-            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/moon" + numBackground
-                    + ".png"));
+//            this.backgroundImg = ImageIO.read(new File("src/visualEffects/backgroundImages/" + numBackground + ".jpeg"));
+            this.backgroundImg = ImageIO.read(this.getClass().getResource(url));
 
         } catch (IOException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
