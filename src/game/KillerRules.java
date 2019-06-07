@@ -47,7 +47,7 @@ public class KillerRules {
     public static final double COLLISION_MODIFFIER = 0.5;
     
     // Pacman
-    public static final int PACMAN_INITIAL_HEALTH = 10;
+    public static final int PACMAN_INITIAL_HEALTH = 60;
     public static final int PACMAN_INCREMENT = 10;
     public static final int PACMAN_DECREMENT = 1;
     public static final double MIN_PACMANS = 0;
@@ -114,7 +114,7 @@ public class KillerRules {
         // Detect wall type
         if (wall.getType() == Wall.Limit.UP) {
             // Teleport to bottom
-            alive.setY( KillerGame.VIEWER_HEIGHT - alive.getImgHeight());
+            alive.setY( KillerGame.VIEWER_HEIGHT - (alive.getImgHeight() / 2) - 1);
         }
         if (wall.getType() == Wall.Limit.DOWN) {
             // Teleport to top
@@ -472,13 +472,15 @@ public class KillerRules {
      * @return True if Ship state becomes dead and False if it still alive.
      */
     private static boolean substractHealthShip(KillerGame game, KillerShip ship, int damage) {
-        // Bling
-        ship.getKillerImage().blink();
         // Dead status
         boolean dead = false;
         if (KillerRules.substractHealthAlive(ship, damage)) {
             game.getNextModule().sendInfoMessageToPad("pad_dead", ship.getId());
             dead = true;
+        }
+        // Bling
+        if (!dead) {
+            ship.getKillerImage().blink();
         }
         // Send health info to pad
         game.getNextModule().sendInfoHealthMessageToPad(ship.getId(), ship.getHealth());

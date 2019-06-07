@@ -485,12 +485,6 @@ public class KillerGame extends JFrame {
     }
 
     public void restartGame() {
-        this.viewer.stop();
-        this.remove(this.viewer);
-        this.viewer = null;
-        this.objects = new ArrayList<>();
-        this.ships = new Hashtable();
-        this.pads = new Hashtable();
         this.status = KillerGame.Status.ROOM;
         this.stopMusic();
         this.changeMusic(KillerRadio.ClipType.MENU);
@@ -498,7 +492,8 @@ public class KillerGame extends JFrame {
     }
 
     public void setWinner(String name) {
-
+        
+        this.stopMusic();
         this.room.setKillerPanelWinner(name);
         this.setVisible(false);
         this.room.setVisible(true);
@@ -516,6 +511,15 @@ public class KillerGame extends JFrame {
                 ((BlackHole) object).setAlive(false);
             }
         }
+        
+        this.viewer.stop();
+        this.remove(this.viewer);
+        this.viewer = null;
+        this.objects = new ArrayList<>();
+        this.ships = new Hashtable();
+        this.pads = new Hashtable();
+        
+        this.changeMusic(KillerRadio.ClipType.ENDING);
 
     }
     
@@ -968,12 +972,14 @@ public class KillerGame extends JFrame {
     public void receiveConfiguration(GameConfiguration configuration) {
 
         this.soundEffects = configuration.getSoundEffects();
-        this.soundMusic = configuration.getSoundsMusic();
+        if (configuration.getSoundsMusic() && !soundMusic) {
+            this.soundMusic = configuration.getSoundsMusic();
+            this.changeMusic(KillerRadio.ClipType.MENU);
+        } else {
+            this.soundMusic = configuration.getSoundsMusic();
+        }
         if (!soundMusic) {
             this.stopMusic();
-        }
-        if (soundMusic) {
-            this.changeMusic(KillerRadio.ClipType.MENU);
         }
         this.pacmanActive = configuration.getPacmanActive();
         this.ultraPacman = configuration.getUltraPacman();
@@ -1103,7 +1109,6 @@ public class KillerGame extends JFrame {
             this.pads.put(ip, pad);
             new Thread(pad).start();
             result = true;
-            System.out.println(user);
             this.room.updateUsers(this.pads);
         }
         return result;
@@ -1454,6 +1459,9 @@ public class KillerGame extends JFrame {
      */
     public void removePad(KillerPad pad) {
         this.pads.remove(pad.getId());
+        if (this.status == KillerGame.Status.ROOM) {
+            this.removeObject(this.getShipByIP(pad.getId()));
+        }
         this.ships.remove(pad.getId());
         this.room.updateUsers(this.pads);
     }
@@ -1490,15 +1498,27 @@ public class KillerGame extends JFrame {
         // New KillerGame
         KillerGame game = new KillerGame();
         while (true) {
+            
             try {
                 Thread.sleep(200);
             } catch (Exception e) {
 
             }
+            
+            for (int inc = 0; inc < game.getObjects().size(); inc++) {
+                VisibleObject object = game.getObjects().get(inc);
+                if (object instanceof Alive) {
+                    if (((Alive) object).getState() == Alive.State.DEAD) {
+                        game.removeObject(object);
+                    }
+                }
+            }
+            
             if (KillerGame.exit) {
                 game.getNextModule().sendMessage(Message.Builder.builder("quit", KillerServer.getId()).build());
                 System.exit(0);
             }
+            
         }
     }
 
