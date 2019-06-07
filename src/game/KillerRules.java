@@ -114,7 +114,7 @@ public class KillerRules {
         // Detect wall type
         if (wall.getType() == Wall.Limit.UP) {
             // Teleport to bottom
-            alive.setY( KillerGame.VIEWER_HEIGHT - alive.getImgHeight());
+            alive.setY( KillerGame.VIEWER_HEIGHT - (alive.getImgHeight() / 2) - 1);
         }
         if (wall.getType() == Wall.Limit.DOWN) {
             // Teleport to top
