@@ -37,7 +37,7 @@ public class PowerUp extends Static implements Destructible {
         this.imgWidth = imgHeight;
         this.radius = this.imgHeight / 2;
         this.m = m;
-        this.health = 400;
+        this.health = 150;
     }
 
     /**
